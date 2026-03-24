@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Daily Tutor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --color-bg: #ffffff;
+    --color-bg2: #f5f4f0;
+    --color-border: rgba(0,0,0,0.12);
+    --color-border2: rgba(0,0,0,0.25);
+    --color-text: #1a1a18;
+    --color-text2: #5f5e5a;
+    --color-text3: #888780;
+    --color-purple: #534AB7;
+    --color-purple-light: #EEEDFE;
+    --color-teal: #1D9E75;
+    --color-teal-light: #E1F5EE;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #1c1c1a;
+      --color-bg2: #262624;
+      --color-border: rgba(255,255,255,0.1);
+      --color-border2: rgba(255,255,255,0.22);
+      --color-text: #e8e6dc;
+      --color-text2: #9c9a92;
+      --color-text3: #6e6c66;
+      --color-purple-light: #26215C;
+      --color-teal-light: #04342C;
+    }
+  }
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background: var(--color-bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .app { width: 100%; max-width: 560px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+  .day-badge {
+    font-size: 11px;
+    background: var(--color-bg2);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 3px 10px;
+    color: var(--color-text2);
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .streak-row { display: flex; gap: 6px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .streak-day {
+    width: 30px; height: 30px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600;
+  }
+  .streak-day.done { background: var(--color-teal); color: var(--color-teal-light); }
+  .streak-day.today { background: var(--color-purple); color: var(--color-purple-light); }
+  .streak-day.empty { background: var(--color-bg2); color: var(--color-text3); border: 1px solid var(--color-border); }
+  .streak-count { font-size: 11px; color: var(--color-text2); margin-left: 4px; }
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text2); margin-bottom: 7px; }
+  .progress-bar { height: 5px; background: var(--color-bg2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--color-purple); border-radius: 3px; transition: width 0.5s ease; }
+  .phase-pills { display: flex; gap: 7px; margin-bottom: 20px; flex-wrap: wrap; }
+  .pill {
+    font-size: 11px; padding: 4px 11px; border-radius: 20px;
+    border: 1px solid var(--color-border); color: var(--color-text2);
+    cursor: pointer; transition: all 0.15s; background: transparent;
+  }
+  .pill.active { background: var(--color-purple); color: var(--color-purple-light); border-color: var(--color-purple); }
+  .topic-card {
+    background: var(--color-bg2);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .topic-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .topic-sub { font-size: 12px; color: var(--color-text2); line-height: 1.5; }
+  .btn-primary {
+    width: 100%; padding: 12px;
+    background: var(--color-purple); color: var(--color-purple-light);
+    border: none; border-radius: 9px;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: opacity 0.15s;
+    margin-bottom: 10px;
+  }
+  .btn-primary:hover { opacity: 0.87; }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-secondary {
+    width: 100%; padding: 10px;
+    background: transparent; color: var(--color-text2);
+    border: 1px solid var(--color-border);
+    border-radius: 9px; font-size: 13px;
+    cursor: pointer; transition: all 0.15s;
+    margin-bottom: 10px;
+  }
+  .btn-secondary:hover { border-color: var(--color-border2); color: var(--color-text); }
+  .session-output {
+    background: var(--color-bg2);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    max-height: 380px;
+    overflow-y: auto;
+    color: var(--color-text);
+  }
+  .session-output.loading { color: var(--color-text2); font-style: italic; }
+  .nav-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .nav-btn {
+    flex: 1; padding: 9px;
+    font-size: 12px; background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 8px; cursor: pointer;
+    color: var(--color-text2); transition: all 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--color-border2); color: var(--color-text); }
+  .reset-btn {
+    width: 100%; padding: 9px;
+    background: transparent; color: var(--color-text3);
+    border: 1px solid var(--color-border);
+    border-radius: 8px; font-size: 12px;
+    cursor: pointer; transition: all 0.15s; margin-top: 4px;
+  }
+  .reset-btn:hover { color: var(--color-text2); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>English daily tutor</h1>
+    <span class="day-badge" id="day-badge">Día 1</span>
+  </div>
+
+  <div class="section-label">Racha semanal</div>
+  <div class="streak-row" id="streak-row"></div>
+
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="phase-label">Fase 1 · Fundamentos</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="phase-pills" id="phase-pills"></div>
+
+  <div class="section-label">Tema de hoy</div>
+  <div class="topic-card">
+    <div class="topic-title" id="topic-title">Cargando...</div>
+    <div class="topic-sub" id="topic-sub"></div>
+  </div>
+
+  <button class="btn-primary" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
+  <div id="session-output" style="display:none"></div>
+
+  <div class="nav-row" id="nav-row" style="display:none">
+    <button class="nav-btn" onclick="markDone()">Marcar como completada</button>
+    <button class="nav-btn" onclick="skipDay()">Saltar al siguiente tema</button>
+  </div>
+
+  <button class="reset-btn" onclick="resetProgress()">Reiniciar progreso</button>
+</div>
+
+<script>
+const CURRICULUM = [
+  { phase: 1, name: "Fundamentos", topics: [
+    { title: "Present simple", sub: "Hábitos y hechos: I work, she doesn't know" },
+    { title: "Present continuous", sub: "Acciones en curso: I am working right now" },
+    { title: "Artículos a/an/the", sub: "Cuándo usarlos y cuándo omitirlos" },
+    { title: "Past simple", sub: "Acciones terminadas: I went, did you eat?" },
+    { title: "Preguntas y negaciones", sub: "Do/does/did como auxiliares" },
+    { title: "Pronombres y posesivos", sub: "my/mine, your/yours, his/her/its" },
+    { title: "There is / there are", sub: "Existencia y ubicación de cosas" },
+    { title: "Comparativos y superlativos", sub: "bigger, the biggest, more interesting" },
+    { title: "Future: will vs going to", sub: "Predicciones vs planes concretos" },
+    { title: "Preposiciones de tiempo", sub: "in/on/at con fechas, horas, períodos" },
+    { title: "Preposiciones de lugar", sub: "in/on/at/next to/between para ubicar" },
+    { title: "Adverbios de frecuencia", sub: "always, usually, sometimes, never" },
+    { title: "Can / can't / could", sub: "Habilidad y posibilidad en presente y pasado" },
+    { title: "Imperatives", sub: "Instrucciones y órdenes: Open the door, don't run" },
+    { title: "Countable vs uncountable", sub: "some/any/much/many/a lot of" },
+  ]},
+  { phase: 2, name: "Intermedio", topics: [
+    { title: "Present perfect", sub: "Have/has + participio: I have visited Paris" },
+    { title: "Present perfect continuous", sub: "I have been working for 3 hours" },
+    { title: "Past continuous", sub: "I was reading when she called" },
+    { title: "Past perfect", sub: "Acción anterior a otra en pasado: had done" },
+    { title: "Condicional 0 y 1", sub: "If it rains, I take an umbrella / I'll take" },
+    { title: "Condicional 2", sub: "If I were you, I would... (situación hipotética)" },
+    { title: "Modal verbs: must/should/might", sub: "Obligación, consejo y probabilidad" },
+    { title: "Passive voice (presente y pasado)", sub: "The report is written / was written" },
+    { title: "Reported speech", sub: "She said that she was tired" },
+    { title: "Relative clauses", sub: "who/which/that/where para describir" },
+    { title: "Linking words", sub: "however, although, therefore, in addition" },
+    { title: "Question tags", sub: "You're coming, aren't you?" },
+    { title: "Gerund vs infinitive", sub: "I enjoy swimming / I want to swim" },
+    { title: "Used to / would", sub: "Hábitos pasados que ya no existen" },
+    { title: "Future continuous y perfect", sub: "Will be doing / will have done" },
+  ]},
+  { phase: 3, name: "Avanzado", topics: [
+    { title: "Condicional 3", sub: "If I had known, I would have called" },
+    { title: "Mixed conditionals", sub: "Combinar tiempos en condicionales complejos" },
+    { title: "Subjuntivo", sub: "I suggest that he be on time (formal)" },
+    { title: "Inversion", sub: "Never have I seen... / Rarely does she..." },
+    { title: "Cleft sentences", sub: "It was John who called. What I need is..." },
+    { title: "Emphasis y fronting", sub: "What I really want is clarity" },
+    { title: "Discourse markers avanzados", sub: "Notwithstanding, as a result, in contrast" },
+    { title: "Reported speech complejo", sub: "Preguntas, órdenes y sugerencias indirectas" },
+    { title: "Passive voice avanzada", sub: "Causative have/get: I had my car fixed" },
+    { title: "Phrasal verbs frecuentes", sub: "come across, bring up, look into, put off" },
+    { title: "Collocations y chunks", sub: "Make a decision, take responsibility" },
+    { title: "Cohesión textual", sub: "Reference, substitution, ellipsis en textos" },
+    { title: "Registro y formalidad", sub: "Diferencias entre formal, neutral e informal" },
+    { title: "Conector de ideas complejas", sub: "Concession, contrast, cause, consequence" },
+    { title: "Repaso y consolidación", sub: "Integración de todos los conceptos" },
+  ]},
+];
+
+const ALL_TOPICS = CURRICULUM.flatMap(p => p.topics.map(t => ({ ...t, phase: p.phase, phaseName: p.name })));
+const TOTAL = ALL_TOPICS.length;
+const WEEK_DAYS = ['L','M','X','J','V','S','D'];
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('eng_tutor_v2');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { currentDay: 0, completedDays: [], startDate: new Date().toISOString().slice(0,10) };
+}
+
+function saveState(s) {
+  try { localStorage.setItem('eng_tutor_v2', JSON.stringify(s)); } catch(e) {}
+}
+
+let state = loadState();
+
+function render() {
+  const idx = Math.min(state.currentDay, TOTAL - 1);
+  const topic = ALL_TOPICS[idx];
+  const phase = CURRICULUM.find(p => p.phase === topic.phase);
+  const phaseStart = CURRICULUM.slice(0, topic.phase - 1).reduce((a, p) => a + p.topics.length, 0);
+  const phaseProgress = ((idx - phaseStart + 1) / phase.topics.length) * 100;
+
+  document.getElementById('day-badge').textContent = `Día ${idx + 1} de ${TOTAL}`;
+  document.getElementById('phase-label').textContent = `Fase ${topic.phase} · ${topic.phaseName}`;
+  document.getElementById('progress-pct').textContent = Math.round(phaseProgress) + '%';
+  document.getElementById('progress-fill').style.width = phaseProgress + '%';
+  document.getElementById('topic-title').textContent = topic.title;
+  document.getElementById('topic-sub').textContent = topic.sub;
+
+  document.getElementById('phase-pills').innerHTML = CURRICULUM.map(p =>
+    `<span class="pill ${p.phase === topic.phase ? 'active' : ''}">${p.name}</span>`
+  ).join('');
+
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  document.getElementById('streak-row').innerHTML =
+    WEEK_DAYS.map((d, i) => {
+      const isToday = i === (today.getDay() + 6) % 7;
+      const done = state.completedDays.includes(todayStr) && isToday;
+      const cls = isToday && done ? 'done' : isToday ? 'today' : 'empty';
+      return `<div class="streak-day ${cls}">${d}</div>`;
+    }).join('') +
+    `<span class="streak-count">${state.completedDays.length} sesiones completadas</span>`;
+
+  document.getElementById('session-output').style.display = 'none';
+  document.getElementById('nav-row').style.display = 'none';
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = false;
+  btn.textContent = 'Generar sesión de hoy';
+}
+
+async function generateSession() {
+  const idx = Math.min(state.currentDay, TOTAL - 1);
+  const topic = ALL_TOPICS[idx];
+  const btn = document.getElementById('btn-generate');
+  const out = document.getElementById('session-output');
+
+  btn.disabled = true;
+  btn.textContent = 'Generando...';
+  out.style.display = 'block';
+  out.className = 'session-output loading';
+  out.textContent = 'Preparando tu sesión personalizada...';
+
+  const prompt = `Eres un profesor de inglés experto. El alumno es hispanohablante y está aprendiendo inglés progresivamente.
+
+SESIÓN DE HOY — Día ${idx + 1} de 45:
+Tema: ${topic.title}
+Contexto: ${topic.sub}
+Fase: ${topic.phase} de 3 (${topic.phaseName})
+
+Estructura la sesión así:
+1. EXPLICACIÓN (3-4 líneas): Qué es, cuándo se usa y por qué los hispanohablantes se confunden con esto.
+2. EJEMPLOS (3 ejemplos): Frases naturales, de registro cotidiano o profesional.
+3. ERROR FRECUENTE: El error más común que cometen los hispanohablantes con este punto. Muestra el error y la forma correcta.
+4. EJERCICIOS (5 ejercicios breves): Que el alumno complete, traduzca o transforme. Deja espacio para responder.
+5. TIP EXTRA: Una expresión idiomática, collocación o frase útil relacionada con el tema.
+
+Sé directo, claro y usa ejemplos realistas. Sin introducciones largas.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || 'Error al generar la sesión.';
+    out.className = 'session-output';
+    out.textContent = text;
+    document.getElementById('nav-row').style.display = 'flex';
+    btn.textContent = 'Regenerar sesión';
+    btn.disabled = false;
+  } catch(e) {
+    out.className = 'session-output';
+    out.textContent = 'Error de conexión. Inténtalo de nuevo.';
+    btn.disabled = false;
+    btn.textContent = 'Generar sesión de hoy';
+  }
+}
+
+function markDone() {
+  const today = new Date().toISOString().slice(0,10);
+  if (!state.completedDays.includes(today)) state.completedDays.push(today);
+  state.currentDay = Math.min(state.currentDay + 1, TOTAL - 1);
+  saveState(state);
+  render();
+}
+
+function skipDay() {
+  state.currentDay = Math.min(state.currentDay + 1, TOTAL - 1);
+  saveState(state);
+  render();
+}
+
+function resetProgress() {
+  if (confirm('¿Reiniciar todo el progreso desde el día 1?')) {
+    state = { currentDay: 0, completedDays: [], startDate: new Date().toISOString().slice(0,10) };
+    saveState(state);
+    render();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
