@@ -7,179 +7,194 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --color-bg: #ffffff;
-    --color-bg2: #f5f4f0;
-    --color-border: rgba(0,0,0,0.12);
-    --color-border2: rgba(0,0,0,0.25);
-    --color-text: #1a1a18;
-    --color-text2: #5f5e5a;
-    --color-text3: #888780;
-    --color-purple: #534AB7;
-    --color-purple-light: #EEEDFE;
-    --color-teal: #1D9E75;
-    --color-teal-light: #E1F5EE;
+    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eeedea;
+    --border: rgba(0,0,0,0.11); --border2: rgba(0,0,0,0.22);
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #929088;
+    --purple: #534AB7; --purple-l: #EEEDFE;
+    --teal: #1D9E75; --teal-l: #E1F5EE;
+    --amber: #BA7517; --amber-l: #FAEEDA;
+    --red: #A32D2D; --red-l: #FCEBEB;
+    --green: #3B6D11; --green-l: #EAF3DE;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-bg: #1c1c1a;
-      --color-bg2: #262624;
-      --color-border: rgba(255,255,255,0.1);
-      --color-border2: rgba(255,255,255,0.22);
-      --color-text: #e8e6dc;
-      --color-text2: #9c9a92;
-      --color-text3: #6e6c66;
-      --color-purple-light: #26215C;
-      --color-teal-light: #04342C;
+      --bg: #1b1b19; --bg2: #242422; --bg3: #2e2e2b;
+      --border: rgba(255,255,255,0.09); --border2: rgba(255,255,255,0.2);
+      --text: #e6e4da; --text2: #9c9a92; --text3: #6a6860;
+      --purple-l: #26215C; --teal-l: #04342C; --amber-l: #412402;
+      --red-l: #501313; --green-l: #173404;
     }
   }
-  body {
-    font-family: var(--font-sans);
-    color: var(--color-text);
-    background: var(--color-bg);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 24px 16px;
-  }
-  .app { width: 100%; max-width: 560px; }
-  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; display: flex; justify-content: center; padding: 28px 16px; }
+  .app { width: 100%; max-width: 540px; }
+
+  /* Header */
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
   .header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
-  .day-badge {
-    font-size: 11px;
-    background: var(--color-bg2);
-    border: 1px solid var(--color-border);
-    border-radius: 20px;
-    padding: 3px 10px;
-    color: var(--color-text2);
-  }
-  .section-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--color-text3);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 8px;
-  }
-  .streak-row { display: flex; gap: 6px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
-  .streak-day {
-    width: 30px; height: 30px; border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 600;
-  }
-  .streak-day.done { background: var(--color-teal); color: var(--color-teal-light); }
-  .streak-day.today { background: var(--color-purple); color: var(--color-purple-light); }
-  .streak-day.empty { background: var(--color-bg2); color: var(--color-text3); border: 1px solid var(--color-border); }
-  .streak-count { font-size: 11px; color: var(--color-text2); margin-left: 4px; }
-  .progress-wrap { margin-bottom: 20px; }
-  .progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text2); margin-bottom: 7px; }
-  .progress-bar { height: 5px; background: var(--color-bg2); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--color-purple); border-radius: 3px; transition: width 0.5s ease; }
-  .phase-pills { display: flex; gap: 7px; margin-bottom: 20px; flex-wrap: wrap; }
-  .pill {
-    font-size: 11px; padding: 4px 11px; border-radius: 20px;
-    border: 1px solid var(--color-border); color: var(--color-text2);
-    cursor: pointer; transition: all 0.15s; background: transparent;
-  }
-  .pill.active { background: var(--color-purple); color: var(--color-purple-light); border-color: var(--color-purple); }
-  .topic-card {
-    background: var(--color-bg2);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  .topic-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .topic-sub { font-size: 12px; color: var(--color-text2); line-height: 1.5; }
-  .btn-primary {
-    width: 100%; padding: 12px;
-    background: var(--color-purple); color: var(--color-purple-light);
-    border: none; border-radius: 9px;
-    font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: opacity 0.15s;
-    margin-bottom: 10px;
-  }
+  .badge { font-size: 11px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--text2); }
+
+  /* Section label */
+  .section-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+
+  /* Streak */
+  .streak-row { display: flex; gap: 5px; align-items: center; margin-bottom: 22px; }
+  .sd { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+  .sd.done { background: var(--teal); color: var(--teal-l); }
+  .sd.today { background: var(--purple); color: var(--purple-l); }
+  .sd.empty { background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
+  .streak-count { font-size: 11px; color: var(--text2); margin-left: 6px; }
+
+  /* Progress */
+  .prog-wrap { margin-bottom: 20px; }
+  .prog-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 7px; }
+  .prog-bar { height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--purple); border-radius: 3px; transition: width 0.5s ease; }
+
+  /* Pills */
+  .pills { display: flex; gap: 7px; margin-bottom: 22px; }
+  .pill { font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--text2); background: transparent; }
+  .pill.active { background: var(--purple); color: var(--purple-l); border-color: var(--purple); }
+
+  /* Topic card */
+  .topic-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 15px 17px; margin-bottom: 16px; }
+  .topic-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .topic-sub { font-size: 12px; color: var(--text2); line-height: 1.55; }
+
+  /* Usage meter */
+  .usage-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 13px 16px; margin-bottom: 16px; }
+  .usage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .usage-label { font-size: 12px; font-weight: 500; }
+  .usage-amount { font-size: 12px; color: var(--text2); }
+  .usage-bar { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .usage-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease, background 0.3s; }
+  .usage-fill.ok { background: var(--teal); }
+  .usage-fill.warn { background: var(--amber); }
+  .usage-fill.danger { background: var(--red); }
+  .usage-hint { font-size: 11px; color: var(--text3); }
+
+  /* Config panel */
+  .config-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; }
+  .config-toggle:hover { color: var(--text); }
+  .config-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .config-row { margin-bottom: 12px; }
+  .config-row:last-child { margin-bottom: 0; }
+  .config-row label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+  .config-row input { width: 100%; padding: 8px 11px; background: var(--bg); border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.15s; }
+  .config-row input:focus { border-color: var(--purple); }
+  .config-row input[type=range] { padding: 4px 0; background: none; border: none; cursor: pointer; }
+  .limit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .limit-val { font-size: 13px; font-weight: 600; color: var(--purple); }
+  .btn-save { width: 100%; padding: 9px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 12px; transition: opacity 0.15s; }
+  .btn-save:hover { opacity: 0.87; }
+
+  /* Buttons */
+  .btn-primary { width: 100%; padding: 12px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; margin-bottom: 10px; }
   .btn-primary:hover { opacity: 0.87; }
   .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-  .btn-secondary {
-    width: 100%; padding: 10px;
-    background: transparent; color: var(--color-text2);
-    border: 1px solid var(--color-border);
-    border-radius: 9px; font-size: 13px;
-    cursor: pointer; transition: all 0.15s;
-    margin-bottom: 10px;
-  }
-  .btn-secondary:hover { border-color: var(--color-border2); color: var(--color-text); }
-  .session-output {
-    background: var(--color-bg2);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-    font-size: 13px;
-    line-height: 1.75;
-    white-space: pre-wrap;
-    max-height: 380px;
-    overflow-y: auto;
-    color: var(--color-text);
-  }
-  .session-output.loading { color: var(--color-text2); font-style: italic; }
   .nav-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .nav-btn {
-    flex: 1; padding: 9px;
-    font-size: 12px; background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 8px; cursor: pointer;
-    color: var(--color-text2); transition: all 0.15s;
-  }
-  .nav-btn:hover { border-color: var(--color-border2); color: var(--color-text); }
-  .reset-btn {
-    width: 100%; padding: 9px;
-    background: transparent; color: var(--color-text3);
-    border: 1px solid var(--color-border);
-    border-radius: 8px; font-size: 12px;
-    cursor: pointer; transition: all 0.15s; margin-top: 4px;
-  }
-  .reset-btn:hover { color: var(--color-text2); }
+  .btn-nav { flex: 1; padding: 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); border-radius: 9px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
+  .btn-nav:hover { border-color: var(--border2); color: var(--text); }
+  .btn-nav.primary { background: var(--teal); color: var(--teal-l); border-color: var(--teal); font-weight: 500; }
+  .btn-nav.primary:hover { opacity: 0.87; }
+  .btn-reset { width: 100%; padding: 9px; background: transparent; color: var(--text3); border: 1px solid var(--border); border-radius: 9px; font-size: 12px; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
+  .btn-reset:hover { color: var(--text2); }
+
+  /* Session output */
+  .session-out { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.75; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .session-out.loading { color: var(--text2); font-style: italic; }
+
+  /* Alert banners */
+  .banner { border-radius: 0 9px 9px 0; padding: 10px 14px; font-size: 12px; line-height: 1.65; margin-bottom: 14px; border-left-width: 3px; border-left-style: solid; border: 1px solid var(--border); }
+  .banner.warn { background: var(--amber-l); border-left-color: var(--amber); color: var(--text2); }
+  .banner.danger { background: var(--red-l); border-left-color: var(--red); color: var(--red); font-weight: 500; }
+  .banner.setup { background: var(--purple-l); border-left-color: var(--purple); color: var(--text2); }
 </style>
 </head>
 <body>
 <div class="app">
+
   <div class="header">
     <h1>English daily tutor</h1>
-    <span class="day-badge" id="day-badge">Día 1</span>
+    <span class="badge" id="day-badge">Día 1 de 45</span>
   </div>
 
   <div class="section-label">Racha semanal</div>
   <div class="streak-row" id="streak-row"></div>
 
-  <div class="progress-wrap">
-    <div class="progress-labels">
+  <div class="prog-wrap">
+    <div class="prog-labels">
       <span id="phase-label">Fase 1 · Fundamentos</span>
-      <span id="progress-pct">0%</span>
+      <span id="prog-pct">0%</span>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
   </div>
 
-  <div class="phase-pills" id="phase-pills"></div>
+  <div class="pills" id="pills"></div>
 
   <div class="section-label">Tema de hoy</div>
   <div class="topic-card">
-    <div class="topic-title" id="topic-title">Cargando...</div>
+    <div class="topic-title" id="topic-title">—</div>
     <div class="topic-sub" id="topic-sub"></div>
   </div>
 
-  <button class="btn-primary" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
-  <div id="session-output" style="display:none"></div>
-
-  <div class="nav-row" id="nav-row" style="display:none">
-    <button class="nav-btn" onclick="markDone()">Marcar como completada</button>
-    <button class="nav-btn" onclick="skipDay()">Saltar al siguiente tema</button>
+  <!-- Usage meter -->
+  <div class="section-label">Uso este mes</div>
+  <div class="usage-card">
+    <div class="usage-top">
+      <span class="usage-label" id="usage-label">$0.00 gastados</span>
+      <span class="usage-amount" id="usage-limit-label">límite: $1.00</span>
+    </div>
+    <div class="usage-bar"><div class="usage-fill ok" id="usage-fill" style="width:0%"></div></div>
+    <div class="usage-hint" id="usage-hint">~0 sesiones generadas este mes</div>
   </div>
 
-  <button class="reset-btn" onclick="resetProgress()">Reiniciar progreso</button>
-</div>
+  <!-- Config toggle -->
+  <button class="config-toggle" onclick="toggleConfig()">
+    <span id="config-arrow">▸</span> Configuración (API key y límite)
+  </button>
+  <div class="config-panel" id="config-panel" style="display:none">
+    <div class="config-row">
+      <label>API Key de Anthropic</label>
+      <input type="password" id="inp-key" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    </div>
+    <div class="config-row">
+      <div class="limit-row">
+        <label style="margin:0">Límite mensual de gasto</label>
+        <span class="limit-val" id="limit-display">$1.00</span>
+      </div>
+      <input type="range" id="inp-limit" min="0.5" max="10" step="0.5" value="1" oninput="updateLimitDisplay(this.value)"/>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>$0.50</span><span>$10.00</span></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">
+      Una sesión diaria cuesta aprox. $0.003 — con $1 tienes para más de 300 sesiones. La key se guarda solo en tu navegador, nunca en ningún servidor.
+    </div>
+    <button class="btn-save" onclick="saveConfig()">Guardar configuración</button>
+  </div>
 
+  <!-- Banners -->
+  <div id="banner-setup" class="banner setup" style="display:none">
+    Añade tu API key en <strong>Configuración</strong> para generar sesiones automáticamente.
+  </div>
+  <div id="banner-warn" class="banner warn" style="display:none">
+    Has superado el 80% de tu límite mensual. Considera aumentarlo en Configuración.
+  </div>
+  <div id="banner-limit" class="banner danger" style="display:none">
+    Límite mensual alcanzado. Reinicia el contador o aumenta el límite en Configuración.
+  </div>
+
+  <!-- Generate -->
+  <button class="btn-primary" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
+  <div class="session-out" id="session-out" style="display:none"></div>
+
+  <div class="nav-row" id="nav-row" style="display:none">
+    <button class="btn-nav primary" onclick="markDone()">Marcar como completada</button>
+    <button class="btn-nav" onclick="skipDay()">Saltar tema</button>
+  </div>
+
+  <button class="btn-reset" onclick="resetProgress()">Reiniciar progreso</button>
+  <button class="btn-reset" onclick="resetUsage()" style="margin-top:6px">Reiniciar contador de uso mensual</button>
+
+</div>
 <script>
 const CURRICULUM = [
   { phase: 1, name: "Fundamentos", topics: [
@@ -234,109 +249,188 @@ const CURRICULUM = [
     { title: "Repaso y consolidación", sub: "Integración de todos los conceptos" },
   ]},
 ];
+const ALL = CURRICULUM.flatMap(p => p.topics.map(t => ({ ...t, phase: p.phase, phaseName: p.name })));
+const TOTAL = ALL.length;
+const DAYS = ['L','M','X','J','V','S','D'];
 
-const ALL_TOPICS = CURRICULUM.flatMap(p => p.topics.map(t => ({ ...t, phase: p.phase, phaseName: p.name })));
-const TOTAL = ALL_TOPICS.length;
-const WEEK_DAYS = ['L','M','X','J','V','S','D'];
+// Cost estimation: ~600 input tokens + ~800 output tokens per session
+// Sonnet pricing: $3/M input, $15/M output → ~$0.003 per session
+const COST_PER_SESSION = 0.003;
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem('eng_tutor_v2');
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
-  return { currentDay: 0, completedDays: [], startDate: new Date().toISOString().slice(0,10) };
+function load() {
+  try { const r = localStorage.getItem('eng_tutor_v4'); if (r) return JSON.parse(r); } catch(e) {}
+  return { day: 0, done: [], monthKey: currentMonthKey(), monthCost: 0, sessions: 0 };
+}
+function save(s) { try { localStorage.setItem('eng_tutor_v4', JSON.stringify(s)); } catch(e) {} }
+
+function loadConfig() {
+  try { const r = localStorage.getItem('eng_tutor_cfg'); if (r) return JSON.parse(r); } catch(e) {}
+  return { key: '', limit: 1.0 };
+}
+function saveConfigData(c) { try { localStorage.setItem('eng_tutor_cfg', JSON.stringify(c)); } catch(e) {} }
+
+function currentMonthKey() {
+  const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}`;
 }
 
-function saveState(s) {
-  try { localStorage.setItem('eng_tutor_v2', JSON.stringify(s)); } catch(e) {}
+let state = load();
+let config = loadConfig();
+
+// Auto-reset usage if new month
+if (state.monthKey !== currentMonthKey()) {
+  state.monthKey = currentMonthKey();
+  state.monthCost = 0;
+  state.sessions = 0;
+  save(state);
 }
 
-let state = loadState();
+function updateLimitDisplay(v) {
+  document.getElementById('limit-display').textContent = '$' + parseFloat(v).toFixed(2);
+}
+
+function toggleConfig() {
+  const panel = document.getElementById('config-panel');
+  const arrow = document.getElementById('config-arrow');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  arrow.textContent = open ? '▾' : '▸';
+  if (open) {
+    document.getElementById('inp-key').value = config.key;
+    document.getElementById('inp-limit').value = config.limit;
+    updateLimitDisplay(config.limit);
+  }
+}
+
+function saveConfig() {
+  config.key = document.getElementById('inp-key').value.trim();
+  config.limit = parseFloat(document.getElementById('inp-limit').value);
+  saveConfigData(config);
+  toggleConfig();
+  render();
+}
 
 function render() {
-  const idx = Math.min(state.currentDay, TOTAL - 1);
-  const topic = ALL_TOPICS[idx];
-  const phase = CURRICULUM.find(p => p.phase === topic.phase);
-  const phaseStart = CURRICULUM.slice(0, topic.phase - 1).reduce((a, p) => a + p.topics.length, 0);
-  const phaseProgress = ((idx - phaseStart + 1) / phase.topics.length) * 100;
+  const idx = Math.min(state.day, TOTAL - 1);
+  const t = ALL[idx];
+  const ph = CURRICULUM.find(p => p.phase === t.phase);
+  const phStart = CURRICULUM.slice(0, t.phase - 1).reduce((a, p) => a + p.topics.length, 0);
+  const phPct = Math.round(((idx - phStart + 1) / ph.topics.length) * 100);
 
   document.getElementById('day-badge').textContent = `Día ${idx + 1} de ${TOTAL}`;
-  document.getElementById('phase-label').textContent = `Fase ${topic.phase} · ${topic.phaseName}`;
-  document.getElementById('progress-pct').textContent = Math.round(phaseProgress) + '%';
-  document.getElementById('progress-fill').style.width = phaseProgress + '%';
-  document.getElementById('topic-title').textContent = topic.title;
-  document.getElementById('topic-sub').textContent = topic.sub;
-
-  document.getElementById('phase-pills').innerHTML = CURRICULUM.map(p =>
-    `<span class="pill ${p.phase === topic.phase ? 'active' : ''}">${p.name}</span>`
+  document.getElementById('phase-label').textContent = `Fase ${t.phase} · ${t.phaseName}`;
+  document.getElementById('prog-pct').textContent = phPct + '%';
+  document.getElementById('prog-fill').style.width = phPct + '%';
+  document.getElementById('topic-title').textContent = t.title;
+  document.getElementById('topic-sub').textContent = t.sub;
+  document.getElementById('pills').innerHTML = CURRICULUM.map(p =>
+    `<span class="pill ${p.phase === t.phase ? 'active' : ''}">${p.name}</span>`
   ).join('');
 
+  // Streak
   const today = new Date();
   const todayStr = today.toISOString().slice(0,10);
+  const todayIdx = (today.getDay() + 6) % 7;
   document.getElementById('streak-row').innerHTML =
-    WEEK_DAYS.map((d, i) => {
-      const isToday = i === (today.getDay() + 6) % 7;
-      const done = state.completedDays.includes(todayStr) && isToday;
-      const cls = isToday && done ? 'done' : isToday ? 'today' : 'empty';
-      return `<div class="streak-day ${cls}">${d}</div>`;
-    }).join('') +
-    `<span class="streak-count">${state.completedDays.length} sesiones completadas</span>`;
+    DAYS.map((d, i) => {
+      const isToday = i === todayIdx;
+      const cls = isToday && state.done.includes(todayStr) ? 'done' : isToday ? 'today' : 'empty';
+      return `<div class="sd ${cls}">${d}</div>`;
+    }).join('') + `<span class="streak-count">${state.done.length} sesiones completadas</span>`;
 
-  document.getElementById('session-output').style.display = 'none';
-  document.getElementById('nav-row').style.display = 'none';
+  // Usage meter
+  const pct = Math.min((state.monthCost / config.limit) * 100, 100);
+  const fillEl = document.getElementById('usage-fill');
+  fillEl.style.width = pct + '%';
+  fillEl.className = 'usage-fill ' + (pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok');
+  document.getElementById('usage-label').textContent = `$${state.monthCost.toFixed(4)} gastados`;
+  document.getElementById('usage-limit-label').textContent = `límite: $${config.limit.toFixed(2)}`;
+  document.getElementById('usage-hint').textContent = `~${state.sessions} sesiones generadas este mes · se reinicia el 1 de cada mes`;
+
+  // Banners
+  const limitReached = state.monthCost >= config.limit;
+  const nearLimit = !limitReached && pct >= 80;
+  document.getElementById('banner-setup').style.display = !config.key ? 'block' : 'none';
+  document.getElementById('banner-warn').style.display = nearLimit ? 'block' : 'none';
+  document.getElementById('banner-limit').style.display = limitReached ? 'block' : 'none';
+
+  // Generate button
   const btn = document.getElementById('btn-generate');
-  btn.disabled = false;
-  btn.textContent = 'Generar sesión de hoy';
+  btn.disabled = limitReached || !config.key;
+  if (!config.key) btn.textContent = 'Configura tu API key primero';
+  else if (limitReached) btn.textContent = 'Límite mensual alcanzado';
+  else btn.textContent = 'Generar sesión de hoy';
+
+  document.getElementById('session-out').style.display = 'none';
+  document.getElementById('nav-row').style.display = 'none';
 }
 
 async function generateSession() {
-  const idx = Math.min(state.currentDay, TOTAL - 1);
-  const topic = ALL_TOPICS[idx];
+  const idx = Math.min(state.day, TOTAL - 1);
+  const t = ALL[idx];
   const btn = document.getElementById('btn-generate');
-  const out = document.getElementById('session-output');
+  const out = document.getElementById('session-out');
 
   btn.disabled = true;
   btn.textContent = 'Generando...';
   out.style.display = 'block';
-  out.className = 'session-output loading';
+  out.className = 'session-out loading';
   out.textContent = 'Preparando tu sesión personalizada...';
 
-  const prompt = `Eres un profesor de inglés experto. El alumno es hispanohablante y está aprendiendo inglés progresivamente.
+  const prompt = `Eres un profesor de inglés experto. El alumno es hispanohablante, nivel A2-B1, aprendiendo de forma progresiva.
 
-SESIÓN DE HOY — Día ${idx + 1} de 45:
-Tema: ${topic.title}
-Contexto: ${topic.sub}
-Fase: ${topic.phase} de 3 (${topic.phaseName})
+SESIÓN — Día ${idx + 1} de 45 | Tema: ${t.title} | ${t.sub} | Fase ${t.phase}/3 (${t.phaseName})
 
-Estructura la sesión así:
-1. EXPLICACIÓN (3-4 líneas): Qué es, cuándo se usa y por qué los hispanohablantes se confunden con esto.
-2. EJEMPLOS (3 ejemplos): Frases naturales, de registro cotidiano o profesional.
-3. ERROR FRECUENTE: El error más común que cometen los hispanohablantes con este punto. Muestra el error y la forma correcta.
-4. EJERCICIOS (5 ejercicios breves): Que el alumno complete, traduzca o transforme. Deja espacio para responder.
-5. TIP EXTRA: Una expresión idiomática, collocación o frase útil relacionada con el tema.
+Estructura:
+1. EXPLICACIÓN (3-4 líneas): qué es, cuándo se usa, por qué confunde a hispanohablantes.
+2. EJEMPLOS (3 frases): naturales, cotidianas o profesionales.
+3. ERROR FRECUENTE: muestra el error típico y la forma correcta.
+4. EJERCICIOS (5): para completar, traducir o transformar.
+5. TIP EXTRA: una expresión idiomática o collocación relacionada.
 
-Sé directo, claro y usa ejemplos realistas. Sin introducciones largas.`;
+Sin introducciones. Directo al contenido.`;
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": config.key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
+        max_tokens: 900,
         messages: [{ role: "user", content: prompt }]
       })
     });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Error ${res.status}`);
+    }
+
     const data = await res.json();
-    const text = data.content?.find(b => b.type === 'text')?.text || 'Error al generar la sesión.';
-    out.className = 'session-output';
+    const text = data.content?.find(b => b.type === 'text')?.text || 'Sin respuesta.';
+
+    // Track cost (input ~600t + output tokens used)
+    const outputTokens = data.usage?.output_tokens || 800;
+    const inputTokens = data.usage?.input_tokens || 600;
+    const cost = (inputTokens / 1_000_000 * 3) + (outputTokens / 1_000_000 * 15);
+    state.monthCost = (state.monthCost || 0) + cost;
+    state.sessions = (state.sessions || 0) + 1;
+    save(state);
+
+    out.className = 'session-out';
     out.textContent = text;
     document.getElementById('nav-row').style.display = 'flex';
+    render();
     btn.textContent = 'Regenerar sesión';
     btn.disabled = false;
+
   } catch(e) {
-    out.className = 'session-output';
-    out.textContent = 'Error de conexión. Inténtalo de nuevo.';
+    out.className = 'session-out';
+    out.textContent = `Error: ${e.message}\n\nVerifica que tu API key sea correcta en Configuración.`;
     btn.disabled = false;
     btn.textContent = 'Generar sesión de hoy';
   }
@@ -344,23 +438,23 @@ Sé directo, claro y usa ejemplos realistas. Sin introducciones largas.`;
 
 function markDone() {
   const today = new Date().toISOString().slice(0,10);
-  if (!state.completedDays.includes(today)) state.completedDays.push(today);
-  state.currentDay = Math.min(state.currentDay + 1, TOTAL - 1);
-  saveState(state);
-  render();
+  if (!state.done.includes(today)) state.done.push(today);
+  state.day = Math.min(state.day + 1, TOTAL - 1);
+  save(state); render();
 }
-
 function skipDay() {
-  state.currentDay = Math.min(state.currentDay + 1, TOTAL - 1);
-  saveState(state);
-  render();
+  state.day = Math.min(state.day + 1, TOTAL - 1);
+  save(state); render();
 }
-
 function resetProgress() {
-  if (confirm('¿Reiniciar todo el progreso desde el día 1?')) {
-    state = { currentDay: 0, completedDays: [], startDate: new Date().toISOString().slice(0,10) };
-    saveState(state);
-    render();
+  if (confirm('¿Reiniciar el progreso de días desde el día 1? (no borra el contador de uso)')) {
+    state.day = 0; state.done = []; save(state); render();
+  }
+}
+function resetUsage() {
+  if (confirm('¿Reiniciar el contador de uso mensual a $0.00?')) {
+    state.monthCost = 0; state.sessions = 0; state.monthKey = currentMonthKey();
+    save(state); render();
   }
 }
 
