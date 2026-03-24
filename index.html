@@ -7,95 +7,183 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #ffffff; --bg2: #f5f4f0; --bg3: #eeedea;
-    --border: rgba(0,0,0,0.11); --border2: rgba(0,0,0,0.22);
-    --text: #1a1a18; --text2: #5f5e5a; --text3: #929088;
-    --purple: #534AB7; --purple-l: #EEEDFE;
-    --teal: #1D9E75; --teal-l: #E1F5EE;
+    --bg: #f8f7f4; --card: #ffffff; --bg2: #f0efe9;
+    --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18; --text2: #5a5956; --text3: #9a9890;
+    --purple: #534AB7; --purple-l: #EEEDFE; --purple-d: #3C3489;
+    --teal: #1D9E75; --teal-l: #E1F5EE; --teal-d: #0F6E56;
     --amber: #BA7517; --amber-l: #FAEEDA;
+    --coral: #D85A30; --coral-l: #FAECE7;
+    --blue: #185FA5; --blue-l: #E6F1FB;
+    --green: #3B6D11; --green-l: #EAF3DE;
     --red: #A32D2D; --red-l: #FCEBEB;
+    --pink: #993556; --pink-l: #FBEAF0;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1b1b19; --bg2: #242422; --bg3: #2e2e2b;
-      --border: rgba(255,255,255,0.09); --border2: rgba(255,255,255,0.2);
-      --text: #e6e4da; --text2: #9c9a92; --text3: #6a6860;
-      --purple-l: #26215C; --teal-l: #04342C; --amber-l: #412402; --red-l: #501313;
+      --bg: #181816; --card: #222220; --bg2: #2a2a27;
+      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.18);
+      --text: #e8e6dc; --text2: #9c9a92; --text3: #6a6860;
+      --purple-l: #26215C; --teal-l: #04342C; --amber-l: #412402;
+      --coral-l: #4A1B0C; --blue-l: #042C53; --green-l: #173404;
+      --red-l: #501313; --pink-l: #4B1528;
     }
   }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; display: flex; justify-content: center; padding: 28px 16px; }
-  .app { width: 100%; max-width: 540px; }
-  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
-  .badge { font-size: 11px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--text2); }
-  .section-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-  .streak-row { display: flex; gap: 5px; align-items: center; margin-bottom: 22px; }
-  .sd { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; padding: 20px 16px 40px; }
+  .app { max-width: 600px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.03em; }
+  .badge { font-size: 11px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--text2); }
+
+  /* ── Streak ── */
+  .streak-row { display: flex; gap: 5px; align-items: center; margin-bottom: 18px; }
+  .sd { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
   .sd.done { background: var(--teal); color: var(--teal-l); }
   .sd.today { background: var(--purple); color: var(--purple-l); }
-  .sd.empty { background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
+  .sd.empty { background: var(--card); color: var(--text3); border: 1px solid var(--border); }
   .streak-count { font-size: 11px; color: var(--text2); margin-left: 6px; }
-  .prog-wrap { margin-bottom: 20px; }
-  .prog-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 7px; }
-  .prog-bar { height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
-  .prog-fill { height: 100%; background: var(--purple); border-radius: 3px; transition: width 0.5s ease; }
-  .pills { display: flex; gap: 7px; margin-bottom: 22px; }
+
+  /* ── Progress ── */
+  .prog-wrap { margin-bottom: 18px; }
+  .prog-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .prog-bar { height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--purple); border-radius: 3px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  .pills { display: flex; gap: 6px; margin-bottom: 20px; }
   .pill { font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--text2); background: transparent; }
   .pill.active { background: var(--purple); color: var(--purple-l); border-color: var(--purple); }
-  .topic-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 15px 17px; margin-bottom: 16px; }
-  .topic-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .topic-sub { font-size: 12px; color: var(--text2); line-height: 1.55; }
-  .usage-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 13px 16px; margin-bottom: 16px; }
-  .usage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .usage-label { font-size: 12px; font-weight: 500; }
-  .usage-amount { font-size: 12px; color: var(--text2); }
-  .usage-bar { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
-  .usage-fill { height: 100%; border-radius: 3px; transition: width 0.4s, background 0.3s; }
+
+  /* ── Topic hero ── */
+  .topic-hero { background: var(--purple); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .topic-hero::before { content: ''; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  .topic-hero::after { content: ''; position: absolute; right: 20px; bottom: -40px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+  .topic-phase { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+  .topic-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .topic-sub { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+  /* ── Section label ── */
+  .sec-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 10px; margin-top: 20px; }
+
+  /* ── Phonetics card ── */
+  .phonetics-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 6px; }
+  .phonetics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ph-item { background: var(--bg2); border-radius: 10px; padding: 12px; }
+  .ph-word { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .ph-ipa { font-size: 13px; color: var(--purple); font-family: 'Courier New', monospace; margin-bottom: 6px; }
+  .ph-meaning { font-size: 11px; color: var(--text2); margin-bottom: 8px; line-height: 1.4; }
+  .btn-speak { display: flex; align-items: center; gap-5px; font-size: 11px; padding: 4px 10px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-weight: 500; gap: 4px; }
+  .btn-speak:hover { background: var(--purple); color: var(--purple-l); }
+  .btn-speak.speaking { background: var(--teal); color: var(--teal-l); }
+
+  /* ── Grammar structure card ── */
+  .grammar-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 6px; }
+  .formula-box { background: var(--blue-l); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8; }
+  .f-subject { color: var(--blue); font-weight: 700; }
+  .f-verb { color: var(--coral); font-weight: 700; }
+  .f-object { color: var(--teal-d); font-weight: 700; }
+  .f-neg { color: var(--red); font-weight: 700; }
+  .f-aux { color: var(--amber); font-weight: 700; }
+  .f-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .f-label.blue { color: var(--blue); }
+  .f-label.coral { color: var(--coral); }
+  .f-label.teal { color: var(--teal-d); }
+  .f-label.red { color: var(--red); }
+  .f-label.amber { color: var(--amber); }
+  .grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.7; margin-top: 10px; }
+  .grammar-note strong { color: var(--text); }
+
+  /* ── Example cards (animated) ── */
+  .examples-wrap { position: relative; margin-bottom: 6px; }
+  .example-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: none; animation: slideIn 0.3s ease; }
+  .example-card.active { display: block; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+  .ex-number { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 10px; }
+  .ex-en { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .ex-highlight { color: var(--purple); }
+  .ex-es { font-size: 13px; color: var(--text2); margin-bottom: 12px; font-style: italic; }
+  .ex-note { font-size: 12px; color: var(--text3); background: var(--bg2); border-radius: 8px; padding: 8px 11px; line-height: 1.5; }
+  .ex-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+  .ex-dots { display: flex; gap: 5px; }
+  .ex-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: all 0.2s; cursor: pointer; }
+  .ex-dot.active { background: var(--purple); width: 18px; border-radius: 3px; }
+  .btn-ex-nav { padding: 6px 14px; font-size: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
+  .btn-ex-nav:hover { border-color: var(--border2); color: var(--text); }
+  .btn-ex-speak { padding: 6px 12px; font-size: 12px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+  .btn-ex-speak:hover { background: var(--purple); color: var(--purple-l); }
+
+  /* ── Error card ── */
+  .error-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 6px; }
+  .error-wrong { background: var(--red-l); border-radius: 9px; padding: 10px 14px; margin-bottom: 10px; }
+  .error-wrong-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--red); margin-bottom: 4px; }
+  .error-wrong-text { font-size: 14px; color: var(--red); text-decoration: line-through; }
+  .error-right { background: var(--green-l); border-radius: 9px; padding: 10px 14px; }
+  .error-right-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); margin-bottom: 4px; }
+  .error-right-text { font-size: 14px; color: var(--green); font-weight: 600; }
+  .error-explain { font-size: 12px; color: var(--text2); margin-top: 10px; line-height: 1.6; }
+
+  /* ── Tip card ── */
+  .tip-card { background: var(--amber-l); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 14px 14px 0; padding: 14px 16px; margin-bottom: 6px; }
+  .tip-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 6px; }
+  .tip-phrase { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .tip-meaning { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* ── Usage meter ── */
+  .usage-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
+  .usage-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 7px; }
+  .usage-bar { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
+  .usage-fill { height: 100%; border-radius: 2px; transition: width 0.4s, background 0.3s; }
   .usage-fill.ok { background: var(--teal); }
   .usage-fill.warn { background: var(--amber); }
   .usage-fill.danger { background: var(--red); }
   .usage-hint { font-size: 11px; color: var(--text3); }
+
+  /* ── Config ── */
   .config-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; }
   .config-toggle:hover { color: var(--text); }
-  .config-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .config-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
   .config-row { margin-bottom: 12px; }
-  .config-row:last-child { margin-bottom: 0; }
-  .config-row label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
-  .config-row input[type=password] { width: 100%; padding: 8px 11px; background: var(--bg); border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.15s; }
+  .config-row label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+  .config-row input[type=password] { width: 100%; padding: 8px 11px; background: var(--bg); border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); outline: none; }
   .config-row input[type=password]:focus { border-color: var(--purple); }
   .config-row input[type=range] { width: 100%; cursor: pointer; }
-  .limit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-  .limit-val { font-size: 13px; font-weight: 600; color: var(--purple); }
-  .btn-save { width: 100%; padding: 9px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 12px; transition: opacity 0.15s; }
-  .btn-save:hover { opacity: 0.87; }
-  .btn-primary { width: 100%; padding: 12px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; margin-bottom: 10px; }
-  .btn-primary:hover { opacity: 0.87; }
-  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-  /* SESSION OUTPUT — always visible once set */
-  .session-out { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.75; white-space: pre-wrap; color: var(--text); }
-  .session-out.loading { color: var(--text2); font-style: italic; }
-  .nav-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .btn-nav { flex: 1; padding: 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); border-radius: 9px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
+  .limit-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .limit-val { font-size: 13px; font-weight: 700; color: var(--purple); }
+  .btn-save { width: 100%; padding: 9px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+
+  /* ── Action buttons ── */
+  .actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+  .btn-generate { width: 100%; padding: 14px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn-generate:hover { opacity: 0.87; }
+  .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-claude { width: 100%; padding: 12px; background: var(--teal); color: var(--teal-l); border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; text-decoration: none; display: block; text-align: center; }
+  .btn-claude:hover { opacity: 0.87; }
+  .nav-row { display: flex; gap: 8px; }
+  .btn-nav { flex: 1; padding: 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
   .btn-nav:hover { border-color: var(--border2); color: var(--text); }
-  .btn-nav.primary { background: var(--teal); color: var(--teal-l); border-color: var(--teal); font-weight: 500; }
-  .btn-nav.primary:hover { opacity: 0.87; }
-  .btn-reset { width: 100%; padding: 9px; background: transparent; color: var(--text3); border: 1px solid var(--border); border-radius: 9px; font-size: 12px; cursor: pointer; transition: all 0.15s; margin-top: 6px; }
-  .btn-reset:hover { color: var(--text2); }
-  .banner { border-radius: 0 9px 9px 0; padding: 10px 14px; font-size: 12px; line-height: 1.65; margin-bottom: 14px; border: 1px solid var(--border); border-left-width: 3px; border-left-style: solid; }
+  .btn-nav.done-btn { background: var(--teal); color: var(--teal-l); border-color: var(--teal); font-weight: 600; }
+  .btn-reset { width: 100%; padding: 8px; background: transparent; color: var(--text3); border: 1px solid var(--border); border-radius: 9px; font-size: 11px; cursor: pointer; }
+
+  /* ── Banners ── */
+  .banner { border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 12px; line-height: 1.6; margin-bottom: 12px; border: 1px solid var(--border); border-left: 3px solid; }
   .banner.setup { background: var(--purple-l); border-left-color: var(--purple); color: var(--text2); }
-  .banner.warn { background: var(--amber-l); border-left-color: var(--amber); color: var(--text2); }
-  .banner.danger { background: var(--red-l); border-left-color: var(--red); color: var(--red); font-weight: 500; }
+  .banner.danger { background: var(--red-l); border-left-color: var(--red); color: var(--red); font-weight: 600; }
+
+  /* ── Loading skeleton ── */
+  .skeleton { background: var(--bg2); border-radius: 14px; padding: 24px; margin-bottom: 6px; text-align: center; color: var(--text3); font-size: 13px; }
+  .loading-dots::after { content: ''; animation: dots 1.2s infinite; }
+  @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
 </style>
 </head>
 <body>
 <div class="app">
 
   <div class="header">
-    <h1>English daily tutor</h1>
+    <h1>English Daily Tutor</h1>
     <span class="badge" id="day-badge">Día 1 de 45</span>
   </div>
 
-  <div class="section-label">Racha semanal</div>
   <div class="streak-row" id="streak-row"></div>
 
   <div class="prog-wrap">
@@ -108,24 +196,26 @@
 
   <div class="pills" id="pills"></div>
 
-  <div class="section-label">Tema de hoy</div>
-  <div class="topic-card">
-    <div class="topic-title" id="topic-title">—</div>
-    <div class="topic-sub" id="topic-sub"></div>
+  <!-- Topic hero -->
+  <div class="topic-hero">
+    <div class="topic-phase" id="topic-phase">Fase 1 · Fundamentos</div>
+    <div class="topic-title" id="topic-title">Present simple</div>
+    <div class="topic-sub" id="topic-sub">Hábitos y hechos cotidianos</div>
   </div>
 
-  <div class="section-label">Uso este mes</div>
+  <!-- Usage -->
   <div class="usage-card">
     <div class="usage-top">
-      <span class="usage-label" id="usage-label">$0.00 gastados</span>
-      <span class="usage-amount" id="usage-limit-label">límite: $1.00</span>
+      <span id="usage-label">$0.0000 gastados este mes</span>
+      <span id="usage-limit-label">límite: $1.00</span>
     </div>
     <div class="usage-bar"><div class="usage-fill ok" id="usage-fill" style="width:0%"></div></div>
-    <div class="usage-hint" id="usage-hint">~0 sesiones generadas este mes</div>
+    <div class="usage-hint" id="usage-hint">~0 sesiones · se reinicia el 1 de cada mes</div>
   </div>
 
+  <!-- Config -->
   <button class="config-toggle" onclick="toggleConfig()">
-    <span id="config-arrow">▸</span> Configuración (API key y límite)
+    <span id="cfg-arrow">▸</span> Configuración (API key y límite)
   </button>
   <div class="config-panel" id="config-panel" style="display:none">
     <div class="config-row">
@@ -134,40 +224,65 @@
     </div>
     <div class="config-row">
       <div class="limit-row">
-        <label style="margin:0">Límite mensual de gasto</label>
+        <label style="margin:0">Límite mensual</label>
         <span class="limit-val" id="limit-display">$1.00</span>
       </div>
       <input type="range" id="inp-limit" min="0.5" max="10" step="0.5" value="1" oninput="updateLimitDisplay(this.value)"/>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>$0.50</span><span>$10.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px"><span>$0.50</span><span>$10.00</span></div>
     </div>
-    <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">
-      Una sesión cuesta aprox. $0.003 — con $1 tienes para más de 300 sesiones. La key se guarda solo en tu navegador.
+    <button class="btn-save" onclick="saveConfig()">Guardar</button>
+  </div>
+
+  <div id="banner-setup" class="banner setup" style="display:none">Añade tu API key en <strong>Configuración</strong> para generar sesiones.</div>
+  <div id="banner-limit" class="banner danger" style="display:none">Límite mensual alcanzado. Auméntalo en Configuración.</div>
+
+  <!-- Session content (hidden until generated) -->
+  <div id="session-content" style="display:none">
+
+    <div class="sec-label">Pronunciación clave</div>
+    <div class="phonetics-card">
+      <div class="phonetics-grid" id="phonetics-grid"></div>
     </div>
-    <button class="btn-save" onclick="saveConfig()">Guardar configuración</button>
+
+    <div class="sec-label">Estructura gramatical</div>
+    <div class="grammar-card" id="grammar-card"></div>
+
+    <div class="sec-label">Ejemplos</div>
+    <div class="examples-wrap">
+      <div id="examples-container"></div>
+      <div class="ex-nav">
+        <button class="btn-ex-nav" onclick="prevExample()">← Anterior</button>
+        <div class="ex-dots" id="ex-dots"></div>
+        <button class="btn-ex-nav" onclick="nextExample()">Siguiente →</button>
+      </div>
+    </div>
+
+    <div class="sec-label">Error frecuente</div>
+    <div class="error-card" id="error-card"></div>
+
+    <div class="sec-label">Tip del día</div>
+    <div class="tip-card" id="tip-card"></div>
+
   </div>
 
-  <div id="banner-setup" class="banner setup" style="display:none">
-    Añade tu API key en <strong>Configuración</strong> para generar sesiones.
-  </div>
-  <div id="banner-warn" class="banner warn" style="display:none">
-    Has superado el 80% de tu límite mensual.
-  </div>
-  <div id="banner-limit" class="banner danger" style="display:none">
-    Límite mensual alcanzado. Aumenta el límite en Configuración.
+  <!-- Loading state -->
+  <div id="session-loading" style="display:none">
+    <div class="skeleton"><span class="loading-dots">Generando tu sesión</span></div>
   </div>
 
-  <button class="btn-primary" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
-
-  <!-- Session output: shown/hidden manually, never reset by render() -->
-  <div class="session-out loading" id="session-out" style="display:none"></div>
-
-  <div class="nav-row" id="nav-row" style="display:none">
-    <button class="btn-nav primary" onclick="markDone()">Marcar como completada</button>
-    <button class="btn-nav" onclick="skipDay()">Saltar tema</button>
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-generate" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
+    <a class="btn-claude" id="btn-claude" href="https://claude.ai/projects" target="_blank" style="display:none">
+      Practicar en Claude.ai →
+    </a>
+    <div class="nav-row" id="nav-row" style="display:none">
+      <button class="btn-nav done-btn" onclick="markDone()">Completada ✓</button>
+      <button class="btn-nav" onclick="skipDay()">Saltar tema</button>
+    </div>
+    <button class="btn-reset" onclick="resetProgress()">Reiniciar progreso</button>
+    <button class="btn-reset" onclick="resetUsage()">Reiniciar contador mensual</button>
   </div>
-
-  <button class="btn-reset" onclick="resetProgress()">Reiniciar progreso</button>
-  <button class="btn-reset" onclick="resetUsage()">Reiniciar contador mensual</button>
 
 </div>
 <script>
@@ -230,50 +345,52 @@ const TOTAL = ALL.length;
 const DAYS = ['L','M','X','J','V','S','D'];
 
 function currentMonthKey() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}`; }
-
 function load() {
-  try { const r = localStorage.getItem('eng_tutor_v4'); if (r) return JSON.parse(r); } catch(e) {}
+  try { const r = localStorage.getItem('eng_v5'); if (r) return JSON.parse(r); } catch(e) {}
   return { day: 0, done: [], monthKey: currentMonthKey(), monthCost: 0, sessions: 0 };
 }
-function save(s) { try { localStorage.setItem('eng_tutor_v4', JSON.stringify(s)); } catch(e) {} }
-function loadConfig() {
-  try { const r = localStorage.getItem('eng_tutor_cfg'); if (r) return JSON.parse(r); } catch(e) {}
+function save(s) { try { localStorage.setItem('eng_v5', JSON.stringify(s)); } catch(e) {} }
+function loadCfg() {
+  try { const r = localStorage.getItem('eng_cfg'); if (r) return JSON.parse(r); } catch(e) {}
   return { key: '', limit: 1.0 };
 }
-function saveConfigData(c) { try { localStorage.setItem('eng_tutor_cfg', JSON.stringify(c)); } catch(e) {} }
+function saveCfg(c) { try { localStorage.setItem('eng_cfg', JSON.stringify(c)); } catch(e) {} }
 
 let state = load();
-let config = loadConfig();
+let cfg = loadCfg();
+let currentExampleIdx = 0;
+let currentExamples = [];
+let currentPrompt = '';
 
 if (state.monthKey !== currentMonthKey()) {
   state.monthKey = currentMonthKey(); state.monthCost = 0; state.sessions = 0; save(state);
 }
 
-function updateLimitDisplay(v) {
-  document.getElementById('limit-display').textContent = '$' + parseFloat(v).toFixed(2);
-}
+function updateLimitDisplay(v) { document.getElementById('limit-display').textContent = '$' + parseFloat(v).toFixed(2); }
 
 function toggleConfig() {
-  const panel = document.getElementById('config-panel');
-  const open = panel.style.display === 'none';
-  panel.style.display = open ? 'block' : 'none';
-  document.getElementById('config-arrow').textContent = open ? '▾' : '▸';
-  if (open) {
-    document.getElementById('inp-key').value = config.key;
-    document.getElementById('inp-limit').value = config.limit;
-    updateLimitDisplay(config.limit);
-  }
+  const p = document.getElementById('config-panel');
+  const open = p.style.display === 'none';
+  p.style.display = open ? 'block' : 'none';
+  document.getElementById('cfg-arrow').textContent = open ? '▾' : '▸';
+  if (open) { document.getElementById('inp-key').value = cfg.key; document.getElementById('inp-limit').value = cfg.limit; updateLimitDisplay(cfg.limit); }
 }
 
 function saveConfig() {
-  config.key = document.getElementById('inp-key').value.trim();
-  config.limit = parseFloat(document.getElementById('inp-limit').value);
-  saveConfigData(config);
-  toggleConfig();
-  renderMeta(); // only update meta parts, NOT session output
+  cfg.key = document.getElementById('inp-key').value.trim();
+  cfg.limit = parseFloat(document.getElementById('inp-limit').value);
+  saveCfg(cfg); toggleConfig(); renderMeta();
 }
 
-// renderMeta: updates everything EXCEPT session output and nav row
+function speak(text, btn) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'en-US'; utt.rate = 0.85;
+  if (btn) { btn.classList.add('speaking'); utt.onend = () => btn.classList.remove('speaking'); }
+  window.speechSynthesis.speak(utt);
+}
+
 function renderMeta() {
   const idx = Math.min(state.day, TOTAL - 1);
   const t = ALL[idx];
@@ -285,14 +402,13 @@ function renderMeta() {
   document.getElementById('phase-label').textContent = `Fase ${t.phase} · ${t.phaseName}`;
   document.getElementById('prog-pct').textContent = phPct + '%';
   document.getElementById('prog-fill').style.width = phPct + '%';
+  document.getElementById('topic-phase').textContent = `Fase ${t.phase} · ${t.phaseName}`;
   document.getElementById('topic-title').textContent = t.title;
   document.getElementById('topic-sub').textContent = t.sub;
   document.getElementById('pills').innerHTML = CURRICULUM.map(p =>
-    `<span class="pill ${p.phase === t.phase ? 'active' : ''}">${p.name}</span>`
-  ).join('');
+    `<span class="pill ${p.phase === t.phase ? 'active' : ''}">${p.name}</span>`).join('');
 
-  const today = new Date();
-  const todayStr = today.toISOString().slice(0,10);
+  const today = new Date(); const todayStr = today.toISOString().slice(0,10);
   const todayIdx = (today.getDay() + 6) % 7;
   document.getElementById('streak-row').innerHTML =
     DAYS.map((d, i) => {
@@ -301,107 +417,220 @@ function renderMeta() {
       return `<div class="sd ${cls}">${d}</div>`;
     }).join('') + `<span class="streak-count">${state.done.length} sesiones completadas</span>`;
 
-  const pct = Math.min((state.monthCost / config.limit) * 100, 100);
-  const fillEl = document.getElementById('usage-fill');
-  fillEl.style.width = pct + '%';
-  fillEl.className = 'usage-fill ' + (pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok');
-  document.getElementById('usage-label').textContent = `$${state.monthCost.toFixed(4)} gastados`;
-  document.getElementById('usage-limit-label').textContent = `límite: $${config.limit.toFixed(2)}`;
-  document.getElementById('usage-hint').textContent = `~${state.sessions} sesiones generadas este mes · se reinicia el 1 de cada mes`;
+  const pct = Math.min((state.monthCost / cfg.limit) * 100, 100);
+  document.getElementById('usage-fill').style.width = pct + '%';
+  document.getElementById('usage-fill').className = 'usage-fill ' + (pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok');
+  document.getElementById('usage-label').textContent = `$${state.monthCost.toFixed(4)} gastados este mes`;
+  document.getElementById('usage-limit-label').textContent = `límite: $${cfg.limit.toFixed(2)}`;
+  document.getElementById('usage-hint').textContent = `~${state.sessions} sesiones · se reinicia el 1 de cada mes`;
 
-  const limitReached = state.monthCost >= config.limit;
-  document.getElementById('banner-setup').style.display = !config.key ? 'block' : 'none';
-  document.getElementById('banner-warn').style.display = (!limitReached && pct >= 80) ? 'block' : 'none';
+  const limitReached = state.monthCost >= cfg.limit;
+  document.getElementById('banner-setup').style.display = !cfg.key ? 'block' : 'none';
   document.getElementById('banner-limit').style.display = limitReached ? 'block' : 'none';
 
   const btn = document.getElementById('btn-generate');
-  const blocked = limitReached || !config.key;
-  btn.disabled = blocked;
-  if (!config.key) btn.textContent = 'Configura tu API key primero';
+  btn.disabled = limitReached || !cfg.key;
+  if (!cfg.key) btn.textContent = 'Configura tu API key primero';
   else if (limitReached) btn.textContent = 'Límite mensual alcanzado';
   else btn.textContent = 'Generar sesión de hoy';
 }
 
-// Full reset (new topic): also hides session output
 function renderFull() {
   renderMeta();
-  document.getElementById('session-out').style.display = 'none';
+  document.getElementById('session-content').style.display = 'none';
+  document.getElementById('session-loading').style.display = 'none';
+  document.getElementById('btn-claude').style.display = 'none';
   document.getElementById('nav-row').style.display = 'none';
-  document.getElementById('btn-generate').textContent = config.key ? 'Generar sesión de hoy' : 'Configura tu API key primero';
+  document.getElementById('btn-generate').textContent = cfg.key ? 'Generar sesión de hoy' : 'Configura tu API key primero';
 }
+
+function renderSession(data) {
+  // Phonetics
+  const pg = document.getElementById('phonetics-grid');
+  pg.innerHTML = (data.phonetics || []).map((p, i) => `
+    <div class="ph-item">
+      <div class="ph-word">${p.word}</div>
+      <div class="ph-ipa">${p.ipa}</div>
+      <div class="ph-meaning">${p.meaning}</div>
+      <button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}', this)">▶ Escuchar</button>
+    </div>`).join('');
+
+  // Grammar
+  const gc = document.getElementById('grammar-card');
+  gc.innerHTML = `
+    <div class="f-label blue">Fórmula</div>
+    <div class="formula-box">${data.formula || ''}</div>
+    <div class="grammar-note">${data.grammar_note || ''}</div>`;
+
+  // Examples
+  currentExamples = data.examples || [];
+  currentExampleIdx = 0;
+  renderExamples();
+
+  // Error
+  const ec = document.getElementById('error-card');
+  const err = data.error || {};
+  ec.innerHTML = `
+    <div class="error-wrong">
+      <div class="error-wrong-label">✗ Error frecuente</div>
+      <div class="error-wrong-text">${err.wrong || ''}</div>
+    </div>
+    <div class="error-right">
+      <div class="error-right-label">✓ Forma correcta</div>
+      <div class="error-right-text">${err.correct || ''}</div>
+    </div>
+    <div class="error-explain">${err.explanation || ''}</div>`;
+
+  // Tip
+  const tc = document.getElementById('tip-card');
+  const tip = data.tip || {};
+  tc.innerHTML = `
+    <div class="tip-label">Tip del día</div>
+    <div class="tip-phrase">"${tip.phrase || ''}"</div>
+    <div class="tip-meaning">${tip.meaning || ''}</div>`;
+
+  document.getElementById('session-content').style.display = 'block';
+}
+
+function renderExamples() {
+  const container = document.getElementById('examples-container');
+  container.innerHTML = currentExamples.map((ex, i) => `
+    <div class="example-card ${i === currentExampleIdx ? 'active' : ''}" id="ex-${i}">
+      <div class="ex-number">Ejemplo ${i + 1} de ${currentExamples.length}</div>
+      <div class="ex-en">${ex.en_highlighted || ex.en}</div>
+      <div class="ex-es">${ex.es}</div>
+      ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
+      <div style="margin-top:12px">
+        <button class="btn-ex-speak" onclick="speak('${(ex.en_plain||ex.en).replace(/'/g,"\\'")}', this)">▶ Escuchar</button>
+      </div>
+    </div>`).join('');
+
+  const dots = document.getElementById('ex-dots');
+  dots.innerHTML = currentExamples.map((_, i) =>
+    `<div class="ex-dot ${i === currentExampleIdx ? 'active' : ''}" onclick="goExample(${i})"></div>`).join('');
+}
+
+function goExample(i) {
+  currentExampleIdx = i; renderExamples();
+}
+function nextExample() { goExample((currentExampleIdx + 1) % currentExamples.length); }
+function prevExample() { goExample((currentExampleIdx - 1 + currentExamples.length) % currentExamples.length); }
 
 async function generateSession() {
   const idx = Math.min(state.day, TOTAL - 1);
   const t = ALL[idx];
   const btn = document.getElementById('btn-generate');
-  const out = document.getElementById('session-out');
 
   btn.disabled = true;
   btn.textContent = 'Generando...';
-  out.style.display = 'block';
-  out.className = 'session-out loading';
-  out.textContent = 'Preparando tu sesión personalizada...';
+  document.getElementById('session-content').style.display = 'none';
+  document.getElementById('session-loading').style.display = 'block';
 
-  const prompt = `Eres un profesor de inglés experto. El alumno es hispanohablante, nivel A2-B1.
+  // Build conversation prompt for Claude.ai
+  currentPrompt = `Sesión de inglés — Día ${idx + 1} de 45
+Tema: ${t.title} | Fase ${t.phase}/3 (${t.phaseName})
 
-SESIÓN — Día ${idx + 1} de 45 | Tema: ${t.title} | ${t.sub} | Fase ${t.phase}/3 (${t.phaseName})
+Soy hispanohablante nivel A2-B1. Explícame este tema con ejemplos bilingües (inglés + traducción al español), señala el error más frecuente que cometemos y dame un tip útil. Luego practica conmigo con ejercicios interactivos — hazme preguntas, corrígeme y adapta la dificultad según mis respuestas.`;
 
-Estructura:
-1. EXPLICACIÓN (3-4 líneas): qué es, cuándo se usa, por qué confunde a hispanohablantes.
-2. EJEMPLOS (3 frases): naturales, cotidianas o profesionales.
-3. ERROR FRECUENTE: muestra el error típico y la forma correcta.
-4. EJERCICIOS (5): para completar, traducir o transformar.
-5. TIP EXTRA: una expresión idiomática o collocación relacionada.
+  const apiPrompt = `You are an expert English teacher for Spanish speakers. Return ONLY valid JSON, no markdown, no extra text.
 
-Sin introducciones. Directo al contenido.`;
+Topic: ${t.title}
+Context: ${t.sub}
+Phase: ${t.phase}/3 (${t.phaseName})
+Student: Spanish speaker, A2-B1 level
+
+Return this exact JSON structure:
+{
+  "phonetics": [
+    {"word": "works", "ipa": "/wɜːrks/", "meaning": "trabaja (3ª persona)"},
+    {"word": "doesn't", "ipa": "/ˈdʌznt/", "meaning": "no hace (negación)"},
+    {"word": "always", "ipa": "/ˈɔːlweɪz/", "meaning": "siempre"},
+    {"word": "usually", "ipa": "/ˈjuːʒuəli/", "meaning": "normalmente"}
+  ],
+  "formula": "<span class='f-subject'>Subject</span> + <span class='f-verb'>verb (base)</span> + <span class='f-object'>object</span><br><span class='f-subject'>He/She/It</span> + <span class='f-verb'>verb+s</span> + <span class='f-object'>object</span><br><span class='f-neg'>Negative:</span> <span class='f-subject'>Subject</span> + <span class='f-aux'>don't/doesn't</span> + <span class='f-verb'>verb</span>",
+  "grammar_note": "Use <strong>present simple</strong> for habits, routines, and facts. Add <strong>-s/-es</strong> for he/she/it. <em>(Español: úsalo para hábitos y verdades generales, no para acciones que pasan ahora mismo)</em>",
+  "examples": [
+    {
+      "en": "She <strong style='color:var(--purple)'>works</strong> at a tech company in Madrid.",
+      "en_plain": "She works at a tech company in Madrid.",
+      "en_highlighted": "She <strong style='color:var(--purple)'>works</strong> at a tech company in Madrid.",
+      "es": "Ella trabaja en una empresa tecnológica en Madrid.",
+      "note": "3rd person singular → adds -s to the verb"
+    },
+    {
+      "en": "I <strong style='color:var(--purple)'>don't eat</strong> meat, but I <strong style='color:var(--purple)'>love</strong> fish.",
+      "en_plain": "I don't eat meat, but I love fish.",
+      "en_highlighted": "I <strong style='color:var(--purple)'>don't eat</strong> meat, but I <strong style='color:var(--purple)'>love</strong> fish.",
+      "es": "No como carne, pero me encanta el pescado.",
+      "note": "don't = do + not (contraction for 1st person)"
+    },
+    {
+      "en": "<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English at work?",
+      "en_plain": "Does he speak English at work?",
+      "en_highlighted": "<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English at work?",
+      "es": "¿Habla inglés en el trabajo?",
+      "note": "Questions: Does (he/she/it) + verb in base form"
+    }
+  ],
+  "error": {
+    "wrong": "She don't know the answer.",
+    "correct": "She doesn't know the answer.",
+    "explanation": "With <strong>he/she/it</strong>, always use <strong>doesn't</strong> (not don't). This is the most common mistake Spanish speakers make because in Spanish the verb form changes but there's no separate auxiliary."
+  },
+  "tip": {
+    "phrase": "I don't buy it.",
+    "meaning": "No solo significa 'no lo compro' — en inglés coloquial significa <strong>'no me lo creo'</strong> o 'no te creo'. Ejemplo: 'He said he was sick.' — 'I don't buy it.'"
+  }
+}
+
+IMPORTANT: Adapt all content to the topic "${t.title}". Keep phonetics relevant to key words in this topic. Make the formula show the actual grammar structure with colored spans. Examples must be natural and practical. Return ONLY the JSON object.`;
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": config.key,
+        "x-api-key": cfg.key,
         "anthropic-version": "2023-06-01",
         "anthropic-dangerous-direct-browser-access": "true"
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 900,
-        messages: [{ role: "user", content: prompt }]
+        max_tokens: 1500,
+        messages: [{ role: "user", content: apiPrompt }]
       })
     });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `Error ${res.status}`);
-    }
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `Error ${res.status}`); }
 
     const data = await res.json();
-    const text = data.content?.find(b => b.type === 'text')?.text || 'Sin respuesta.';
+    const raw = data.content?.find(b => b.type === 'text')?.text || '';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
 
-    // Track cost with real token counts
-    const outputTokens = data.usage?.output_tokens || 800;
-    const inputTokens = data.usage?.input_tokens || 600;
-    const cost = (inputTokens / 1_000_000 * 3) + (outputTokens / 1_000_000 * 15);
-    state.monthCost = (state.monthCost || 0) + cost;
-    state.sessions = (state.sessions || 0) + 1;
+    // Track cost
+    const cost = ((data.usage?.input_tokens||800)/1e6*3) + ((data.usage?.output_tokens||1200)/1e6*15);
+    state.monthCost = (state.monthCost||0) + cost;
+    state.sessions = (state.sessions||0) + 1;
     save(state);
 
-    // Show session — renderMeta() only updates stats, never touches session-out
-    out.className = 'session-out';
-    out.textContent = text;
-    out.style.display = 'block';
+    document.getElementById('session-loading').style.display = 'none';
+    renderSession(parsed);
+    renderMeta();
+
+    // Update Claude.ai button with encoded prompt
+    const encoded = encodeURIComponent(currentPrompt);
+    document.getElementById('btn-claude').href = `https://claude.ai/new?q=${encoded}`;
+    document.getElementById('btn-claude').style.display = 'block';
     document.getElementById('nav-row').style.display = 'flex';
 
     btn.disabled = false;
     btn.textContent = 'Regenerar sesión';
 
-    renderMeta(); // update usage meter only
-
   } catch(e) {
-    out.className = 'session-out';
-    out.textContent = `Error: ${e.message}\n\nVerifica que tu API key sea correcta en Configuración.`;
-    out.style.display = 'block';
+    document.getElementById('session-loading').style.display = 'none';
+    document.getElementById('session-content').style.display = 'block';
+    document.getElementById('grammar-card').innerHTML = `<div style="color:var(--red);font-size:13px">Error: ${e.message}<br><br>Verifica tu API key en Configuración.</div>`;
     btn.disabled = false;
     btn.textContent = 'Generar sesión de hoy';
   }
@@ -413,20 +642,12 @@ function markDone() {
   state.day = Math.min(state.day + 1, TOTAL - 1);
   save(state); renderFull();
 }
-function skipDay() {
-  state.day = Math.min(state.day + 1, TOTAL - 1);
-  save(state); renderFull();
-}
+function skipDay() { state.day = Math.min(state.day + 1, TOTAL - 1); save(state); renderFull(); }
 function resetProgress() {
-  if (confirm('¿Reiniciar el progreso desde el día 1?')) {
-    state.day = 0; state.done = []; save(state); renderFull();
-  }
+  if (confirm('¿Reiniciar progreso desde el día 1?')) { state.day = 0; state.done = []; save(state); renderFull(); }
 }
 function resetUsage() {
-  if (confirm('¿Reiniciar el contador de uso mensual a $0.00?')) {
-    state.monthCost = 0; state.sessions = 0; state.monthKey = currentMonthKey();
-    save(state); renderMeta();
-  }
+  if (confirm('¿Reiniciar contador mensual?')) { state.monthCost = 0; state.sessions = 0; state.monthKey = currentMonthKey(); save(state); renderMeta(); }
 }
 
 renderFull();
