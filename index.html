@@ -5,650 +5,819 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>English Daily Tutor</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f8f7f4; --card: #ffffff; --bg2: #f0efe9;
+  --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.2);
+  --text: #1a1a18; --text2: #5a5956; --text3: #9a9890;
+  --purple: #534AB7; --purple-l: #EEEDFE; --purple-d: #3C3489;
+  --teal: #1D9E75; --teal-l: #E1F5EE; --teal-d: #0F6E56;
+  --amber: #BA7517; --amber-l: #FAEEDA;
+  --coral: #D85A30; --coral-l: #FAECE7;
+  --blue: #185FA5; --blue-l: #E6F1FB;
+  --green: #3B6D11; --green-l: #EAF3DE;
+  --red: #A32D2D; --red-l: #FCEBEB;
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #f8f7f4; --card: #ffffff; --bg2: #f0efe9;
-    --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.18);
-    --text: #1a1a18; --text2: #5a5956; --text3: #9a9890;
-    --purple: #534AB7; --purple-l: #EEEDFE; --purple-d: #3C3489;
-    --teal: #1D9E75; --teal-l: #E1F5EE; --teal-d: #0F6E56;
-    --amber: #BA7517; --amber-l: #FAEEDA;
-    --coral: #D85A30; --coral-l: #FAECE7;
-    --blue: #185FA5; --blue-l: #E6F1FB;
-    --green: #3B6D11; --green-l: #EAF3DE;
-    --red: #A32D2D; --red-l: #FCEBEB;
-    --pink: #993556; --pink-l: #FBEAF0;
+    --bg: #181816; --card: #222220; --bg2: #2a2a27;
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.18);
+    --text: #e8e6dc; --text2: #9c9a92; --text3: #6a6860;
+    --purple-l: #26215C; --teal-l: #04342C; --amber-l: #412402;
+    --coral-l: #4A1B0C; --blue-l: #042C53; --green-l: #173404; --red-l: #501313;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181816; --card: #222220; --bg2: #2a2a27;
-      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.18);
-      --text: #e8e6dc; --text2: #9c9a92; --text3: #6a6860;
-      --purple-l: #26215C; --teal-l: #04342C; --amber-l: #412402;
-      --coral-l: #4A1B0C; --blue-l: #042C53; --green-l: #173404;
-      --red-l: #501313; --pink-l: #4B1528;
-    }
-  }
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; padding: 20px 16px 60px; }
+.app { max-width: 600px; margin: 0 auto; }
 
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; padding: 20px 16px 40px; }
-  .app { max-width: 600px; margin: 0 auto; }
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.03em; }
+.badge { font-size: 11px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--text2); }
 
-  /* ── Header ── */
-  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.03em; }
-  .badge { font-size: 11px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--text2); }
+/* Streak */
+.streak-row { display: flex; gap: 5px; align-items: center; margin-bottom: 16px; }
+.sd { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.sd.done { background: var(--teal); color: var(--teal-l); }
+.sd.today { background: var(--purple); color: var(--purple-l); }
+.sd.empty { background: var(--card); color: var(--text3); border: 1px solid var(--border); }
+.streak-count { font-size: 11px; color: var(--text2); margin-left: 6px; }
 
-  /* ── Streak ── */
-  .streak-row { display: flex; gap: 5px; align-items: center; margin-bottom: 18px; }
-  .sd { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
-  .sd.done { background: var(--teal); color: var(--teal-l); }
-  .sd.today { background: var(--purple); color: var(--purple-l); }
-  .sd.empty { background: var(--card); color: var(--text3); border: 1px solid var(--border); }
-  .streak-count { font-size: 11px; color: var(--text2); margin-left: 6px; }
+/* Progress */
+.prog-wrap { margin-bottom: 16px; }
+.prog-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.prog-bar { height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--purple); border-radius: 3px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+.pills { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.pill { font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--text2); background: transparent; }
+.pill.active { background: var(--purple); color: var(--purple-l); border-color: var(--purple); }
 
-  /* ── Progress ── */
-  .prog-wrap { margin-bottom: 18px; }
-  .prog-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
-  .prog-bar { height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
-  .prog-fill { height: 100%; background: var(--purple); border-radius: 3px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
-  .pills { display: flex; gap: 6px; margin-bottom: 20px; }
-  .pill { font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--text2); background: transparent; }
-  .pill.active { background: var(--purple); color: var(--purple-l); border-color: var(--purple); }
+/* Topic hero */
+.topic-hero { background: var(--purple); border-radius: 16px; padding: 20px 22px; margin-bottom: 14px; position: relative; overflow: hidden; }
+.topic-hero::before { content:''; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.06); }
+.topic-phase { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6); margin-bottom: 5px; }
+.topic-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 3px; letter-spacing: -0.02em; }
+.topic-sub { font-size: 13px; color: rgba(255,255,255,0.72); }
 
-  /* ── Topic hero ── */
-  .topic-hero { background: var(--purple); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; position: relative; overflow: hidden; }
-  .topic-hero::before { content: ''; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.06); }
-  .topic-hero::after { content: ''; position: absolute; right: 20px; bottom: -40px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.04); }
-  .topic-phase { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
-  .topic-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; letter-spacing: -0.02em; }
-  .topic-sub { font-size: 13px; color: rgba(255,255,255,0.75); }
+/* Micro-repaso banner */
+.repaso-banner { background: var(--amber-l); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-bottom: 14px; }
+.repaso-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--amber); margin-bottom: 6px; }
+.repaso-items { font-size: 12px; color: var(--text2); line-height: 1.7; }
+.repaso-item { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; margin: 2px; font-size: 11px; }
+.repaso-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
 
-  /* ── Section label ── */
-  .sec-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 10px; margin-top: 20px; }
+/* Usage */
+.usage-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; }
+.usage-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.usage-bar { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
+.usage-fill { height: 100%; border-radius: 2px; transition: width 0.4s, background 0.3s; }
+.usage-fill.ok { background: var(--teal); }
+.usage-fill.warn { background: var(--amber); }
+.usage-fill.danger { background: var(--red); }
+.usage-hint { font-size: 11px; color: var(--text3); }
 
-  /* ── Phonetics card ── */
-  .phonetics-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 6px; }
-  .phonetics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .ph-item { background: var(--bg2); border-radius: 10px; padding: 12px; }
-  .ph-word { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-  .ph-ipa { font-size: 13px; color: var(--purple); font-family: 'Courier New', monospace; margin-bottom: 6px; }
-  .ph-meaning { font-size: 11px; color: var(--text2); margin-bottom: 8px; line-height: 1.4; }
-  .btn-speak { display: flex; align-items: center; gap-5px; font-size: 11px; padding: 4px 10px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-weight: 500; gap: 4px; }
-  .btn-speak:hover { background: var(--purple); color: var(--purple-l); }
-  .btn-speak.speaking { background: var(--teal); color: var(--teal-l); }
+/* Config */
+.config-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; margin-bottom: 12px; background: none; border: none; padding: 0; }
+.config-toggle:hover { color: var(--text); }
+.config-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.cfg-row { margin-bottom: 12px; }
+.cfg-row label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.cfg-row input[type=password] { width: 100%; padding: 8px 11px; background: var(--bg); border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); outline: none; }
+.cfg-row input[type=password]:focus { border-color: var(--purple); }
+.cfg-row input[type=range] { width: 100%; cursor: pointer; }
+.limit-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.limit-val { font-size: 13px; font-weight: 700; color: var(--purple); }
+.btn-save { width: 100%; padding: 9px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
 
-  /* ── Grammar structure card ── */
-  .grammar-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 6px; }
-  .formula-box { background: var(--blue-l); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8; }
-  .f-subject { color: var(--blue); font-weight: 700; }
-  .f-verb { color: var(--coral); font-weight: 700; }
-  .f-object { color: var(--teal-d); font-weight: 700; }
-  .f-neg { color: var(--red); font-weight: 700; }
-  .f-aux { color: var(--amber); font-weight: 700; }
-  .f-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-  .f-label.blue { color: var(--blue); }
-  .f-label.coral { color: var(--coral); }
-  .f-label.teal { color: var(--teal-d); }
-  .f-label.red { color: var(--red); }
-  .f-label.amber { color: var(--amber); }
-  .grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.7; margin-top: 10px; }
-  .grammar-note strong { color: var(--text); }
+/* Section label */
+.sec-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.09em; margin: 18px 0 9px; }
 
-  /* ── Example cards (animated) ── */
-  .examples-wrap { position: relative; margin-bottom: 6px; }
-  .example-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: none; animation: slideIn 0.3s ease; }
-  .example-card.active { display: block; }
-  @keyframes slideIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
-  .ex-number { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 10px; }
-  .ex-en { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.01em; }
-  .ex-highlight { color: var(--purple); }
-  .ex-es { font-size: 13px; color: var(--text2); margin-bottom: 12px; font-style: italic; }
-  .ex-note { font-size: 12px; color: var(--text3); background: var(--bg2); border-radius: 8px; padding: 8px 11px; line-height: 1.5; }
-  .ex-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
-  .ex-dots { display: flex; gap: 5px; }
-  .ex-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: all 0.2s; cursor: pointer; }
-  .ex-dot.active { background: var(--purple); width: 18px; border-radius: 3px; }
-  .btn-ex-nav { padding: 6px 14px; font-size: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
-  .btn-ex-nav:hover { border-color: var(--border2); color: var(--text); }
-  .btn-ex-speak { padding: 6px 12px; font-size: 12px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
-  .btn-ex-speak:hover { background: var(--purple); color: var(--purple-l); }
+/* Phonetics */
+.phonetics-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+.phonetics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.ph-item { background: var(--bg2); border-radius: 10px; padding: 11px; }
+.ph-word { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.ph-ipa { font-size: 12px; color: var(--purple); font-family: monospace; margin-bottom: 5px; }
+.ph-meaning { font-size: 11px; color: var(--text2); margin-bottom: 7px; line-height: 1.4; }
+.btn-speak { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 4px 9px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.15s; }
+.btn-speak:hover, .btn-speak.speaking { background: var(--purple); color: var(--purple-l); }
 
-  /* ── Error card ── */
-  .error-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 6px; }
-  .error-wrong { background: var(--red-l); border-radius: 9px; padding: 10px 14px; margin-bottom: 10px; }
-  .error-wrong-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--red); margin-bottom: 4px; }
-  .error-wrong-text { font-size: 14px; color: var(--red); text-decoration: line-through; }
-  .error-right { background: var(--green-l); border-radius: 9px; padding: 10px 14px; }
-  .error-right-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green); margin-bottom: 4px; }
-  .error-right-text { font-size: 14px; color: var(--green); font-weight: 600; }
-  .error-explain { font-size: 12px; color: var(--text2); margin-top: 10px; line-height: 1.6; }
+/* Grammar */
+.grammar-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+.formula-box { background: var(--blue-l); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; font-family: monospace; font-size: 13px; line-height: 1.9; }
+.f-subject { color: var(--blue); font-weight: 700; }
+.f-verb { color: var(--coral); font-weight: 700; }
+.f-object { color: var(--teal-d); font-weight: 700; }
+.f-neg { color: var(--red); font-weight: 700; }
+.f-aux { color: var(--amber); font-weight: 700; }
+.grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.7; }
 
-  /* ── Tip card ── */
-  .tip-card { background: var(--amber-l); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 14px 14px 0; padding: 14px 16px; margin-bottom: 6px; }
-  .tip-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 6px; }
-  .tip-phrase { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .tip-meaning { font-size: 12px; color: var(--text2); line-height: 1.6; }
+/* Examples */
+.examples-wrap { }
+.example-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: none; animation: slideIn 0.25s ease; }
+.example-card.active { display: block; }
+@keyframes slideIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
+.ex-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 9px; }
+.ex-en { font-size: 17px; font-weight: 600; margin-bottom: 5px; line-height: 1.4; }
+.ex-es { font-size: 13px; color: var(--text2); font-style: italic; margin-bottom: 10px; }
+.ex-note { font-size: 12px; color: var(--text3); background: var(--bg2); border-radius: 8px; padding: 8px 11px; line-height: 1.5; }
+.ex-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 13px; }
+.ex-dots { display: flex; gap: 5px; }
+.ex-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: all 0.2s; }
+.ex-dot.active { background: var(--purple); width: 18px; border-radius: 3px; }
+.ex-nav-btns { display: flex; gap: 6px; }
+.btn-ex { padding: 5px 12px; font-size: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; cursor: pointer; color: var(--text2); }
+.btn-ex-speak { padding: 5px 12px; font-size: 12px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 7px; cursor: pointer; font-weight: 500; }
 
-  /* ── Usage meter ── */
-  .usage-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
-  .usage-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 7px; }
-  .usage-bar { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
-  .usage-fill { height: 100%; border-radius: 2px; transition: width 0.4s, background 0.3s; }
-  .usage-fill.ok { background: var(--teal); }
-  .usage-fill.warn { background: var(--amber); }
-  .usage-fill.danger { background: var(--red); }
-  .usage-hint { font-size: 11px; color: var(--text3); }
+/* Error card */
+.error-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+.err-wrong { background: var(--red-l); border-radius: 9px; padding: 10px 14px; margin-bottom: 9px; }
+.err-wrong-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
+.err-wrong-txt { font-size: 14px; color: var(--red); text-decoration: line-through; }
+.err-right { background: var(--green-l); border-radius: 9px; padding: 10px 14px; margin-bottom: 9px; }
+.err-right-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--green); margin-bottom: 3px; }
+.err-right-txt { font-size: 14px; color: var(--green); font-weight: 600; }
+.err-explain { font-size: 12px; color: var(--text2); line-height: 1.6; }
 
-  /* ── Config ── */
-  .config-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; }
-  .config-toggle:hover { color: var(--text); }
-  .config-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-  .config-row { margin-bottom: 12px; }
-  .config-row label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
-  .config-row input[type=password] { width: 100%; padding: 8px 11px; background: var(--bg); border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); outline: none; }
-  .config-row input[type=password]:focus { border-color: var(--purple); }
-  .config-row input[type=range] { width: 100%; cursor: pointer; }
-  .limit-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-  .limit-val { font-size: 13px; font-weight: 700; color: var(--purple); }
-  .btn-save { width: 100%; padding: 9px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+/* Exercises */
+.exercises-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+.ex-phase-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.ex-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 600; text-align: center; border-radius: 8px; border: 1px solid var(--border); color: var(--text3); background: var(--bg2); cursor: default; }
+.ex-tab.active { background: var(--purple); color: var(--purple-l); border-color: var(--purple); }
+.ex-tab.done { background: var(--teal); color: var(--teal-l); border-color: var(--teal); }
+.ex-tab.locked { opacity: 0.4; }
+.score-bar-wrap { margin-bottom: 14px; }
+.score-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+.score-bar { height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 3px; background: var(--purple); transition: width 0.4s; }
 
-  /* ── Action buttons ── */
-  .actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
-  .btn-generate { width: 100%; padding: 14px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
-  .btn-generate:hover { opacity: 0.87; }
-  .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-claude { width: 100%; padding: 12px; background: var(--teal); color: var(--teal-l); border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; text-decoration: none; display: block; text-align: center; }
-  .btn-claude:hover { opacity: 0.87; }
-  .nav-row { display: flex; gap: 8px; }
-  .btn-nav { flex: 1; padding: 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
-  .btn-nav:hover { border-color: var(--border2); color: var(--text); }
-  .btn-nav.done-btn { background: var(--teal); color: var(--teal-l); border-color: var(--teal); font-weight: 600; }
-  .btn-reset { width: 100%; padding: 8px; background: transparent; color: var(--text3); border: 1px solid var(--border); border-radius: 9px; font-size: 11px; cursor: pointer; }
+/* Multiple choice */
+.mc-question { font-size: 14px; font-weight: 600; margin-bottom: 12px; line-height: 1.5; }
+.mc-options { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+.mc-option { padding: 10px 14px; border: 1.5px solid var(--border2); border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.15s; background: var(--bg2); }
+.mc-option:hover { border-color: var(--purple); background: var(--purple-l); }
+.mc-option.correct { background: var(--green-l); border-color: var(--green); color: var(--green); font-weight: 600; cursor: default; }
+.mc-option.wrong { background: var(--red-l); border-color: var(--red); color: var(--red); cursor: default; }
+.mc-option.disabled { cursor: default; }
+.mc-feedback { font-size: 12.5px; padding: 10px 13px; border-radius: 9px; line-height: 1.6; margin-bottom: 10px; }
+.mc-feedback.ok { background: var(--green-l); color: var(--green); }
+.mc-feedback.nope { background: var(--red-l); color: var(--red); }
+.btn-next-q { padding: 8px 18px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
-  /* ── Banners ── */
-  .banner { border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 12px; line-height: 1.6; margin-bottom: 12px; border: 1px solid var(--border); border-left: 3px solid; }
-  .banner.setup { background: var(--purple-l); border-left-color: var(--purple); color: var(--text2); }
-  .banner.danger { background: var(--red-l); border-left-color: var(--red); color: var(--red); font-weight: 600; }
+/* Free production */
+.fp-instruction { font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; background: var(--blue-l); border-radius: 9px; padding: 10px 13px; }
+.fp-prompt { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.fp-input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border2); border-radius: 10px; font-size: 14px; color: var(--text); background: var(--bg); outline: none; resize: vertical; min-height: 70px; font-family: inherit; }
+.fp-input:focus { border-color: var(--purple); }
+.fp-actions { display: flex; gap: 8px; margin-top: 8px; }
+.btn-check { padding: 9px 20px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-hint { padding: 9px 14px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); border-radius: 9px; font-size: 13px; cursor: pointer; }
+.fp-feedback { margin-top: 10px; font-size: 12.5px; padding: 11px 14px; border-radius: 10px; line-height: 1.7; }
+.fp-feedback.ok { background: var(--green-l); color: var(--green); }
+.fp-feedback.partial { background: var(--amber-l); color: var(--amber); }
+.fp-feedback.nope { background: var(--red-l); color: var(--red); }
+.fp-model { margin-top: 8px; font-size: 12px; color: var(--text2); background: var(--bg2); border-radius: 8px; padding: 8px 12px; }
 
-  /* ── Loading skeleton ── */
-  .skeleton { background: var(--bg2); border-radius: 14px; padding: 24px; margin-bottom: 6px; text-align: center; color: var(--text3); font-size: 13px; }
-  .loading-dots::after { content: ''; animation: dots 1.2s infinite; }
-  @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+/* Phase result */
+.phase-result { text-align: center; padding: 20px 10px; }
+.phase-result-score { font-size: 36px; font-weight: 700; margin-bottom: 6px; }
+.phase-result-label { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
+.btn-next-phase { padding: 11px 28px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-retry { padding: 11px 28px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; cursor: pointer; margin-left: 8px; }
+
+/* Tip */
+.tip-card { background: var(--amber-l); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 14px 14px 0; padding: 14px 16px; }
+.tip-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 5px; }
+.tip-phrase { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.tip-meaning { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+/* Prompt box */
+.prompt-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 6px; }
+.prompt-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.prompt-title { font-size: 12px; font-weight: 700; color: var(--text2); }
+.prompt-actions { display: flex; gap: 7px; }
+.btn-copy { font-size: 12px; padding: 5px 12px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 7px; cursor: pointer; font-weight: 600; transition: all 0.15s; }
+.btn-copy.copied { background: var(--teal); color: var(--teal-l); }
+.btn-open-claude { font-size: 12px; padding: 5px 12px; background: var(--teal-l); color: var(--teal-d); border: none; border-radius: 7px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; }
+.prompt-box { background: var(--bg2); border-radius: 9px; padding: 12px 14px; font-size: 12px; color: var(--text2); line-height: 1.7; white-space: pre-wrap; max-height: 180px; overflow-y: auto; }
+
+/* Actions */
+.actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.btn-generate { width: 100%; padding: 14px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+.btn-generate:hover { opacity: 0.87; }
+.btn-generate:disabled { opacity: 0.4; cursor: not-allowed; }
+.nav-row { display: flex; gap: 8px; }
+.btn-nav { flex: 1; padding: 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
+.btn-nav:hover { border-color: var(--border2); color: var(--text); }
+.btn-nav.done-btn { background: var(--teal); color: var(--teal-l); border-color: var(--teal); font-weight: 600; }
+.btn-reset { width: 100%; padding: 8px; background: transparent; color: var(--text3); border: 1px solid var(--border); border-radius: 9px; font-size: 11px; cursor: pointer; }
+
+/* Banners */
+.banner { border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 12px; line-height: 1.6; margin-bottom: 12px; border: 1px solid var(--border); border-left: 3px solid; }
+.banner.setup { background: var(--purple-l); border-left-color: var(--purple); color: var(--text2); }
+.banner.danger { background: var(--red-l); border-left-color: var(--red); color: var(--red); font-weight: 600; }
+
+/* Skeleton */
+.skeleton { background: var(--bg2); border-radius: 14px; padding: 24px; text-align: center; color: var(--text3); font-size: 13px; margin-bottom: 6px; }
+@keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+.loading-dots::after { content: '.'; animation: dots 1.2s infinite; }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <div class="header">
-    <h1>English Daily Tutor</h1>
-    <span class="badge" id="day-badge">Día 1 de 45</span>
-  </div>
-
-  <div class="streak-row" id="streak-row"></div>
-
-  <div class="prog-wrap">
-    <div class="prog-labels">
-      <span id="phase-label">Fase 1 · Fundamentos</span>
-      <span id="prog-pct">0%</span>
-    </div>
-    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-  </div>
-
-  <div class="pills" id="pills"></div>
-
-  <!-- Topic hero -->
-  <div class="topic-hero">
-    <div class="topic-phase" id="topic-phase">Fase 1 · Fundamentos</div>
-    <div class="topic-title" id="topic-title">Present simple</div>
-    <div class="topic-sub" id="topic-sub">Hábitos y hechos cotidianos</div>
-  </div>
-
-  <!-- Usage -->
-  <div class="usage-card">
-    <div class="usage-top">
-      <span id="usage-label">$0.0000 gastados este mes</span>
-      <span id="usage-limit-label">límite: $1.00</span>
-    </div>
-    <div class="usage-bar"><div class="usage-fill ok" id="usage-fill" style="width:0%"></div></div>
-    <div class="usage-hint" id="usage-hint">~0 sesiones · se reinicia el 1 de cada mes</div>
-  </div>
-
-  <!-- Config -->
-  <button class="config-toggle" onclick="toggleConfig()">
-    <span id="cfg-arrow">▸</span> Configuración (API key y límite)
-  </button>
-  <div class="config-panel" id="config-panel" style="display:none">
-    <div class="config-row">
-      <label>API Key de Anthropic</label>
-      <input type="password" id="inp-key" placeholder="sk-ant-api03-..." autocomplete="off"/>
-    </div>
-    <div class="config-row">
-      <div class="limit-row">
-        <label style="margin:0">Límite mensual</label>
-        <span class="limit-val" id="limit-display">$1.00</span>
-      </div>
-      <input type="range" id="inp-limit" min="0.5" max="10" step="0.5" value="1" oninput="updateLimitDisplay(this.value)"/>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px"><span>$0.50</span><span>$10.00</span></div>
-    </div>
-    <button class="btn-save" onclick="saveConfig()">Guardar</button>
-  </div>
-
-  <div id="banner-setup" class="banner setup" style="display:none">Añade tu API key en <strong>Configuración</strong> para generar sesiones.</div>
-  <div id="banner-limit" class="banner danger" style="display:none">Límite mensual alcanzado. Auméntalo en Configuración.</div>
-
-  <!-- Session content (hidden until generated) -->
-  <div id="session-content" style="display:none">
-
-    <div class="sec-label">Pronunciación clave</div>
-    <div class="phonetics-card">
-      <div class="phonetics-grid" id="phonetics-grid"></div>
-    </div>
-
-    <div class="sec-label">Estructura gramatical</div>
-    <div class="grammar-card" id="grammar-card"></div>
-
-    <div class="sec-label">Ejemplos</div>
-    <div class="examples-wrap">
-      <div id="examples-container"></div>
-      <div class="ex-nav">
-        <button class="btn-ex-nav" onclick="prevExample()">← Anterior</button>
-        <div class="ex-dots" id="ex-dots"></div>
-        <button class="btn-ex-nav" onclick="nextExample()">Siguiente →</button>
-      </div>
-    </div>
-
-    <div class="sec-label">Error frecuente</div>
-    <div class="error-card" id="error-card"></div>
-
-    <div class="sec-label">Tip del día</div>
-    <div class="tip-card" id="tip-card"></div>
-
-  </div>
-
-  <!-- Loading state -->
-  <div id="session-loading" style="display:none">
-    <div class="skeleton"><span class="loading-dots">Generando tu sesión</span></div>
-  </div>
-
-  <!-- Actions -->
-  <div class="actions">
-    <button class="btn-generate" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
-    <a class="btn-claude" id="btn-claude" href="https://claude.ai/projects" target="_blank" style="display:none">
-      Practicar en Claude.ai →
-    </a>
-    <div class="nav-row" id="nav-row" style="display:none">
-      <button class="btn-nav done-btn" onclick="markDone()">Completada ✓</button>
-      <button class="btn-nav" onclick="skipDay()">Saltar tema</button>
-    </div>
-    <button class="btn-reset" onclick="resetProgress()">Reiniciar progreso</button>
-    <button class="btn-reset" onclick="resetUsage()">Reiniciar contador mensual</button>
-  </div>
-
+<div class="header">
+  <h1>English Daily Tutor</h1>
+  <span class="badge" id="day-badge">Día 1 de 45</span>
 </div>
+
+<div class="streak-row" id="streak-row"></div>
+
+<div class="prog-wrap">
+  <div class="prog-labels"><span id="phase-label">Fase 1</span><span id="prog-pct">0%</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="pills" id="pills"></div>
+<div class="topic-hero">
+  <div class="topic-phase" id="topic-phase">Fase 1 · Fundamentos</div>
+  <div class="topic-title" id="topic-title">Present simple</div>
+  <div class="topic-sub" id="topic-sub">Hábitos y hechos</div>
+</div>
+
+<div id="repaso-wrap" style="display:none"></div>
+
+<div class="usage-card">
+  <div class="usage-top"><span id="usage-label">$0.0000 este mes</span><span id="usage-limit-label">límite: $1.00</span></div>
+  <div class="usage-bar"><div class="usage-fill ok" id="usage-fill" style="width:0%"></div></div>
+  <div class="usage-hint" id="usage-hint">~0 sesiones</div>
+</div>
+
+<button class="config-toggle" onclick="toggleConfig()"><span id="cfg-arrow">▸</span> Configuración</button>
+<div class="config-panel" id="config-panel" style="display:none">
+  <div class="cfg-row"><label>API Key de Anthropic</label><input type="password" id="inp-key" placeholder="sk-ant-api03-..." autocomplete="off"/></div>
+  <div class="cfg-row">
+    <div class="limit-row"><label style="margin:0">Límite mensual</label><span class="limit-val" id="limit-display">$1.00</span></div>
+    <input type="range" id="inp-limit" min="0.5" max="10" step="0.5" value="1" oninput="updateLimitDisplay(this.value)"/>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px"><span>$0.50</span><span>$10.00</span></div>
+  </div>
+  <button class="btn-save" onclick="saveConfig()">Guardar</button>
+</div>
+
+<div id="banner-setup" class="banner setup" style="display:none">Añade tu API key en <strong>Configuración</strong>.</div>
+<div id="banner-limit" class="banner danger" style="display:none">Límite mensual alcanzado.</div>
+
+<!-- Session -->
+<div id="session-loading" style="display:none"><div class="skeleton"><span class="loading-dots">Generando tu sesión</span></div></div>
+<div id="session-content" style="display:none">
+  <div class="sec-label">Pronunciación clave</div>
+  <div class="phonetics-card"><div class="phonetics-grid" id="phonetics-grid"></div></div>
+
+  <div class="sec-label">Estructura gramatical</div>
+  <div class="grammar-card" id="grammar-card"></div>
+
+  <div class="sec-label">Ejemplos</div>
+  <div class="examples-wrap">
+    <div id="examples-container"></div>
+    <div class="ex-actions" style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+      <button class="btn-ex" onclick="prevEx()">← Anterior</button>
+      <div class="ex-dots" id="ex-dots"></div>
+      <button class="btn-ex" onclick="nextEx()">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="sec-label">Error frecuente</div>
+  <div class="error-card" id="error-card"></div>
+
+  <div class="sec-label">Ejercicios</div>
+  <div class="exercises-card" id="exercises-card"></div>
+
+  <div class="sec-label">Tip del día</div>
+  <div class="tip-card" id="tip-card"></div>
+
+  <div class="sec-label">Practicar con Claude</div>
+  <div class="prompt-section">
+    <div class="prompt-header">
+      <span class="prompt-title">Prompt listo para tu Proyecto</span>
+      <div class="prompt-actions">
+        <button class="btn-copy" id="btn-copy" onclick="copyPrompt()">Copiar</button>
+        <a class="btn-open-claude" id="btn-open-claude" href="https://claude.ai/projects" target="_blank">Abrir Claude →</a>
+      </div>
+    </div>
+    <div class="prompt-box" id="prompt-box"></div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-generate" id="btn-generate" onclick="generateSession()">Generar sesión de hoy</button>
+  <div class="nav-row" id="nav-row" style="display:none">
+    <button class="btn-nav done-btn" onclick="markDone()">Completada ✓</button>
+    <button class="btn-nav" onclick="skipDay()">Saltar tema</button>
+  </div>
+  <button class="btn-reset" onclick="resetProgress()">Reiniciar progreso</button>
+  <button class="btn-reset" onclick="resetUsage()">Reiniciar contador mensual</button>
+</div>
+
+</div><!-- .app -->
 <script>
+// ── Curriculum ──────────────────────────────────────────────────────────────
 const CURRICULUM = [
-  { phase: 1, name: "Fundamentos", topics: [
-    { title: "Present simple", sub: "Hábitos y hechos: I work, she doesn't know" },
-    { title: "Present continuous", sub: "Acciones en curso: I am working right now" },
-    { title: "Artículos a/an/the", sub: "Cuándo usarlos y cuándo omitirlos" },
-    { title: "Past simple", sub: "Acciones terminadas: I went, did you eat?" },
-    { title: "Preguntas y negaciones", sub: "Do/does/did como auxiliares" },
-    { title: "Pronombres y posesivos", sub: "my/mine, your/yours, his/her/its" },
-    { title: "There is / there are", sub: "Existencia y ubicación de cosas" },
-    { title: "Comparativos y superlativos", sub: "bigger, the biggest, more interesting" },
-    { title: "Future: will vs going to", sub: "Predicciones vs planes concretos" },
-    { title: "Preposiciones de tiempo", sub: "in/on/at con fechas, horas, períodos" },
-    { title: "Preposiciones de lugar", sub: "in/on/at/next to/between para ubicar" },
-    { title: "Adverbios de frecuencia", sub: "always, usually, sometimes, never" },
-    { title: "Can / can't / could", sub: "Habilidad y posibilidad en presente y pasado" },
-    { title: "Imperatives", sub: "Instrucciones y órdenes: Open the door, don't run" },
-    { title: "Countable vs uncountable", sub: "some/any/much/many/a lot of" },
+  { phase:1, name:"Fundamentos", topics:[
+    {title:"Present simple",sub:"Hábitos y hechos: I work, she doesn't know"},
+    {title:"Present continuous",sub:"Acciones en curso: I am working right now"},
+    {title:"Artículos a/an/the",sub:"Cuándo usarlos y cuándo omitirlos"},
+    {title:"Past simple",sub:"Acciones terminadas: I went, did you eat?"},
+    {title:"Preguntas y negaciones",sub:"Do/does/did como auxiliares"},
+    {title:"Pronombres y posesivos",sub:"my/mine, your/yours, his/her/its"},
+    {title:"There is / there are",sub:"Existencia y ubicación de cosas"},
+    {title:"Comparativos y superlativos",sub:"bigger, the biggest, more interesting"},
+    {title:"Future: will vs going to",sub:"Predicciones vs planes concretos"},
+    {title:"Preposiciones de tiempo",sub:"in/on/at con fechas, horas, períodos"},
+    {title:"Preposiciones de lugar",sub:"in/on/at/next to/between para ubicar"},
+    {title:"Adverbios de frecuencia",sub:"always, usually, sometimes, never"},
+    {title:"Can / can't / could",sub:"Habilidad y posibilidad en presente y pasado"},
+    {title:"Imperatives",sub:"Instrucciones y órdenes: Open the door, don't run"},
+    {title:"Countable vs uncountable",sub:"some/any/much/many/a lot of"},
   ]},
-  { phase: 2, name: "Intermedio", topics: [
-    { title: "Present perfect", sub: "Have/has + participio: I have visited Paris" },
-    { title: "Present perfect continuous", sub: "I have been working for 3 hours" },
-    { title: "Past continuous", sub: "I was reading when she called" },
-    { title: "Past perfect", sub: "Acción anterior a otra en pasado: had done" },
-    { title: "Condicional 0 y 1", sub: "If it rains, I take an umbrella / I'll take" },
-    { title: "Condicional 2", sub: "If I were you, I would... (situación hipotética)" },
-    { title: "Modal verbs: must/should/might", sub: "Obligación, consejo y probabilidad" },
-    { title: "Passive voice (presente y pasado)", sub: "The report is written / was written" },
-    { title: "Reported speech", sub: "She said that she was tired" },
-    { title: "Relative clauses", sub: "who/which/that/where para describir" },
-    { title: "Linking words", sub: "however, although, therefore, in addition" },
-    { title: "Question tags", sub: "You're coming, aren't you?" },
-    { title: "Gerund vs infinitive", sub: "I enjoy swimming / I want to swim" },
-    { title: "Used to / would", sub: "Hábitos pasados que ya no existen" },
-    { title: "Future continuous y perfect", sub: "Will be doing / will have done" },
+  { phase:2, name:"Intermedio", topics:[
+    {title:"Present perfect",sub:"Have/has + participio: I have visited Paris"},
+    {title:"Present perfect continuous",sub:"I have been working for 3 hours"},
+    {title:"Past continuous",sub:"I was reading when she called"},
+    {title:"Past perfect",sub:"Acción anterior a otra en pasado: had done"},
+    {title:"Condicional 0 y 1",sub:"If it rains, I take an umbrella / I'll take"},
+    {title:"Condicional 2",sub:"If I were you, I would... (situación hipotética)"},
+    {title:"Modal verbs: must/should/might",sub:"Obligación, consejo y probabilidad"},
+    {title:"Passive voice (presente y pasado)",sub:"The report is written / was written"},
+    {title:"Reported speech",sub:"She said that she was tired"},
+    {title:"Relative clauses",sub:"who/which/that/where para describir"},
+    {title:"Linking words",sub:"however, although, therefore, in addition"},
+    {title:"Question tags",sub:"You're coming, aren't you?"},
+    {title:"Gerund vs infinitive",sub:"I enjoy swimming / I want to swim"},
+    {title:"Used to / would",sub:"Hábitos pasados que ya no existen"},
+    {title:"Future continuous y perfect",sub:"Will be doing / will have done"},
   ]},
-  { phase: 3, name: "Avanzado", topics: [
-    { title: "Condicional 3", sub: "If I had known, I would have called" },
-    { title: "Mixed conditionals", sub: "Combinar tiempos en condicionales complejos" },
-    { title: "Subjuntivo", sub: "I suggest that he be on time (formal)" },
-    { title: "Inversion", sub: "Never have I seen... / Rarely does she..." },
-    { title: "Cleft sentences", sub: "It was John who called. What I need is..." },
-    { title: "Emphasis y fronting", sub: "What I really want is clarity" },
-    { title: "Discourse markers avanzados", sub: "Notwithstanding, as a result, in contrast" },
-    { title: "Reported speech complejo", sub: "Preguntas, órdenes y sugerencias indirectas" },
-    { title: "Passive voice avanzada", sub: "Causative have/get: I had my car fixed" },
-    { title: "Phrasal verbs frecuentes", sub: "come across, bring up, look into, put off" },
-    { title: "Collocations y chunks", sub: "Make a decision, take responsibility" },
-    { title: "Cohesión textual", sub: "Reference, substitution, ellipsis en textos" },
-    { title: "Registro y formalidad", sub: "Diferencias entre formal, neutral e informal" },
-    { title: "Conector de ideas complejas", sub: "Concession, contrast, cause, consequence" },
-    { title: "Repaso y consolidación", sub: "Integración de todos los conceptos" },
+  { phase:3, name:"Avanzado", topics:[
+    {title:"Condicional 3",sub:"If I had known, I would have called"},
+    {title:"Mixed conditionals",sub:"Combinar tiempos en condicionales complejos"},
+    {title:"Subjuntivo",sub:"I suggest that he be on time (formal)"},
+    {title:"Inversion",sub:"Never have I seen... / Rarely does she..."},
+    {title:"Cleft sentences",sub:"It was John who called. What I need is..."},
+    {title:"Emphasis y fronting",sub:"What I really want is clarity"},
+    {title:"Discourse markers avanzados",sub:"Notwithstanding, as a result, in contrast"},
+    {title:"Reported speech complejo",sub:"Preguntas, órdenes y sugerencias indirectas"},
+    {title:"Passive voice avanzada",sub:"Causative have/get: I had my car fixed"},
+    {title:"Phrasal verbs frecuentes",sub:"come across, bring up, look into, put off"},
+    {title:"Collocations y chunks",sub:"Make a decision, take responsibility"},
+    {title:"Cohesión textual",sub:"Reference, substitution, ellipsis en textos"},
+    {title:"Registro y formalidad",sub:"Diferencias entre formal, neutral e informal"},
+    {title:"Conector de ideas complejas",sub:"Concession, contrast, cause, consequence"},
+    {title:"Repaso y consolidación",sub:"Integración de todos los conceptos"},
   ]},
 ];
-
-const ALL = CURRICULUM.flatMap(p => p.topics.map(t => ({ ...t, phase: p.phase, phaseName: p.name })));
+const ALL = CURRICULUM.flatMap(p => p.topics.map(t => ({...t, phase:p.phase, phaseName:p.name})));
 const TOTAL = ALL.length;
 const DAYS = ['L','M','X','J','V','S','D'];
 
-function currentMonthKey() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}`; }
+// ── State & Config ───────────────────────────────────────────────────────────
+function monthKey() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}`; }
 function load() {
-  try { const r = localStorage.getItem('eng_v5'); if (r) return JSON.parse(r); } catch(e) {}
-  return { day: 0, done: [], monthKey: currentMonthKey(), monthCost: 0, sessions: 0 };
+  try { const r=localStorage.getItem('eng_v6'); if(r) return JSON.parse(r); } catch(e){}
+  return {day:0, done:[], mk:monthKey(), cost:0, sessions:0, errors:{}};
 }
-function save(s) { try { localStorage.setItem('eng_v5', JSON.stringify(s)); } catch(e) {} }
+function save(s) { try { localStorage.setItem('eng_v6', JSON.stringify(s)); } catch(e){} }
 function loadCfg() {
-  try { const r = localStorage.getItem('eng_cfg'); if (r) return JSON.parse(r); } catch(e) {}
-  return { key: '', limit: 1.0 };
+  try { const r=localStorage.getItem('eng_cfg2'); if(r) return JSON.parse(r); } catch(e){}
+  return {key:'', limit:1.0};
 }
-function saveCfg(c) { try { localStorage.setItem('eng_cfg', JSON.stringify(c)); } catch(e) {} }
+function saveCfg(c) { try { localStorage.setItem('eng_cfg2', JSON.stringify(c)); } catch(e){} }
 
 let state = load();
 let cfg = loadCfg();
-let currentExampleIdx = 0;
-let currentExamples = [];
+
+if (state.mk !== monthKey()) { state.mk=monthKey(); state.cost=0; state.sessions=0; save(state); }
+if (!state.errors) state.errors = {};
+
+// ── Exercise engine state ────────────────────────────────────────────────────
+let exData = null;
+let exPhase = 0; // 0=mc, 1=fp
+let mcIdx = 0; let mcScore = 0; let mcAnswered = false;
+let fpIdx = 0; let fpScore = 0;
+let currentExIdx = 0; let currentExamples = [];
 let currentPrompt = '';
 
-if (state.monthKey !== currentMonthKey()) {
-  state.monthKey = currentMonthKey(); state.monthCost = 0; state.sessions = 0; save(state);
-}
-
-function updateLimitDisplay(v) { document.getElementById('limit-display').textContent = '$' + parseFloat(v).toFixed(2); }
-
-function toggleConfig() {
-  const p = document.getElementById('config-panel');
-  const open = p.style.display === 'none';
-  p.style.display = open ? 'block' : 'none';
-  document.getElementById('cfg-arrow').textContent = open ? '▾' : '▸';
-  if (open) { document.getElementById('inp-key').value = cfg.key; document.getElementById('inp-limit').value = cfg.limit; updateLimitDisplay(cfg.limit); }
-}
-
-function saveConfig() {
-  cfg.key = document.getElementById('inp-key').value.trim();
-  cfg.limit = parseFloat(document.getElementById('inp-limit').value);
-  saveCfg(cfg); toggleConfig(); renderMeta();
-}
+// ── Audio: preload voices ────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+});
 
 function speak(text, btn) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'en-US'; utt.rate = 0.85;
-  if (btn) { btn.classList.add('speaking'); utt.onend = () => btn.classList.remove('speaking'); }
-  window.speechSynthesis.speak(utt);
+  const go = () => {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'en-US'; utt.rate = 0.82;
+    const voices = window.speechSynthesis.getVoices();
+    const enVoice = voices.find(v => v.lang.startsWith('en-') && !v.name.includes('Google')) ||
+                    voices.find(v => v.lang.startsWith('en-'));
+    if (enVoice) utt.voice = enVoice;
+    if (btn) { btn.classList.add('speaking'); utt.onend = () => btn.classList.remove('speaking'); }
+    window.speechSynthesis.speak(utt);
+  };
+  if (window.speechSynthesis.getVoices().length > 0) go();
+  else { window.speechSynthesis.onvoiceschanged = go; }
 }
 
+// ── Config UI ────────────────────────────────────────────────────────────────
+function updateLimitDisplay(v) { document.getElementById('limit-display').textContent='$'+parseFloat(v).toFixed(2); }
+function toggleConfig() {
+  const p=document.getElementById('config-panel'); const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  document.getElementById('cfg-arrow').textContent=open?'▾':'▸';
+  if(open){document.getElementById('inp-key').value=cfg.key;document.getElementById('inp-limit').value=cfg.limit;updateLimitDisplay(cfg.limit);}
+}
+function saveConfig() { cfg.key=document.getElementById('inp-key').value.trim(); cfg.limit=parseFloat(document.getElementById('inp-limit').value); saveCfg(cfg); toggleConfig(); renderMeta(); }
+
+// ── Render meta (non-destructive) ────────────────────────────────────────────
 function renderMeta() {
-  const idx = Math.min(state.day, TOTAL - 1);
-  const t = ALL[idx];
-  const ph = CURRICULUM.find(p => p.phase === t.phase);
-  const phStart = CURRICULUM.slice(0, t.phase - 1).reduce((a, p) => a + p.topics.length, 0);
-  const phPct = Math.round(((idx - phStart + 1) / ph.topics.length) * 100);
+  const idx=Math.min(state.day,TOTAL-1); const t=ALL[idx];
+  const ph=CURRICULUM.find(p=>p.phase===t.phase);
+  const phStart=CURRICULUM.slice(0,t.phase-1).reduce((a,p)=>a+p.topics.length,0);
+  const phPct=Math.round(((idx-phStart+1)/ph.topics.length)*100);
 
-  document.getElementById('day-badge').textContent = `Día ${idx + 1} de ${TOTAL}`;
-  document.getElementById('phase-label').textContent = `Fase ${t.phase} · ${t.phaseName}`;
-  document.getElementById('prog-pct').textContent = phPct + '%';
-  document.getElementById('prog-fill').style.width = phPct + '%';
-  document.getElementById('topic-phase').textContent = `Fase ${t.phase} · ${t.phaseName}`;
-  document.getElementById('topic-title').textContent = t.title;
-  document.getElementById('topic-sub').textContent = t.sub;
-  document.getElementById('pills').innerHTML = CURRICULUM.map(p =>
-    `<span class="pill ${p.phase === t.phase ? 'active' : ''}">${p.name}</span>`).join('');
+  document.getElementById('day-badge').textContent=`Día ${idx+1} de ${TOTAL}`;
+  document.getElementById('phase-label').textContent=`Fase ${t.phase} · ${t.phaseName}`;
+  document.getElementById('prog-pct').textContent=phPct+'%';
+  document.getElementById('prog-fill').style.width=phPct+'%';
+  document.getElementById('topic-phase').textContent=`Fase ${t.phase} · ${t.phaseName}`;
+  document.getElementById('topic-title').textContent=t.title;
+  document.getElementById('topic-sub').textContent=t.sub;
+  document.getElementById('pills').innerHTML=CURRICULUM.map(p=>`<span class="pill ${p.phase===t.phase?'active':''}">${p.name}</span>`).join('');
 
-  const today = new Date(); const todayStr = today.toISOString().slice(0,10);
-  const todayIdx = (today.getDay() + 6) % 7;
-  document.getElementById('streak-row').innerHTML =
-    DAYS.map((d, i) => {
-      const isToday = i === todayIdx;
-      const cls = isToday && state.done.includes(todayStr) ? 'done' : isToday ? 'today' : 'empty';
-      return `<div class="sd ${cls}">${d}</div>`;
-    }).join('') + `<span class="streak-count">${state.done.length} sesiones completadas</span>`;
+  const today=new Date(); const todayStr=today.toISOString().slice(0,10);
+  const todayIdx=(today.getDay()+6)%7;
+  document.getElementById('streak-row').innerHTML=DAYS.map((d,i)=>{
+    const isT=i===todayIdx; const cls=isT&&state.done.includes(todayStr)?'done':isT?'today':'empty';
+    return `<div class="sd ${cls}">${d}</div>`;
+  }).join('')+`<span class="streak-count">${state.done.length} sesiones completadas</span>`;
 
-  const pct = Math.min((state.monthCost / cfg.limit) * 100, 100);
-  document.getElementById('usage-fill').style.width = pct + '%';
-  document.getElementById('usage-fill').className = 'usage-fill ' + (pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok');
-  document.getElementById('usage-label').textContent = `$${state.monthCost.toFixed(4)} gastados este mes`;
-  document.getElementById('usage-limit-label').textContent = `límite: $${cfg.limit.toFixed(2)}`;
-  document.getElementById('usage-hint').textContent = `~${state.sessions} sesiones · se reinicia el 1 de cada mes`;
+  const pct=Math.min((state.cost/cfg.limit)*100,100);
+  document.getElementById('usage-fill').style.width=pct+'%';
+  document.getElementById('usage-fill').className='usage-fill '+(pct>=100?'danger':pct>=80?'warn':'ok');
+  document.getElementById('usage-label').textContent=`$${state.cost.toFixed(4)} este mes`;
+  document.getElementById('usage-limit-label').textContent=`límite: $${cfg.limit.toFixed(2)}`;
+  document.getElementById('usage-hint').textContent=`~${state.sessions} sesiones · reinicia el 1 de cada mes`;
 
-  const limitReached = state.monthCost >= cfg.limit;
-  document.getElementById('banner-setup').style.display = !cfg.key ? 'block' : 'none';
-  document.getElementById('banner-limit').style.display = limitReached ? 'block' : 'none';
+  const limited=state.cost>=cfg.limit;
+  document.getElementById('banner-setup').style.display=!cfg.key?'block':'none';
+  document.getElementById('banner-limit').style.display=limited?'block':'none';
 
-  const btn = document.getElementById('btn-generate');
-  btn.disabled = limitReached || !cfg.key;
-  if (!cfg.key) btn.textContent = 'Configura tu API key primero';
-  else if (limitReached) btn.textContent = 'Límite mensual alcanzado';
-  else btn.textContent = 'Generar sesión de hoy';
+  const btn=document.getElementById('btn-generate');
+  btn.disabled=limited||!cfg.key;
+  btn.textContent=!cfg.key?'Configura tu API key':limited?'Límite alcanzado':'Generar sesión de hoy';
+
+  // Micro-repaso
+  const errs=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,4);
+  const rw=document.getElementById('repaso-wrap');
+  if(errs.length>0&&idx>0){
+    rw.style.display='block';
+    rw.innerHTML=`<div class="repaso-banner"><div class="repaso-title">Micro-repaso · Errores frecuentes tuyos</div><div class="repaso-items">${errs.map(([k,v])=>`<span class="repaso-item"><span class="repaso-dot"></span>${k} <span style="color:var(--text3)">(×${v.count})</span></span>`).join('')}</div></div>`;
+  } else { rw.style.display='none'; }
 }
 
 function renderFull() {
   renderMeta();
-  document.getElementById('session-content').style.display = 'none';
-  document.getElementById('session-loading').style.display = 'none';
-  document.getElementById('btn-claude').style.display = 'none';
-  document.getElementById('nav-row').style.display = 'none';
-  document.getElementById('btn-generate').textContent = cfg.key ? 'Generar sesión de hoy' : 'Configura tu API key primero';
+  document.getElementById('session-content').style.display='none';
+  document.getElementById('session-loading').style.display='none';
+  document.getElementById('nav-row').style.display='none';
+  const btn=document.getElementById('btn-generate');
+  btn.textContent=cfg.key?'Generar sesión de hoy':'Configura tu API key';
 }
 
+// ── Render session ───────────────────────────────────────────────────────────
 function renderSession(data) {
+  exData = data;
+
   // Phonetics
-  const pg = document.getElementById('phonetics-grid');
-  pg.innerHTML = (data.phonetics || []).map((p, i) => `
+  document.getElementById('phonetics-grid').innerHTML=(data.phonetics||[]).map(p=>`
     <div class="ph-item">
       <div class="ph-word">${p.word}</div>
       <div class="ph-ipa">${p.ipa}</div>
       <div class="ph-meaning">${p.meaning}</div>
-      <button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}', this)">▶ Escuchar</button>
+      <button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}',this)">▶ Escuchar</button>
     </div>`).join('');
 
   // Grammar
-  const gc = document.getElementById('grammar-card');
-  gc.innerHTML = `
-    <div class="f-label blue">Fórmula</div>
-    <div class="formula-box">${data.formula || ''}</div>
-    <div class="grammar-note">${data.grammar_note || ''}</div>`;
+  document.getElementById('grammar-card').innerHTML=`
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:8px">Fórmula</div>
+    <div class="formula-box">${data.formula||''}</div>
+    <div class="grammar-note">${data.grammar_note||''}</div>`;
 
   // Examples
-  currentExamples = data.examples || [];
-  currentExampleIdx = 0;
-  renderExamples();
+  currentExamples=data.examples||[]; currentExIdx=0; renderExamples();
 
   // Error
-  const ec = document.getElementById('error-card');
-  const err = data.error || {};
-  ec.innerHTML = `
-    <div class="error-wrong">
-      <div class="error-wrong-label">✗ Error frecuente</div>
-      <div class="error-wrong-text">${err.wrong || ''}</div>
-    </div>
-    <div class="error-right">
-      <div class="error-right-label">✓ Forma correcta</div>
-      <div class="error-right-text">${err.correct || ''}</div>
-    </div>
-    <div class="error-explain">${err.explanation || ''}</div>`;
+  const err=data.error||{};
+  document.getElementById('error-card').innerHTML=`
+    <div class="err-wrong"><div class="err-wrong-lbl">✗ Error frecuente</div><div class="err-wrong-txt">${err.wrong||''}</div></div>
+    <div class="err-right"><div class="err-right-lbl">✓ Correcto</div><div class="err-right-txt">${err.correct||''}</div></div>
+    <div class="err-explain">${err.explanation||''}</div>`;
+
+  // Exercises
+  mcIdx=0; mcScore=0; mcAnswered=false; fpIdx=0; fpScore=0; exPhase=0;
+  renderExercisePhase();
 
   // Tip
-  const tc = document.getElementById('tip-card');
-  const tip = data.tip || {};
-  tc.innerHTML = `
-    <div class="tip-label">Tip del día</div>
-    <div class="tip-phrase">"${tip.phrase || ''}"</div>
-    <div class="tip-meaning">${tip.meaning || ''}</div>`;
+  const tip=data.tip||{};
+  document.getElementById('tip-card').innerHTML=`
+    <div class="tip-lbl">Tip del día</div>
+    <div class="tip-phrase">"${tip.phrase||''}"</div>
+    <div class="tip-meaning">${tip.meaning||''}</div>`;
 
-  document.getElementById('session-content').style.display = 'block';
+  // Prompt
+  currentPrompt=buildPrompt();
+  document.getElementById('prompt-box').textContent=currentPrompt;
+  const enc=encodeURIComponent(currentPrompt);
+  document.getElementById('btn-open-claude').href=`https://claude.ai/new?q=${enc}`;
+
+  document.getElementById('session-content').style.display='block';
+  document.getElementById('nav-row').style.display='flex';
 }
 
+// ── Examples ─────────────────────────────────────────────────────────────────
 function renderExamples() {
-  const container = document.getElementById('examples-container');
-  container.innerHTML = currentExamples.map((ex, i) => `
-    <div class="example-card ${i === currentExampleIdx ? 'active' : ''}" id="ex-${i}">
-      <div class="ex-number">Ejemplo ${i + 1} de ${currentExamples.length}</div>
-      <div class="ex-en">${ex.en_highlighted || ex.en}</div>
+  document.getElementById('examples-container').innerHTML=currentExamples.map((ex,i)=>`
+    <div class="example-card ${i===currentExIdx?'active':''}" id="ex-${i}">
+      <div class="ex-num">Ejemplo ${i+1} de ${currentExamples.length}</div>
+      <div class="ex-en">${ex.en_highlighted||ex.en}</div>
       <div class="ex-es">${ex.es}</div>
-      ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
-      <div style="margin-top:12px">
-        <button class="btn-ex-speak" onclick="speak('${(ex.en_plain||ex.en).replace(/'/g,"\\'")}', this)">▶ Escuchar</button>
+      ${ex.note?`<div class="ex-note">${ex.note}</div>`:''}
+      <div style="margin-top:11px">
+        <button class="btn-ex-speak" onclick="speak('${(ex.en_plain||ex.en).replace(/['"]/g,' ')}',this)">▶ Escuchar</button>
       </div>
     </div>`).join('');
+  document.getElementById('ex-dots').innerHTML=currentExamples.map((_,i)=>
+    `<div class="ex-dot ${i===currentExIdx?'active':''}" onclick="goEx(${i})"></div>`).join('');
+}
+function goEx(i){currentExIdx=i;renderExamples();}
+function nextEx(){goEx((currentExIdx+1)%currentExamples.length);}
+function prevEx(){goEx((currentExIdx-1+currentExamples.length)%currentExamples.length);}
 
-  const dots = document.getElementById('ex-dots');
-  dots.innerHTML = currentExamples.map((_, i) =>
-    `<div class="ex-dot ${i === currentExampleIdx ? 'active' : ''}" onclick="goExample(${i})"></div>`).join('');
+// ── Exercise phases ───────────────────────────────────────────────────────────
+function renderExercisePhase() {
+  const mc=exData.exercises_mc||[];
+  const fp=exData.exercises_fp||[];
+  const container=document.getElementById('exercises-card');
+
+  const tabHtml=`<div class="ex-phase-tabs">
+    <div class="ex-tab ${exPhase===0?'active':exPhase>0?'done':''}">1 · Reconocimiento</div>
+    <div class="ex-tab ${exPhase===1?'active':exPhase>1?'done':exPhase<1?'locked':''}">2 · Producción</div>
+  </div>`;
+
+  const totalMC=mc.length; const totalFP=fp.length;
+
+  if(exPhase===0) {
+    if(mcIdx<totalMC) {
+      const q=mc[mcIdx];
+      const scoreBar=`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Pregunta ${mcIdx+1} de ${totalMC}</span><span>${mcScore} correctas</span></div><div class="score-bar"><div class="score-fill" style="width:${(mcIdx/totalMC)*100}%"></div></div></div>`;
+      container.innerHTML=tabHtml+scoreBar+`
+        <div class="mc-question">${q.question}</div>
+        <div class="mc-options" id="mc-opts">
+          ${q.options.map((o,i)=>`<div class="mc-option" onclick="checkMC(${i})" data-idx="${i}">${o}</div>`).join('')}
+        </div>
+        <div id="mc-feedback" style="display:none" class="mc-feedback"></div>
+        <div style="text-align:right;margin-top:6px"><button class="btn-next-q" id="btn-next-mc" onclick="nextMC()" style="display:none">Siguiente →</button></div>`;
+    } else {
+      const pct=Math.round((mcScore/totalMC)*100);
+      const pass=pct>=60;
+      container.innerHTML=tabHtml+`<div class="phase-result">
+        <div class="phase-result-score" style="color:${pass?'var(--teal)':'var(--red)'}">${pct}%</div>
+        <div class="phase-result-label">${pass?'Listo para producción 👍':'Repasa los ejemplos antes de continuar'}</div>
+        <button class="btn-next-phase" onclick="startFP()">Pasar a producción →</button>
+        ${!pass?`<button class="btn-retry" onclick="retryMC()">Repetir reconocimiento</button>`:''}
+      </div>`;
+    }
+  } else if(exPhase===1) {
+    if(fpIdx<totalFP) {
+      const q=fp[fpIdx];
+      const scoreBar=`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${fpIdx+1} de ${totalFP}</span><span>${fpScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(fpIdx/totalFP)*100}%"></div></div></div>`;
+      container.innerHTML=tabHtml+scoreBar+`
+        <div class="fp-instruction">Escribe tu respuesta en inglés. Puedes usar el botón de pista si lo necesitas.</div>
+        <div class="fp-prompt">${q.prompt}</div>
+        <textarea class="fp-input" id="fp-input" placeholder="Your answer here..." rows="3"></textarea>
+        <div class="fp-actions">
+          <button class="btn-check" onclick="checkFP()">Verificar</button>
+          <button class="btn-hint" onclick="showHint()">Pista</button>
+        </div>
+        <div id="fp-feedback" style="display:none"></div>`;
+    } else {
+      const pct=Math.round((fpScore/totalFP)*100);
+      container.innerHTML=tabHtml+`<div class="phase-result">
+        <div class="phase-result-score" style="color:${pct>=60?'var(--teal)':'var(--amber)'}">${pct}%</div>
+        <div class="phase-result-label">${pct>=80?'Excelente trabajo 🎉':pct>=60?'Buen progreso, sigue practicando':'Más práctica en Claude te ayudará'}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">Copia el prompt de abajo para practicar conversación en Claude.</div>
+      </div>`;
+    }
+  }
 }
 
-function goExample(i) {
-  currentExampleIdx = i; renderExamples();
+function checkMC(selectedIdx) {
+  if(mcAnswered) return;
+  mcAnswered=true;
+  const q=(exData.exercises_mc||[])[mcIdx];
+  const opts=document.querySelectorAll('.mc-option');
+  opts.forEach(o=>o.classList.add('disabled'));
+  const isCorrect=selectedIdx===q.correct;
+  opts[selectedIdx].classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect) opts[q.correct].classList.add('correct');
+  if(isCorrect) mcScore++;
+
+  const fb=document.getElementById('mc-feedback');
+  fb.style.display='block';
+  fb.className='mc-feedback '+(isCorrect?'ok':'nope');
+  fb.innerHTML=isCorrect?`✓ Correcto. ${q.explanation||''}`:`✗ ${q.explanation||''}`;
+
+  if(!isCorrect) trackError(q.error_tag||'');
+  document.getElementById('btn-next-mc').style.display='inline-block';
+
+  // Speak correct answer
+  if(q.speak) setTimeout(()=>speak(q.speak), 300);
 }
-function nextExample() { goExample((currentExampleIdx + 1) % currentExamples.length); }
-function prevExample() { goExample((currentExampleIdx - 1 + currentExamples.length) % currentExamples.length); }
 
-async function generateSession() {
-  const idx = Math.min(state.day, TOTAL - 1);
-  const t = ALL[idx];
-  const btn = document.getElementById('btn-generate');
+function nextMC() {
+  mcIdx++; mcAnswered=false; renderExercisePhase();
+}
+function retryMC() { mcIdx=0; mcScore=0; mcAnswered=false; renderExercisePhase(); }
+function startFP() { exPhase=1; fpIdx=0; fpScore=0; renderExercisePhase(); }
 
-  btn.disabled = true;
-  btn.textContent = 'Generando...';
-  document.getElementById('session-content').style.display = 'none';
-  document.getElementById('session-loading').style.display = 'block';
+function checkFP() {
+  const inp=document.getElementById('fp-input');
+  const answer=(inp.value||'').trim();
+  if(!answer) return;
+  const q=(exData.exercises_fp||[])[fpIdx];
+  const fb=document.getElementById('fp-feedback');
 
-  // Build conversation prompt for Claude.ai
-  currentPrompt = `Sesión de inglés — Día ${idx + 1} de 45
+  // Normalize for comparison
+  const norm=s=>s.toLowerCase().replace(/[^a-z0-9\s']/g,'').trim();
+  const userN=norm(answer);
+  const accepted=(q.accepted||[]).map(norm);
+  const isExact=accepted.some(a=>userN===a);
+  const isPartial=!isExact&&accepted.some(a=>{
+    const ua=userN.split(' '); const aa=a.split(' ');
+    const common=ua.filter(w=>aa.includes(w));
+    return common.length/aa.length>=0.6;
+  });
+
+  fb.style.display='block';
+  if(isExact) {
+    fpScore++;
+    fb.className='fp-feedback ok';
+    fb.innerHTML=`✓ Perfecto. ${q.feedback_ok||''}`;
+    if(q.speak) setTimeout(()=>speak(q.speak),300);
+  } else if(isPartial) {
+    fb.className='fp-feedback partial';
+    fb.innerHTML=`≈ Casi. ${q.feedback_partial||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;
+    trackError(q.error_tag||'');
+    if(q.speak) setTimeout(()=>speak(q.model||''),300);
+  } else {
+    fb.className='fp-feedback nope';
+    fb.innerHTML=`✗ ${q.feedback_wrong||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;
+    trackError(q.error_tag||'');
+    if(q.speak) setTimeout(()=>speak(q.model||''),300);
+  }
+
+  inp.disabled=true;
+  const actions=document.querySelector('.fp-actions');
+  if(actions) actions.innerHTML=`<button class="btn-check" onclick="nextFP()">Siguiente →</button>`;
+}
+
+function showHint() {
+  const q=(exData.exercises_fp||[])[fpIdx];
+  const fb=document.getElementById('fp-feedback');
+  fb.style.display='block';
+  fb.className='fp-feedback partial';
+  fb.innerHTML=`Pista: ${q.hint||''}`;
+}
+
+function nextFP() { fpIdx++; renderExercisePhase(); }
+
+function trackError(tag) {
+  if(!tag) return;
+  if(!state.errors[tag]) state.errors[tag]={count:0};
+  state.errors[tag].count++;
+  save(state);
+}
+
+// ── Prompt builder ────────────────────────────────────────────────────────────
+function buildPrompt() {
+  const idx=Math.min(state.day,TOTAL-1); const t=ALL[idx];
+  const errList=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,3).map(([k])=>k).join(', ')||'ninguno registrado aún';
+  return `Sesión de inglés — Día ${idx+1} de 45
 Tema: ${t.title} | Fase ${t.phase}/3 (${t.phaseName})
+Contexto: ${t.sub}
 
-Soy hispanohablante nivel A2-B1. Explícame este tema con ejemplos bilingües (inglés + traducción al español), señala el error más frecuente que cometemos y dame un tip útil. Luego practica conmigo con ejercicios interactivos — hazme preguntas, corrígeme y adapta la dificultad según mis respuestas.`;
+Soy hispanohablante, nivel A2-B1. Ya completé la sesión teórica del día.
+Mis errores frecuentes registrados: ${errList}.
 
-  const apiPrompt = `You are an expert English teacher for Spanish speakers. Return ONLY valid JSON, no markdown, no extra text.
+Por favor:
+1. Empieza con un micro-repaso rápido de mis errores frecuentes si los hay.
+2. Practica este tema conmigo en conversación natural — hazme preguntas, corrígeme directamente sin excesivo elogio, adapta la dificultad según mis respuestas.
+3. Si cometo un error, explícame brevemente por qué está mal y dame la forma correcta.
+4. Al final dame 2-3 frases para que practique pronunciación en voz alta.`;
+}
+
+// ── Copy prompt ───────────────────────────────────────────────────────────────
+function copyPrompt() {
+  navigator.clipboard.writeText(currentPrompt).then(()=>{
+    const btn=document.getElementById('btn-copy');
+    btn.textContent='Copiado ✓'; btn.className='btn-copy copied';
+    setTimeout(()=>{btn.textContent='Copiar';btn.className='btn-copy';},2200);
+  });
+}
+
+// ── Generate session ──────────────────────────────────────────────────────────
+async function generateSession() {
+  const idx=Math.min(state.day,TOTAL-1); const t=ALL[idx];
+  const btn=document.getElementById('btn-generate');
+  btn.disabled=true; btn.textContent='Generando...';
+  document.getElementById('session-content').style.display='none';
+  document.getElementById('session-loading').style.display='block';
+
+  const apiPrompt=`You are an expert English teacher for Spanish speakers. Return ONLY valid JSON, no markdown fences.
 
 Topic: ${t.title}
 Context: ${t.sub}
 Phase: ${t.phase}/3 (${t.phaseName})
-Student: Spanish speaker, A2-B1 level
+Student: Spanish speaker, A2-B1 level. Explanations should be in English with Spanish translations in parentheses.
 
-Return this exact JSON structure:
+Return this exact JSON (adapt ALL content to the topic above):
 {
   "phonetics": [
-    {"word": "works", "ipa": "/wɜːrks/", "meaning": "trabaja (3ª persona)"},
-    {"word": "doesn't", "ipa": "/ˈdʌznt/", "meaning": "no hace (negación)"},
-    {"word": "always", "ipa": "/ˈɔːlweɪz/", "meaning": "siempre"},
-    {"word": "usually", "ipa": "/ˈjuːʒuəli/", "meaning": "normalmente"}
+    {"word":"works","ipa":"/wɜːrks/","meaning":"trabaja (3ª persona)"},
+    {"word":"doesn't","ipa":"/ˈdʌznt/","meaning":"no hace"},
+    {"word":"always","ipa":"/ˈɔːlweɪz/","meaning":"siempre"},
+    {"word":"usually","ipa":"/ˈjuːʒuəli/","meaning":"normalmente"}
   ],
-  "formula": "<span class='f-subject'>Subject</span> + <span class='f-verb'>verb (base)</span> + <span class='f-object'>object</span><br><span class='f-subject'>He/She/It</span> + <span class='f-verb'>verb+s</span> + <span class='f-object'>object</span><br><span class='f-neg'>Negative:</span> <span class='f-subject'>Subject</span> + <span class='f-aux'>don't/doesn't</span> + <span class='f-verb'>verb</span>",
-  "grammar_note": "Use <strong>present simple</strong> for habits, routines, and facts. Add <strong>-s/-es</strong> for he/she/it. <em>(Español: úsalo para hábitos y verdades generales, no para acciones que pasan ahora mismo)</em>",
-  "examples": [
-    {
-      "en": "She <strong style='color:var(--purple)'>works</strong> at a tech company in Madrid.",
-      "en_plain": "She works at a tech company in Madrid.",
-      "en_highlighted": "She <strong style='color:var(--purple)'>works</strong> at a tech company in Madrid.",
-      "es": "Ella trabaja en una empresa tecnológica en Madrid.",
-      "note": "3rd person singular → adds -s to the verb"
-    },
-    {
-      "en": "I <strong style='color:var(--purple)'>don't eat</strong> meat, but I <strong style='color:var(--purple)'>love</strong> fish.",
-      "en_plain": "I don't eat meat, but I love fish.",
-      "en_highlighted": "I <strong style='color:var(--purple)'>don't eat</strong> meat, but I <strong style='color:var(--purple)'>love</strong> fish.",
-      "es": "No como carne, pero me encanta el pescado.",
-      "note": "don't = do + not (contraction for 1st person)"
-    },
-    {
-      "en": "<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English at work?",
-      "en_plain": "Does he speak English at work?",
-      "en_highlighted": "<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English at work?",
-      "es": "¿Habla inglés en el trabajo?",
-      "note": "Questions: Does (he/she/it) + verb in base form"
-    }
+  "formula":"<span class='f-subject'>Subject</span> + <span class='f-verb'>verb</span> + ...",
+  "grammar_note":"Explanation in English with <strong>key terms</strong> highlighted. <em>(Español: traducción del punto clave)</em>",
+  "examples":[
+    {"en":"She <strong style='color:var(--purple)'>works</strong> at a tech company.","en_plain":"She works at a tech company.","en_highlighted":"She <strong style='color:var(--purple)'>works</strong> at a tech company.","es":"Ella trabaja en una empresa tecnológica.","note":"3rd person → adds -s"},
+    {"en":"I <strong style='color:var(--purple)'>don't eat</strong> meat.","en_plain":"I don't eat meat.","en_highlighted":"I <strong style='color:var(--purple)'>don't eat</strong> meat.","es":"No como carne.","note":"don't for 1st/2nd person"},
+    {"en":"<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English?","en_plain":"Does he speak English?","en_highlighted":"<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English?","es":"¿Habla inglés?","note":"Questions: Does + base verb"}
   ],
-  "error": {
-    "wrong": "She don't know the answer.",
-    "correct": "She doesn't know the answer.",
-    "explanation": "With <strong>he/she/it</strong>, always use <strong>doesn't</strong> (not don't). This is the most common mistake Spanish speakers make because in Spanish the verb form changes but there's no separate auxiliary."
-  },
-  "tip": {
-    "phrase": "I don't buy it.",
-    "meaning": "No solo significa 'no lo compro' — en inglés coloquial significa <strong>'no me lo creo'</strong> o 'no te creo'. Ejemplo: 'He said he was sick.' — 'I don't buy it.'"
-  }
-}
-
-IMPORTANT: Adapt all content to the topic "${t.title}". Keep phonetics relevant to key words in this topic. Make the formula show the actual grammar structure with colored spans. Examples must be natural and practical. Return ONLY the JSON object.`;
+  "error":{"wrong":"She don't know.","correct":"She doesn't know.","explanation":"With he/she/it always use <strong>doesn't</strong>. Spanish speakers often forget because Spanish doesn't have a separate auxiliary verb."},
+  "exercises_mc":[
+    {"question":"Choose the correct form: 'He ___ to work every day.'","options":["go","goes","is going","going"],"correct":1,"explanation":"3rd person singular (he/she/it) adds -s to the verb.","error_tag":"3rd person -s","speak":"He goes to work every day."},
+    {"question":"Which sentence is correct?","options":["She don't like coffee.","She doesn't likes coffee.","She doesn't like coffee.","She not like coffee."],"correct":2,"explanation":"Negative: subject + doesn't + base verb (no -s on main verb).","error_tag":"doesn't vs don't","speak":"She doesn't like coffee."},
+    {"question":"'They ___ football on Sundays.'","options":["plays","is playing","play","played"],"correct":2,"explanation":"With they/we/I/you, use the base form (no -s).","error_tag":"base form plural","speak":"They play football on Sundays."},
+    {"question":"How do you ask a question? '___ she work in Madrid?'","options":["Is","Does","Do","Has"],"correct":1,"explanation":"Questions with he/she/it: Does + subject + base verb.","error_tag":"does questions","speak":"Does she work in Madrid?"}
+  ],
+  "exercises_fp":[
+    {"prompt":"Translate: 'Mi hermano trabaja en un hospital.' (My brother works...)","accepted":["my brother works in a hospital","my brother works at a hospital"],"model":"My brother works in a hospital.","hint":"3rd person — remember the -s on the verb.","feedback_ok":"Perfect use of 3rd person singular.","feedback_partial":"Almost! Check the verb ending.","feedback_wrong":"3rd person singular (he/she/it) always needs -s: work → works.","error_tag":"3rd person -s","speak":"My brother works in a hospital."},
+    {"prompt":"Make it negative: 'I eat fish.' → 'I ___ fish.'","accepted":["i don't eat fish","i do not eat fish"],"model":"I don't eat fish.","hint":"Use don't (do not) + base verb.","feedback_ok":"Correct negative form!","feedback_partial":"Check the auxiliary verb.","feedback_wrong":"Negative: I/you/we/they + don't + base verb.","error_tag":"don't negative","speak":"I don't eat fish."},
+    {"prompt":"Ask a question: You want to know if Ana speaks French. Start with 'Does...'","accepted":["does ana speak french","does she speak french"],"model":"Does Ana speak French?","hint":"Does + subject + base verb (no -s on main verb).","feedback_ok":"Great question structure!","feedback_partial":"Remember: after Does, the main verb has no -s.","feedback_wrong":"Questions: Does + he/she/it + base verb (speak, not speaks).","error_tag":"does questions","speak":"Does Ana speak French?"}
+  ],
+  "tip":{"phrase":"I don't buy it.","meaning":"No solo 'no lo compro' — coloquialmente significa <strong>'no me lo creo'</strong>. Example: 'He said he was sick.' — 'I don't buy it.' (No me lo creo.)"}
+}`;
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": cfg.key,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
-        messages: [{ role: "user", content: apiPrompt }]
-      })
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:apiPrompt}]})
     });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`);}
+    const data=await res.json();
+    const raw=data.content?.find(b=>b.type==='text')?.text||'';
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
 
-    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `Error ${res.status}`); }
+    const cost=((data.usage?.input_tokens||1000)/1e6*3)+((data.usage?.output_tokens||1500)/1e6*15);
+    state.cost=(state.cost||0)+cost; state.sessions=(state.sessions||0)+1; save(state);
 
-    const data = await res.json();
-    const raw = data.content?.find(b => b.type === 'text')?.text || '';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
-
-    // Track cost
-    const cost = ((data.usage?.input_tokens||800)/1e6*3) + ((data.usage?.output_tokens||1200)/1e6*15);
-    state.monthCost = (state.monthCost||0) + cost;
-    state.sessions = (state.sessions||0) + 1;
-    save(state);
-
-    document.getElementById('session-loading').style.display = 'none';
-    renderSession(parsed);
-    renderMeta();
-
-    // Update Claude.ai button with encoded prompt
-    const encoded = encodeURIComponent(currentPrompt);
-    document.getElementById('btn-claude').href = `https://claude.ai/new?q=${encoded}`;
-    document.getElementById('btn-claude').style.display = 'block';
-    document.getElementById('nav-row').style.display = 'flex';
-
-    btn.disabled = false;
-    btn.textContent = 'Regenerar sesión';
+    document.getElementById('session-loading').style.display='none';
+    renderSession(parsed); renderMeta();
+    btn.disabled=false; btn.textContent='Regenerar sesión';
 
   } catch(e) {
-    document.getElementById('session-loading').style.display = 'none';
-    document.getElementById('session-content').style.display = 'block';
-    document.getElementById('grammar-card').innerHTML = `<div style="color:var(--red);font-size:13px">Error: ${e.message}<br><br>Verifica tu API key en Configuración.</div>`;
-    btn.disabled = false;
-    btn.textContent = 'Generar sesión de hoy';
+    document.getElementById('session-loading').style.display='none';
+    document.getElementById('session-content').style.display='block';
+    document.getElementById('grammar-card').innerHTML=`<div style="color:var(--red);font-size:13px;padding:8px">Error: ${e.message}<br><br>Verifica tu API key en Configuración.</div>`;
+    btn.disabled=false; btn.textContent='Generar sesión de hoy';
   }
 }
 
-function markDone() {
-  const today = new Date().toISOString().slice(0,10);
-  if (!state.done.includes(today)) state.done.push(today);
-  state.day = Math.min(state.day + 1, TOTAL - 1);
-  save(state); renderFull();
+// ── Navigation ────────────────────────────────────────────────────────────────
+function markDone(){
+  const today=new Date().toISOString().slice(0,10);
+  if(!state.done.includes(today)) state.done.push(today);
+  state.day=Math.min(state.day+1,TOTAL-1); save(state); renderFull();
 }
-function skipDay() { state.day = Math.min(state.day + 1, TOTAL - 1); save(state); renderFull(); }
-function resetProgress() {
-  if (confirm('¿Reiniciar progreso desde el día 1?')) { state.day = 0; state.done = []; save(state); renderFull(); }
-}
-function resetUsage() {
-  if (confirm('¿Reiniciar contador mensual?')) { state.monthCost = 0; state.sessions = 0; state.monthKey = currentMonthKey(); save(state); renderMeta(); }
-}
+function skipDay(){state.day=Math.min(state.day+1,TOTAL-1);save(state);renderFull();}
+function resetProgress(){if(confirm('¿Reiniciar progreso?')){state.day=0;state.done=[];state.errors={};save(state);renderFull();}}
+function resetUsage(){if(confirm('¿Reiniciar contador mensual?')){state.cost=0;state.sessions=0;state.mk=monthKey();save(state);renderMeta();}}
 
 renderFull();
 </script>
