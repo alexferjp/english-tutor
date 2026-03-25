@@ -681,44 +681,45 @@ function buildClaudePrompt(data){
   const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
   const errs=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,4);
   const errStr=errs.length>0?errs.map(([k,v])=>`"${k}" (×${v.count})`).join(', '):'ninguno registrado aún';
-  const mcResults=(data.exercises_mc||[]).map((q,i)=>`- ${q.question.slice(0,60)}...`).slice(0,3).join('\n');
-  const fpResults=(data.exercises_fp||[]).map((q,i)=>`- ${q.prompt.slice(0,60)}...`).slice(0,2).join('\n');
 
   return `===== SESIÓN DE PRÁCTICA — Día ${idx+1}/45 =====
 Tema: ${t.title} | Fase ${t.phase}/3 (${t.phaseName})
 Contexto: ${t.sub}
 
 PERFIL DEL ALUMNO:
-- Hispanohablante nativo, nivel A2-B1 en inglés
+- Hispanohablante nativo, nivel A2-B1
 - Errores frecuentes registrados: ${errStr}
-- Ya completó la sesión teórica del día (fórmula, ejemplos, ejercicios escritos)
+- Ya completó la sesión teórica del día en la app
 
-ARQUITECTURA DE LA SESIÓN (sigue este orden estricto):
+ARQUITECTURA DE LA SESIÓN:
 
-FASE 1 — CALENTAMIENTO (2-3 intercambios)
-• Si hay errores frecuentes registrados, empieza con UN mini-ejercicio de repaso sobre el error más repetido
-• Luego haz UNA pregunta simple sobre el tema de hoy para activar el conocimiento
-• Espera mi respuesta antes de continuar. NO avances a la siguiente fase sin mi respuesta.
-• Si cometo un error: corrígeme con el patrón exacto → "✗ [mi error] → ✓ [forma correcta]" + explicación de UNA línea sobre por qué. Sin elogios excesivos.
+FASE 1 — CALENTAMIENTO (conversación, 2-3 turnos)
+- Si hay errores frecuentes registrados, empieza con UN mini-ejercicio de repaso sobre el más repetido
+- Haz UNA pregunta simple sobre el tema para activar el conocimiento
+- Espera mi respuesta. Corrige con formato: ✗ [error] → ✓ [corrección] | Motivo: una línea
+- Sin elogios excesivos. Tono directo.
 
-FASE 2 — PRÁCTICA GUIADA (4-5 intercambios)
-• Ejercicios por turnos: una pregunta → espera mi respuesta → corrige/confirma → siguiente
-• Tipos: completar frases, transformar (afirmativo→negativo→pregunta), traducción inversa
-• Detecta estos errores típicos del hispanohablante para este tema y corrígelos con mensaje específico:
-${(data.error_tags_for_claude||['error de auxiliar','concordancia sujeto-verbo','tiempo verbal incorrecto']).map(e=>`  · ${e}`).join('\n')}
-• Adapta la dificultad: si fallo 2 seguidas, simplifica; si acierto 3 seguidas, sube un nivel
+FASE 2 — PRÁCTICA GUIADA (genera un widget interactivo)
+- Crea un artefacto HTML/JS interactivo con exactamente este contenido:
+  - 4 ejercicios de opción múltiple sobre ${t.title}, con feedback inmediato en color (verde=correcto, rojo=incorrecto)
+  - 3 flip cards: inglés al frente → traducción + nota gramatical al dorso
+  - Barra de progreso que avanza con cada respuesta correcta
+  - Botón "Escuchar" en cada ejercicio usando Web Speech API (lang: en-US)
+  - Al finalizar: puntuación final con mensaje personalizado según resultado
+- IMPORTANTE: toda la lógica de corrección debe estar en JavaScript dentro del widget. No usar sendPrompt() para corregir respuestas. Los ejercicios deben funcionar de forma completamente autónoma.
+- Los errores típicos a detectar para este tema: ${(data.error_tags_for_claude||['concordancia sujeto-verbo','auxiliar incorrecto','tiempo verbal']).join(', ')}
 
-FASE 3 — PRODUCCIÓN LIBRE (2-3 intercambios)
-• Propón un mini-escenario real (email corto, conversación cotidiana, descripción de tu trabajo)
-• Yo escribo libremente usando el tema del día
-• Tú corriges solo los errores relacionados con ${t.title}, no todo
-• Cierra con 2-3 frases cortas para que practique pronunciación en voz alta (escríbelas en inglés)
+FASE 3 — PRODUCCIÓN LIBRE (conversación, 2-3 turnos)
+- Propón un mini-escenario real relacionado con trabajo o vida cotidiana
+- Yo escribo libremente usando ${t.title}
+- Corrige solo errores del tema del día, no todo
+- Cierra con 2-3 frases cortas para practicar pronunciación en voz alta
 
-REGLAS DE CORRECCIÓN:
-• Formato siempre: ✗ [error] → ✓ [corrección] | Motivo: [una línea]
-• Tono: directo, preciso, sin excesivo elogio
-• Nunca des la respuesta antes de que yo la intente
-• Una pregunta por turno, nunca dos a la vez
+REGLAS GENERALES:
+- Una pregunta o acción por turno, nunca dos a la vez
+- Nunca des la respuesta antes de que yo la intente
+- En Fase 1 y 3: responde en texto conversacional
+- En Fase 2: genera el widget y espera a que termine antes de pasar a Fase 3
 
 Empieza ahora con la Fase 1.`;
 }
