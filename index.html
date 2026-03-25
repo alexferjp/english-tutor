@@ -30,6 +30,15 @@
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; padding: 20px 16px 60px; }
 .app { max-width: 600px; margin: 0 auto; }
 
+/* Day recovery modal */
+.modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+.modal { background: var(--card); border-radius: 16px; padding: 24px; max-width: 420px; width: 100%; }
+.modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.modal p { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+.modal select { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border2); border-radius: 9px; font-size: 13px; color: var(--text); background: var(--bg); margin-bottom: 14px; outline: none; }
+.modal select:focus { border-color: var(--purple); }
+.btn-modal { width: 100%; padding: 12px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
 /* Header */
 .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.03em; }
@@ -59,10 +68,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .topic-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 3px; letter-spacing: -0.02em; }
 .topic-sub { font-size: 13px; color: rgba(255,255,255,0.72); }
 
-/* Micro-repaso banner */
+/* Repaso banner */
 .repaso-banner { background: var(--amber-l); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-bottom: 14px; }
 .repaso-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--amber); margin-bottom: 6px; }
-.repaso-items { font-size: 12px; color: var(--text2); line-height: 1.7; }
 .repaso-item { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; margin: 2px; font-size: 11px; }
 .repaso-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
 
@@ -71,14 +79,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .usage-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
 .usage-bar { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
 .usage-fill { height: 100%; border-radius: 2px; transition: width 0.4s, background 0.3s; }
-.usage-fill.ok { background: var(--teal); }
-.usage-fill.warn { background: var(--amber); }
-.usage-fill.danger { background: var(--red); }
+.usage-fill.ok { background: var(--teal); } .usage-fill.warn { background: var(--amber); } .usage-fill.danger { background: var(--red); }
 .usage-hint { font-size: 11px; color: var(--text3); }
 
 /* Config */
 .config-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; margin-bottom: 12px; background: none; border: none; padding: 0; }
-.config-toggle:hover { color: var(--text); }
 .config-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
 .cfg-row { margin-bottom: 12px; }
 .cfg-row label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
@@ -113,7 +118,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.7; }
 
 /* Examples */
-.examples-wrap { }
 .example-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: none; animation: slideIn 0.25s ease; }
 .example-card.active { display: block; }
 @keyframes slideIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
@@ -125,7 +129,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .ex-dots { display: flex; gap: 5px; }
 .ex-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: all 0.2s; }
 .ex-dot.active { background: var(--purple); width: 18px; border-radius: 3px; }
-.ex-nav-btns { display: flex; gap: 6px; }
 .btn-ex { padding: 5px 12px; font-size: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; cursor: pointer; color: var(--text2); }
 .btn-ex-speak { padding: 5px 12px; font-size: 12px; background: var(--purple-l); color: var(--purple); border: none; border-radius: 7px; cursor: pointer; font-weight: 500; }
 
@@ -142,7 +145,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 /* Exercises */
 .exercises-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
 .ex-phase-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-.ex-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 600; text-align: center; border-radius: 8px; border: 1px solid var(--border); color: var(--text3); background: var(--bg2); cursor: default; }
+.ex-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 600; text-align: center; border-radius: 8px; border: 1px solid var(--border); color: var(--text3); background: var(--bg2); }
 .ex-tab.active { background: var(--purple); color: var(--purple-l); border-color: var(--purple); }
 .ex-tab.done { background: var(--teal); color: var(--teal-l); border-color: var(--teal); }
 .ex-tab.locked { opacity: 0.4; }
@@ -150,12 +153,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .score-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 5px; }
 .score-bar { height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
 .score-fill { height: 100%; border-radius: 3px; background: var(--purple); transition: width 0.4s; }
-
-/* Multiple choice */
 .mc-question { font-size: 14px; font-weight: 600; margin-bottom: 12px; line-height: 1.5; }
 .mc-options { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
 .mc-option { padding: 10px 14px; border: 1.5px solid var(--border2); border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.15s; background: var(--bg2); }
-.mc-option:hover { border-color: var(--purple); background: var(--purple-l); }
+.mc-option:hover:not(.disabled) { border-color: var(--purple); background: var(--purple-l); }
 .mc-option.correct { background: var(--green-l); border-color: var(--green); color: var(--green); font-weight: 600; cursor: default; }
 .mc-option.wrong { background: var(--red-l); border-color: var(--red); color: var(--red); cursor: default; }
 .mc-option.disabled { cursor: default; }
@@ -163,10 +164,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .mc-feedback.ok { background: var(--green-l); color: var(--green); }
 .mc-feedback.nope { background: var(--red-l); color: var(--red); }
 .btn-next-q { padding: 8px 18px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
-
-/* Free production */
 .fp-instruction { font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; background: var(--blue-l); border-radius: 9px; padding: 10px 13px; }
-.fp-prompt { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.fp-prompt { font-size: 14px; font-weight: 600; margin-bottom: 10px; line-height: 1.5; }
 .fp-input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border2); border-radius: 10px; font-size: 14px; color: var(--text); background: var(--bg); outline: none; resize: vertical; min-height: 70px; font-family: inherit; }
 .fp-input:focus { border-color: var(--purple); }
 .fp-actions { display: flex; gap: 8px; margin-top: 8px; }
@@ -177,13 +176,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .fp-feedback.partial { background: var(--amber-l); color: var(--amber); }
 .fp-feedback.nope { background: var(--red-l); color: var(--red); }
 .fp-model { margin-top: 8px; font-size: 12px; color: var(--text2); background: var(--bg2); border-radius: 8px; padding: 8px 12px; }
-
-/* Phase result */
 .phase-result { text-align: center; padding: 20px 10px; }
 .phase-result-score { font-size: 36px; font-weight: 700; margin-bottom: 6px; }
 .phase-result-label { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
 .btn-next-phase { padding: 11px 28px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-retry { padding: 11px 28px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; cursor: pointer; margin-left: 8px; }
+.btn-retry { padding: 11px 22px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; cursor: pointer; margin-left: 8px; }
 
 /* Tip */
 .tip-card { background: var(--amber-l); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 14px 14px 0; padding: 14px 16px; }
@@ -191,15 +188,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .tip-phrase { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
 .tip-meaning { font-size: 12px; color: var(--text2); line-height: 1.6; }
 
-/* Prompt box */
-.prompt-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 6px; }
+/* Prompt section */
+.prompt-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
 .prompt-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .prompt-title { font-size: 12px; font-weight: 700; color: var(--text2); }
 .prompt-actions { display: flex; gap: 7px; }
 .btn-copy { font-size: 12px; padding: 5px 12px; background: var(--purple); color: var(--purple-l); border: none; border-radius: 7px; cursor: pointer; font-weight: 600; transition: all 0.15s; }
 .btn-copy.copied { background: var(--teal); color: var(--teal-l); }
 .btn-open-claude { font-size: 12px; padding: 5px 12px; background: var(--teal-l); color: var(--teal-d); border: none; border-radius: 7px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; }
-.prompt-box { background: var(--bg2); border-radius: 9px; padding: 12px 14px; font-size: 12px; color: var(--text2); line-height: 1.7; white-space: pre-wrap; max-height: 180px; overflow-y: auto; }
+.prompt-box { background: var(--bg2); border-radius: 9px; padding: 12px 14px; font-size: 12px; color: var(--text2); line-height: 1.7; white-space: pre-wrap; max-height: 220px; overflow-y: auto; }
 
 /* Actions */
 .actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
@@ -226,6 +223,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 <body>
 <div class="app">
 
+<!-- Day recovery modal -->
+<div class="modal-wrap" id="modal-wrap" style="display:none">
+  <div class="modal">
+    <h2>¿En qué día vas?</h2>
+    <p>No encontré progreso guardado en este navegador. Selecciona el día en que estás para continuar desde ahí.</p>
+    <select id="modal-day-select"></select>
+    <button class="btn-modal" onclick="applyDayFromModal()">Continuar desde este día</button>
+  </div>
+</div>
+
 <div class="header">
   <h1>English Daily Tutor</h1>
   <span class="badge" id="day-badge">Día 1 de 45</span>
@@ -239,10 +246,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 </div>
 
 <div class="pills" id="pills"></div>
+
 <div class="topic-hero">
   <div class="topic-phase" id="topic-phase">Fase 1 · Fundamentos</div>
-  <div class="topic-title" id="topic-title">Present simple</div>
-  <div class="topic-sub" id="topic-sub">Hábitos y hechos</div>
+  <div class="topic-title" id="topic-title">—</div>
+  <div class="topic-sub" id="topic-sub"></div>
 </div>
 
 <div id="repaso-wrap" style="display:none"></div>
@@ -267,8 +275,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 <div id="banner-setup" class="banner setup" style="display:none">Añade tu API key en <strong>Configuración</strong>.</div>
 <div id="banner-limit" class="banner danger" style="display:none">Límite mensual alcanzado.</div>
 
-<!-- Session -->
 <div id="session-loading" style="display:none"><div class="skeleton"><span class="loading-dots">Generando tu sesión</span></div></div>
+
 <div id="session-content" style="display:none">
   <div class="sec-label">Pronunciación clave</div>
   <div class="phonetics-card"><div class="phonetics-grid" id="phonetics-grid"></div></div>
@@ -277,13 +285,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
   <div class="grammar-card" id="grammar-card"></div>
 
   <div class="sec-label">Ejemplos</div>
-  <div class="examples-wrap">
-    <div id="examples-container"></div>
-    <div class="ex-actions" style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-      <button class="btn-ex" onclick="prevEx()">← Anterior</button>
-      <div class="ex-dots" id="ex-dots"></div>
-      <button class="btn-ex" onclick="nextEx()">Siguiente →</button>
-    </div>
+  <div id="examples-container"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+    <button class="btn-ex" onclick="prevEx()">← Anterior</button>
+    <div class="ex-dots" id="ex-dots"></div>
+    <button class="btn-ex" onclick="nextEx()">Siguiente →</button>
   </div>
 
   <div class="sec-label">Error frecuente</div>
@@ -298,7 +304,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
   <div class="sec-label">Practicar con Claude</div>
   <div class="prompt-section">
     <div class="prompt-header">
-      <span class="prompt-title">Prompt listo para tu Proyecto</span>
+      <span class="prompt-title">Prompt para tu Proyecto de Claude</span>
       <div class="prompt-actions">
         <button class="btn-copy" id="btn-copy" onclick="copyPrompt()">Copiar</button>
         <a class="btn-open-claude" id="btn-open-claude" href="https://claude.ai/projects" target="_blank">Abrir Claude →</a>
@@ -318,11 +324,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
   <button class="btn-reset" onclick="resetUsage()">Reiniciar contador mensual</button>
 </div>
 
-</div><!-- .app -->
+</div>
 <script>
-// ── Curriculum ──────────────────────────────────────────────────────────────
+// ── Curriculum ───────────────────────────────────────────────────────────────
 const CURRICULUM = [
-  { phase:1, name:"Fundamentos", topics:[
+  {phase:1,name:"Fundamentos",topics:[
     {title:"Present simple",sub:"Hábitos y hechos: I work, she doesn't know"},
     {title:"Present continuous",sub:"Acciones en curso: I am working right now"},
     {title:"Artículos a/an/the",sub:"Cuándo usarlos y cuándo omitirlos"},
@@ -339,7 +345,7 @@ const CURRICULUM = [
     {title:"Imperatives",sub:"Instrucciones y órdenes: Open the door, don't run"},
     {title:"Countable vs uncountable",sub:"some/any/much/many/a lot of"},
   ]},
-  { phase:2, name:"Intermedio", topics:[
+  {phase:2,name:"Intermedio",topics:[
     {title:"Present perfect",sub:"Have/has + participio: I have visited Paris"},
     {title:"Present perfect continuous",sub:"I have been working for 3 hours"},
     {title:"Past continuous",sub:"I was reading when she called"},
@@ -356,7 +362,7 @@ const CURRICULUM = [
     {title:"Used to / would",sub:"Hábitos pasados que ya no existen"},
     {title:"Future continuous y perfect",sub:"Will be doing / will have done"},
   ]},
-  { phase:3, name:"Avanzado", topics:[
+  {phase:3,name:"Avanzado",topics:[
     {title:"Condicional 3",sub:"If I had known, I would have called"},
     {title:"Mixed conditionals",sub:"Combinar tiempos en condicionales complejos"},
     {title:"Subjuntivo",sub:"I suggest that he be on time (formal)"},
@@ -374,75 +380,94 @@ const CURRICULUM = [
     {title:"Repaso y consolidación",sub:"Integración de todos los conceptos"},
   ]},
 ];
-const ALL = CURRICULUM.flatMap(p => p.topics.map(t => ({...t, phase:p.phase, phaseName:p.name})));
+const ALL = CURRICULUM.flatMap(p => p.topics.map(t => ({...t,phase:p.phase,phaseName:p.name})));
 const TOTAL = ALL.length;
 const DAYS = ['L','M','X','J','V','S','D'];
 
-// ── State & Config ───────────────────────────────────────────────────────────
-function monthKey() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}`; }
-function load() {
-  try { const r=localStorage.getItem('eng_v6'); if(r) return JSON.parse(r); } catch(e){}
-  return {day:0, done:[], mk:monthKey(), cost:0, sessions:0, errors:{}};
-}
-function save(s) { try { localStorage.setItem('eng_v6', JSON.stringify(s)); } catch(e){} }
-function loadCfg() {
-  try { const r=localStorage.getItem('eng_cfg2'); if(r) return JSON.parse(r); } catch(e){}
-  return {key:'', limit:1.0};
-}
-function saveCfg(c) { try { localStorage.setItem('eng_cfg2', JSON.stringify(c)); } catch(e){} }
+// ── Storage ──────────────────────────────────────────────────────────────────
+const KEYS = ['eng_v6','eng_v5','eng_v4','eng_tutor_v4','eng_tutor_v3']; // migrate old keys
+function monthKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()}`;}
 
-let state = load();
+function load(){
+  // Try all known keys for migration
+  for(const k of KEYS){
+    try{const r=localStorage.getItem(k);if(r){const p=JSON.parse(r);if(typeof p.day==='number') return {...p,_key:k};}}catch(e){}
+  }
+  return null;
+}
+function save(s){try{localStorage.setItem('eng_v7',JSON.stringify(s));}catch(e){}}
+function loadCfg(){try{const r=localStorage.getItem('eng_cfg2');if(r)return JSON.parse(r);}catch(e){}return{key:'',limit:1.0};}
+function saveCfg(c){try{localStorage.setItem('eng_cfg2',JSON.stringify(c));}catch(e){}}
+
+let rawState = load();
+let state;
 let cfg = loadCfg();
+let isNewUser = false;
 
-if (state.mk !== monthKey()) { state.mk=monthKey(); state.cost=0; state.sessions=0; save(state); }
-if (!state.errors) state.errors = {};
+if(rawState){
+  // Migrate if needed
+  state = {day:rawState.day||0, done:rawState.done||[], mk:monthKey(), cost:rawState.cost||rawState.monthCost||0, sessions:rawState.sessions||0, errors:rawState.errors||{}};
+  if(state.mk!==monthKey()){state.mk=monthKey();state.cost=0;state.sessions=0;}
+  save(state);
+} else {
+  isNewUser = true;
+  state = {day:0,done:[],mk:monthKey(),cost:0,sessions:0,errors:{}};
+}
 
-// ── Exercise engine state ────────────────────────────────────────────────────
-let exData = null;
-let exPhase = 0; // 0=mc, 1=fp
-let mcIdx = 0; let mcScore = 0; let mcAnswered = false;
-let fpIdx = 0; let fpScore = 0;
-let currentExIdx = 0; let currentExamples = [];
-let currentPrompt = '';
+// ── Exercise state ───────────────────────────────────────────────────────────
+let exData=null, exPhase=0, mcIdx=0, mcScore=0, mcAnswered=false, fpIdx=0, fpScore=0;
+let currentExIdx=0, currentExamples=[], currentPrompt='';
 
-// ── Audio: preload voices ────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  if (window.speechSynthesis) {
+// ── Audio ────────────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  if(window.speechSynthesis){
     window.speechSynthesis.getVoices();
-    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
   }
 });
-
-function speak(text, btn) {
-  if (!window.speechSynthesis) return;
+function speak(text,btn){
+  if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  const go = () => {
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'en-US'; utt.rate = 0.82;
-    const voices = window.speechSynthesis.getVoices();
-    const enVoice = voices.find(v => v.lang.startsWith('en-') && !v.name.includes('Google')) ||
-                    voices.find(v => v.lang.startsWith('en-'));
-    if (enVoice) utt.voice = enVoice;
-    if (btn) { btn.classList.add('speaking'); utt.onend = () => btn.classList.remove('speaking'); }
+  const go=()=>{
+    const utt=new SpeechSynthesisUtterance(text);
+    utt.lang='en-US';utt.rate=0.82;
+    const voices=window.speechSynthesis.getVoices();
+    const v=voices.find(v=>v.lang.startsWith('en-')&&!v.name.includes('Google'))||voices.find(v=>v.lang.startsWith('en-'));
+    if(v)utt.voice=v;
+    if(btn){btn.classList.add('speaking');utt.onend=()=>btn.classList.remove('speaking');}
     window.speechSynthesis.speak(utt);
   };
-  if (window.speechSynthesis.getVoices().length > 0) go();
-  else { window.speechSynthesis.onvoiceschanged = go; }
+  if(window.speechSynthesis.getVoices().length>0)go();
+  else window.speechSynthesis.onvoiceschanged=go;
+}
+
+// ── Day recovery modal ───────────────────────────────────────────────────────
+function showDayModal(){
+  const sel=document.getElementById('modal-day-select');
+  sel.innerHTML=ALL.map((t,i)=>`<option value="${i}">Día ${i+1} — ${t.title} (${t.phaseName})</option>`).join('');
+  sel.value=1; // default to day 2 (Present continuous) per user input
+  document.getElementById('modal-wrap').style.display='flex';
+}
+function applyDayFromModal(){
+  const v=parseInt(document.getElementById('modal-day-select').value)||0;
+  state.day=v; save(state);
+  document.getElementById('modal-wrap').style.display='none';
+  renderFull();
 }
 
 // ── Config UI ────────────────────────────────────────────────────────────────
-function updateLimitDisplay(v) { document.getElementById('limit-display').textContent='$'+parseFloat(v).toFixed(2); }
-function toggleConfig() {
-  const p=document.getElementById('config-panel'); const open=p.style.display==='none';
+function updateLimitDisplay(v){document.getElementById('limit-display').textContent='$'+parseFloat(v).toFixed(2);}
+function toggleConfig(){
+  const p=document.getElementById('config-panel');const open=p.style.display==='none';
   p.style.display=open?'block':'none';
   document.getElementById('cfg-arrow').textContent=open?'▾':'▸';
   if(open){document.getElementById('inp-key').value=cfg.key;document.getElementById('inp-limit').value=cfg.limit;updateLimitDisplay(cfg.limit);}
 }
-function saveConfig() { cfg.key=document.getElementById('inp-key').value.trim(); cfg.limit=parseFloat(document.getElementById('inp-limit').value); saveCfg(cfg); toggleConfig(); renderMeta(); }
+function saveConfig(){cfg.key=document.getElementById('inp-key').value.trim();cfg.limit=parseFloat(document.getElementById('inp-limit').value);saveCfg(cfg);toggleConfig();renderMeta();}
 
-// ── Render meta (non-destructive) ────────────────────────────────────────────
-function renderMeta() {
-  const idx=Math.min(state.day,TOTAL-1); const t=ALL[idx];
+// ── Render meta ──────────────────────────────────────────────────────────────
+function renderMeta(){
+  const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
   const ph=CURRICULUM.find(p=>p.phase===t.phase);
   const phStart=CURRICULUM.slice(0,t.phase-1).reduce((a,p)=>a+p.topics.length,0);
   const phPct=Math.round(((idx-phStart+1)/ph.topics.length)*100);
@@ -456,10 +481,9 @@ function renderMeta() {
   document.getElementById('topic-sub').textContent=t.sub;
   document.getElementById('pills').innerHTML=CURRICULUM.map(p=>`<span class="pill ${p.phase===t.phase?'active':''}">${p.name}</span>`).join('');
 
-  const today=new Date(); const todayStr=today.toISOString().slice(0,10);
-  const todayIdx=(today.getDay()+6)%7;
+  const today=new Date();const todayStr=today.toISOString().slice(0,10);const todayIdx=(today.getDay()+6)%7;
   document.getElementById('streak-row').innerHTML=DAYS.map((d,i)=>{
-    const isT=i===todayIdx; const cls=isT&&state.done.includes(todayStr)?'done':isT?'today':'empty';
+    const isT=i===todayIdx;const cls=isT&&state.done.includes(todayStr)?'done':isT?'today':'empty';
     return `<div class="sd ${cls}">${d}</div>`;
   }).join('')+`<span class="streak-count">${state.done.length} sesiones completadas</span>`;
 
@@ -483,11 +507,11 @@ function renderMeta() {
   const rw=document.getElementById('repaso-wrap');
   if(errs.length>0&&idx>0){
     rw.style.display='block';
-    rw.innerHTML=`<div class="repaso-banner"><div class="repaso-title">Micro-repaso · Errores frecuentes tuyos</div><div class="repaso-items">${errs.map(([k,v])=>`<span class="repaso-item"><span class="repaso-dot"></span>${k} <span style="color:var(--text3)">(×${v.count})</span></span>`).join('')}</div></div>`;
-  } else { rw.style.display='none'; }
+    rw.innerHTML=`<div class="repaso-banner"><div class="repaso-title">Micro-repaso · Tus errores frecuentes</div><div>${errs.map(([k,v])=>`<span class="repaso-item"><span class="repaso-dot"></span>${k} <span style="color:var(--text3)">(×${v.count})</span></span>`).join('')}</div></div>`;
+  } else rw.style.display='none';
 }
 
-function renderFull() {
+function renderFull(){
   renderMeta();
   document.getElementById('session-content').style.display='none';
   document.getElementById('session-loading').style.display='none';
@@ -497,66 +521,53 @@ function renderFull() {
 }
 
 // ── Render session ───────────────────────────────────────────────────────────
-function renderSession(data) {
-  exData = data;
-
+function renderSession(data){
+  exData=data;
   // Phonetics
   document.getElementById('phonetics-grid').innerHTML=(data.phonetics||[]).map(p=>`
     <div class="ph-item">
-      <div class="ph-word">${p.word}</div>
-      <div class="ph-ipa">${p.ipa}</div>
+      <div class="ph-word">${p.word}</div><div class="ph-ipa">${p.ipa}</div>
       <div class="ph-meaning">${p.meaning}</div>
       <button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}',this)">▶ Escuchar</button>
     </div>`).join('');
-
   // Grammar
   document.getElementById('grammar-card').innerHTML=`
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:8px">Fórmula</div>
     <div class="formula-box">${data.formula||''}</div>
     <div class="grammar-note">${data.grammar_note||''}</div>`;
-
   // Examples
-  currentExamples=data.examples||[]; currentExIdx=0; renderExamples();
-
+  currentExamples=data.examples||[];currentExIdx=0;renderExamples();
   // Error
   const err=data.error||{};
   document.getElementById('error-card').innerHTML=`
     <div class="err-wrong"><div class="err-wrong-lbl">✗ Error frecuente</div><div class="err-wrong-txt">${err.wrong||''}</div></div>
     <div class="err-right"><div class="err-right-lbl">✓ Correcto</div><div class="err-right-txt">${err.correct||''}</div></div>
     <div class="err-explain">${err.explanation||''}</div>`;
-
   // Exercises
-  mcIdx=0; mcScore=0; mcAnswered=false; fpIdx=0; fpScore=0; exPhase=0;
-  renderExercisePhase();
-
+  mcIdx=0;mcScore=0;mcAnswered=false;fpIdx=0;fpScore=0;exPhase=0;renderExercisePhase();
   // Tip
   const tip=data.tip||{};
   document.getElementById('tip-card').innerHTML=`
     <div class="tip-lbl">Tip del día</div>
     <div class="tip-phrase">"${tip.phrase||''}"</div>
     <div class="tip-meaning">${tip.meaning||''}</div>`;
-
   // Prompt
-  currentPrompt=buildPrompt();
+  currentPrompt=buildClaudePrompt(data);
   document.getElementById('prompt-box').textContent=currentPrompt;
-  const enc=encodeURIComponent(currentPrompt);
-  document.getElementById('btn-open-claude').href=`https://claude.ai/new?q=${enc}`;
-
+  document.getElementById('btn-open-claude').href=`https://claude.ai/new?q=${encodeURIComponent(currentPrompt)}`;
   document.getElementById('session-content').style.display='block';
   document.getElementById('nav-row').style.display='flex';
 }
 
 // ── Examples ─────────────────────────────────────────────────────────────────
-function renderExamples() {
+function renderExamples(){
   document.getElementById('examples-container').innerHTML=currentExamples.map((ex,i)=>`
     <div class="example-card ${i===currentExIdx?'active':''}" id="ex-${i}">
       <div class="ex-num">Ejemplo ${i+1} de ${currentExamples.length}</div>
       <div class="ex-en">${ex.en_highlighted||ex.en}</div>
       <div class="ex-es">${ex.es}</div>
       ${ex.note?`<div class="ex-note">${ex.note}</div>`:''}
-      <div style="margin-top:11px">
-        <button class="btn-ex-speak" onclick="speak('${(ex.en_plain||ex.en).replace(/['"]/g,' ')}',this)">▶ Escuchar</button>
-      </div>
+      <div style="margin-top:11px"><button class="btn-ex-speak" onclick="speak('${(ex.en_plain||ex.en).replace(/['"<>]/g,' ')}',this)">▶ Escuchar</button></div>
     </div>`).join('');
   document.getElementById('ex-dots').innerHTML=currentExamples.map((_,i)=>
     `<div class="ex-dot ${i===currentExIdx?'active':''}" onclick="goEx(${i})"></div>`).join('');
@@ -565,261 +576,242 @@ function goEx(i){currentExIdx=i;renderExamples();}
 function nextEx(){goEx((currentExIdx+1)%currentExamples.length);}
 function prevEx(){goEx((currentExIdx-1+currentExamples.length)%currentExamples.length);}
 
-// ── Exercise phases ───────────────────────────────────────────────────────────
-function renderExercisePhase() {
-  const mc=exData.exercises_mc||[];
-  const fp=exData.exercises_fp||[];
-  const container=document.getElementById('exercises-card');
-
-  const tabHtml=`<div class="ex-phase-tabs">
+// ── Exercises ─────────────────────────────────────────────────────────────────
+function renderExercisePhase(){
+  const mc=exData.exercises_mc||[];const fp=exData.exercises_fp||[];
+  const c=document.getElementById('exercises-card');
+  const tabs=`<div class="ex-phase-tabs">
     <div class="ex-tab ${exPhase===0?'active':exPhase>0?'done':''}">1 · Reconocimiento</div>
     <div class="ex-tab ${exPhase===1?'active':exPhase>1?'done':exPhase<1?'locked':''}">2 · Producción</div>
   </div>`;
-
-  const totalMC=mc.length; const totalFP=fp.length;
-
-  if(exPhase===0) {
-    if(mcIdx<totalMC) {
+  if(exPhase===0){
+    if(mcIdx<mc.length){
       const q=mc[mcIdx];
-      const scoreBar=`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Pregunta ${mcIdx+1} de ${totalMC}</span><span>${mcScore} correctas</span></div><div class="score-bar"><div class="score-fill" style="width:${(mcIdx/totalMC)*100}%"></div></div></div>`;
-      container.innerHTML=tabHtml+scoreBar+`
-        <div class="mc-question">${q.question}</div>
-        <div class="mc-options" id="mc-opts">
-          ${q.options.map((o,i)=>`<div class="mc-option" onclick="checkMC(${i})" data-idx="${i}">${o}</div>`).join('')}
-        </div>
-        <div id="mc-feedback" style="display:none" class="mc-feedback"></div>
-        <div style="text-align:right;margin-top:6px"><button class="btn-next-q" id="btn-next-mc" onclick="nextMC()" style="display:none">Siguiente →</button></div>`;
+      c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Pregunta ${mcIdx+1}/${mc.length}</span><span>${mcScore} correctas</span></div><div class="score-bar"><div class="score-fill" style="width:${(mcIdx/mc.length)*100}%"></div></div></div>
+      <div class="mc-question">${q.question}</div>
+      <div class="mc-options" id="mc-opts">${q.options.map((o,i)=>`<div class="mc-option" onclick="checkMC(${i})" data-idx="${i}">${o}</div>`).join('')}</div>
+      <div id="mc-feedback" style="display:none" class="mc-feedback"></div>
+      <div style="text-align:right;margin-top:6px"><button class="btn-next-q" id="btn-nmc" onclick="nextMC()" style="display:none">Siguiente →</button></div>`;
     } else {
-      const pct=Math.round((mcScore/totalMC)*100);
-      const pass=pct>=60;
-      container.innerHTML=tabHtml+`<div class="phase-result">
+      const pct=Math.round((mcScore/mc.length)*100);const pass=pct>=60;
+      c.innerHTML=tabs+`<div class="phase-result">
         <div class="phase-result-score" style="color:${pass?'var(--teal)':'var(--red)'}">${pct}%</div>
         <div class="phase-result-label">${pass?'Listo para producción 👍':'Repasa los ejemplos antes de continuar'}</div>
         <button class="btn-next-phase" onclick="startFP()">Pasar a producción →</button>
-        ${!pass?`<button class="btn-retry" onclick="retryMC()">Repetir reconocimiento</button>`:''}
+        ${!pass?`<button class="btn-retry" onclick="retryMC()">Repetir</button>`:''}
       </div>`;
     }
-  } else if(exPhase===1) {
-    if(fpIdx<totalFP) {
+  } else {
+    if(fpIdx<fp.length){
       const q=fp[fpIdx];
-      const scoreBar=`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${fpIdx+1} de ${totalFP}</span><span>${fpScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(fpIdx/totalFP)*100}%"></div></div></div>`;
-      container.innerHTML=tabHtml+scoreBar+`
-        <div class="fp-instruction">Escribe tu respuesta en inglés. Puedes usar el botón de pista si lo necesitas.</div>
-        <div class="fp-prompt">${q.prompt}</div>
-        <textarea class="fp-input" id="fp-input" placeholder="Your answer here..." rows="3"></textarea>
-        <div class="fp-actions">
-          <button class="btn-check" onclick="checkFP()">Verificar</button>
-          <button class="btn-hint" onclick="showHint()">Pista</button>
-        </div>
-        <div id="fp-feedback" style="display:none"></div>`;
+      c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${fpIdx+1}/${fp.length}</span><span>${fpScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(fpIdx/fp.length)*100}%"></div></div></div>
+      <div class="fp-instruction">Escribe en inglés. Puedes pedir una pista si la necesitas.</div>
+      <div class="fp-prompt">${q.prompt}</div>
+      <textarea class="fp-input" id="fp-input" placeholder="Your answer here..." rows="3"></textarea>
+      <div class="fp-actions"><button class="btn-check" onclick="checkFP()">Verificar</button><button class="btn-hint" onclick="showHint()">Pista</button></div>
+      <div id="fp-feedback" style="display:none"></div>`;
     } else {
-      const pct=Math.round((fpScore/totalFP)*100);
-      container.innerHTML=tabHtml+`<div class="phase-result">
+      const pct=Math.round((fpScore/fp.length)*100);
+      c.innerHTML=tabs+`<div class="phase-result">
         <div class="phase-result-score" style="color:${pct>=60?'var(--teal)':'var(--amber)'}">${pct}%</div>
-        <div class="phase-result-label">${pct>=80?'Excelente trabajo 🎉':pct>=60?'Buen progreso, sigue practicando':'Más práctica en Claude te ayudará'}</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">Copia el prompt de abajo para practicar conversación en Claude.</div>
+        <div class="phase-result-label">${pct>=80?'Excelente 🎉':pct>=60?'Buen progreso':'Sigue practicando con Claude'}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">Copia el prompt de abajo para practicar conversación.</div>
       </div>`;
     }
   }
 }
 
-function checkMC(selectedIdx) {
-  if(mcAnswered) return;
-  mcAnswered=true;
+function checkMC(i){
+  if(mcAnswered)return;mcAnswered=true;
   const q=(exData.exercises_mc||[])[mcIdx];
-  const opts=document.querySelectorAll('.mc-option');
-  opts.forEach(o=>o.classList.add('disabled'));
-  const isCorrect=selectedIdx===q.correct;
-  opts[selectedIdx].classList.add(isCorrect?'correct':'wrong');
-  if(!isCorrect) opts[q.correct].classList.add('correct');
-  if(isCorrect) mcScore++;
-
+  document.querySelectorAll('.mc-option').forEach(o=>o.classList.add('disabled'));
+  const isOk=i===q.correct;
+  document.querySelectorAll('.mc-option')[i].classList.add(isOk?'correct':'wrong');
+  if(!isOk)document.querySelectorAll('.mc-option')[q.correct].classList.add('correct');
+  if(isOk)mcScore++;
   const fb=document.getElementById('mc-feedback');
-  fb.style.display='block';
-  fb.className='mc-feedback '+(isCorrect?'ok':'nope');
-  fb.innerHTML=isCorrect?`✓ Correcto. ${q.explanation||''}`:`✗ ${q.explanation||''}`;
-
-  if(!isCorrect) trackError(q.error_tag||'');
-  document.getElementById('btn-next-mc').style.display='inline-block';
-
-  // Speak correct answer
-  if(q.speak) setTimeout(()=>speak(q.speak), 300);
+  fb.style.display='block';fb.className='mc-feedback '+(isOk?'ok':'nope');
+  fb.innerHTML=isOk?`✓ Correcto. ${q.explanation||''}`:`✗ ${q.explanation||''}`;
+  if(!isOk)trackError(q.error_tag||'');
+  if(q.speak)setTimeout(()=>speak(q.speak),300);
+  document.getElementById('btn-nmc').style.display='inline-block';
 }
+function nextMC(){mcIdx++;mcAnswered=false;renderExercisePhase();}
+function retryMC(){mcIdx=0;mcScore=0;mcAnswered=false;renderExercisePhase();}
+function startFP(){exPhase=1;fpIdx=0;fpScore=0;renderExercisePhase();}
 
-function nextMC() {
-  mcIdx++; mcAnswered=false; renderExercisePhase();
-}
-function retryMC() { mcIdx=0; mcScore=0; mcAnswered=false; renderExercisePhase(); }
-function startFP() { exPhase=1; fpIdx=0; fpScore=0; renderExercisePhase(); }
-
-function checkFP() {
+function checkFP(){
   const inp=document.getElementById('fp-input');
-  const answer=(inp.value||'').trim();
-  if(!answer) return;
+  const answer=(inp.value||'').trim();if(!answer)return;
   const q=(exData.exercises_fp||[])[fpIdx];
-  const fb=document.getElementById('fp-feedback');
-
-  // Normalize for comparison
   const norm=s=>s.toLowerCase().replace(/[^a-z0-9\s']/g,'').trim();
-  const userN=norm(answer);
-  const accepted=(q.accepted||[]).map(norm);
+  const userN=norm(answer);const accepted=(q.accepted||[]).map(norm);
   const isExact=accepted.some(a=>userN===a);
   const isPartial=!isExact&&accepted.some(a=>{
-    const ua=userN.split(' '); const aa=a.split(' ');
-    const common=ua.filter(w=>aa.includes(w));
-    return common.length/aa.length>=0.6;
+    const ua=userN.split(' ');const aa=a.split(' ');
+    return ua.filter(w=>aa.includes(w)).length/aa.length>=0.6;
   });
-
-  fb.style.display='block';
-  if(isExact) {
-    fpScore++;
-    fb.className='fp-feedback ok';
+  const fb=document.getElementById('fp-feedback');fb.style.display='block';
+  if(isExact){
+    fpScore++;fb.className='fp-feedback ok';
     fb.innerHTML=`✓ Perfecto. ${q.feedback_ok||''}`;
-    if(q.speak) setTimeout(()=>speak(q.speak),300);
-  } else if(isPartial) {
+    if(q.speak)setTimeout(()=>speak(q.speak),300);
+  } else if(isPartial){
     fb.className='fp-feedback partial';
     fb.innerHTML=`≈ Casi. ${q.feedback_partial||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;
-    trackError(q.error_tag||'');
-    if(q.speak) setTimeout(()=>speak(q.model||''),300);
+    trackError(q.error_tag||'');if(q.speak)setTimeout(()=>speak(q.model||''),400);
   } else {
     fb.className='fp-feedback nope';
     fb.innerHTML=`✗ ${q.feedback_wrong||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;
-    trackError(q.error_tag||'');
-    if(q.speak) setTimeout(()=>speak(q.model||''),300);
+    trackError(q.error_tag||'');if(q.speak)setTimeout(()=>speak(q.model||''),400);
   }
-
   inp.disabled=true;
-  const actions=document.querySelector('.fp-actions');
-  if(actions) actions.innerHTML=`<button class="btn-check" onclick="nextFP()">Siguiente →</button>`;
+  document.querySelector('.fp-actions').innerHTML=`<button class="btn-check" onclick="nextFP()">Siguiente →</button>`;
 }
-
-function showHint() {
+function showHint(){
   const q=(exData.exercises_fp||[])[fpIdx];
-  const fb=document.getElementById('fp-feedback');
-  fb.style.display='block';
-  fb.className='fp-feedback partial';
-  fb.innerHTML=`Pista: ${q.hint||''}`;
+  const fb=document.getElementById('fp-feedback');fb.style.display='block';
+  fb.className='fp-feedback partial';fb.innerHTML=`Pista: ${q.hint||''}`;
 }
+function nextFP(){fpIdx++;renderExercisePhase();}
+function trackError(tag){if(!tag)return;if(!state.errors[tag])state.errors[tag]={count:0};state.errors[tag].count++;save(state);}
 
-function nextFP() { fpIdx++; renderExercisePhase(); }
+// ── Claude prompt builder ─────────────────────────────────────────────────────
+function buildClaudePrompt(data){
+  const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
+  const errs=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,4);
+  const errStr=errs.length>0?errs.map(([k,v])=>`"${k}" (×${v.count})`).join(', '):'ninguno registrado aún';
+  const mcResults=(data.exercises_mc||[]).map((q,i)=>`- ${q.question.slice(0,60)}...`).slice(0,3).join('\n');
+  const fpResults=(data.exercises_fp||[]).map((q,i)=>`- ${q.prompt.slice(0,60)}...`).slice(0,2).join('\n');
 
-function trackError(tag) {
-  if(!tag) return;
-  if(!state.errors[tag]) state.errors[tag]={count:0};
-  state.errors[tag].count++;
-  save(state);
-}
-
-// ── Prompt builder ────────────────────────────────────────────────────────────
-function buildPrompt() {
-  const idx=Math.min(state.day,TOTAL-1); const t=ALL[idx];
-  const errList=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,3).map(([k])=>k).join(', ')||'ninguno registrado aún';
-  return `Sesión de inglés — Día ${idx+1} de 45
+  return `===== SESIÓN DE PRÁCTICA — Día ${idx+1}/45 =====
 Tema: ${t.title} | Fase ${t.phase}/3 (${t.phaseName})
 Contexto: ${t.sub}
 
-Soy hispanohablante, nivel A2-B1. Ya completé la sesión teórica del día.
-Mis errores frecuentes registrados: ${errList}.
+PERFIL DEL ALUMNO:
+- Hispanohablante nativo, nivel A2-B1 en inglés
+- Errores frecuentes registrados: ${errStr}
+- Ya completó la sesión teórica del día (fórmula, ejemplos, ejercicios escritos)
 
-Por favor:
-1. Empieza con un micro-repaso rápido de mis errores frecuentes si los hay.
-2. Practica este tema conmigo en conversación natural — hazme preguntas, corrígeme directamente sin excesivo elogio, adapta la dificultad según mis respuestas.
-3. Si cometo un error, explícame brevemente por qué está mal y dame la forma correcta.
-4. Al final dame 2-3 frases para que practique pronunciación en voz alta.`;
+ARQUITECTURA DE LA SESIÓN (sigue este orden estricto):
+
+FASE 1 — CALENTAMIENTO (2-3 intercambios)
+• Si hay errores frecuentes registrados, empieza con UN mini-ejercicio de repaso sobre el error más repetido
+• Luego haz UNA pregunta simple sobre el tema de hoy para activar el conocimiento
+• Espera mi respuesta antes de continuar. NO avances a la siguiente fase sin mi respuesta.
+• Si cometo un error: corrígeme con el patrón exacto → "✗ [mi error] → ✓ [forma correcta]" + explicación de UNA línea sobre por qué. Sin elogios excesivos.
+
+FASE 2 — PRÁCTICA GUIADA (4-5 intercambios)
+• Ejercicios por turnos: una pregunta → espera mi respuesta → corrige/confirma → siguiente
+• Tipos: completar frases, transformar (afirmativo→negativo→pregunta), traducción inversa
+• Detecta estos errores típicos del hispanohablante para este tema y corrígelos con mensaje específico:
+${(data.error_tags_for_claude||['error de auxiliar','concordancia sujeto-verbo','tiempo verbal incorrecto']).map(e=>`  · ${e}`).join('\n')}
+• Adapta la dificultad: si fallo 2 seguidas, simplifica; si acierto 3 seguidas, sube un nivel
+
+FASE 3 — PRODUCCIÓN LIBRE (2-3 intercambios)
+• Propón un mini-escenario real (email corto, conversación cotidiana, descripción de tu trabajo)
+• Yo escribo libremente usando el tema del día
+• Tú corriges solo los errores relacionados con ${t.title}, no todo
+• Cierra con 2-3 frases cortas para que practique pronunciación en voz alta (escríbelas en inglés)
+
+REGLAS DE CORRECCIÓN:
+• Formato siempre: ✗ [error] → ✓ [corrección] | Motivo: [una línea]
+• Tono: directo, preciso, sin excesivo elogio
+• Nunca des la respuesta antes de que yo la intente
+• Una pregunta por turno, nunca dos a la vez
+
+Empieza ahora con la Fase 1.`;
 }
 
-// ── Copy prompt ───────────────────────────────────────────────────────────────
-function copyPrompt() {
+// ── Copy ─────────────────────────────────────────────────────────────────────
+function copyPrompt(){
   navigator.clipboard.writeText(currentPrompt).then(()=>{
     const btn=document.getElementById('btn-copy');
-    btn.textContent='Copiado ✓'; btn.className='btn-copy copied';
+    btn.textContent='Copiado ✓';btn.className='btn-copy copied';
     setTimeout(()=>{btn.textContent='Copiar';btn.className='btn-copy';},2200);
   });
 }
 
-// ── Generate session ──────────────────────────────────────────────────────────
-async function generateSession() {
-  const idx=Math.min(state.day,TOTAL-1); const t=ALL[idx];
+// ── Generate ─────────────────────────────────────────────────────────────────
+async function generateSession(){
+  const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
   const btn=document.getElementById('btn-generate');
-  btn.disabled=true; btn.textContent='Generando...';
+  btn.disabled=true;btn.textContent='Generando...';
   document.getElementById('session-content').style.display='none';
   document.getElementById('session-loading').style.display='block';
 
-  const apiPrompt=`You are an expert English teacher for Spanish speakers. Return ONLY valid JSON, no markdown fences.
+  const apiPrompt=`You are an expert English teacher for Spanish speakers. Return ONLY valid JSON, no markdown fences, no extra text.
 
-Topic: ${t.title}
-Context: ${t.sub}
-Phase: ${t.phase}/3 (${t.phaseName})
-Student: Spanish speaker, A2-B1 level. Explanations should be in English with Spanish translations in parentheses.
+Topic: ${t.title} | Context: ${t.sub} | Phase: ${t.phase}/3 (${t.phaseName})
+Student level: A2-B1 Spanish speaker. Use English with Spanish translations in parentheses.
 
-Return this exact JSON (adapt ALL content to the topic above):
+Return this exact JSON structure (adapt ALL content to the topic "${t.title}"):
 {
-  "phonetics": [
-    {"word":"works","ipa":"/wɜːrks/","meaning":"trabaja (3ª persona)"},
-    {"word":"doesn't","ipa":"/ˈdʌznt/","meaning":"no hace"},
-    {"word":"always","ipa":"/ˈɔːlweɪz/","meaning":"siempre"},
-    {"word":"usually","ipa":"/ˈjuːʒuəli/","meaning":"normalmente"}
+  "phonetics":[
+    {"word":"is","ipa":"/ɪz/","meaning":"es/está (3ª persona)"},
+    {"word":"working","ipa":"/ˈwɜːrkɪŋ/","meaning":"trabajando"},
+    {"word":"right now","ipa":"/raɪt naʊ/","meaning":"ahora mismo"},
+    {"word":"aren't","ipa":"/ˈɑːrnt/","meaning":"no están (negación)"}
   ],
-  "formula":"<span class='f-subject'>Subject</span> + <span class='f-verb'>verb</span> + ...",
-  "grammar_note":"Explanation in English with <strong>key terms</strong> highlighted. <em>(Español: traducción del punto clave)</em>",
+  "formula":"<span class='f-subject'>Subject</span> + <span class='f-aux'>am/is/are</span> + <span class='f-verb'>verb+ing</span><br><span class='f-neg'>Negative:</span> <span class='f-subject'>Subject</span> + <span class='f-aux'>am/is/are</span> + <span class='f-neg'>not</span> + <span class='f-verb'>verb+ing</span>",
+  "grammar_note":"Use <strong>present continuous</strong> for actions happening RIGHT NOW or temporary situations. <em>(Español: para acciones que están ocurriendo en este momento — no para hábitos)</em>",
   "examples":[
-    {"en":"She <strong style='color:var(--purple)'>works</strong> at a tech company.","en_plain":"She works at a tech company.","en_highlighted":"She <strong style='color:var(--purple)'>works</strong> at a tech company.","es":"Ella trabaja en una empresa tecnológica.","note":"3rd person → adds -s"},
-    {"en":"I <strong style='color:var(--purple)'>don't eat</strong> meat.","en_plain":"I don't eat meat.","en_highlighted":"I <strong style='color:var(--purple)'>don't eat</strong> meat.","es":"No como carne.","note":"don't for 1st/2nd person"},
-    {"en":"<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English?","en_plain":"Does he speak English?","en_highlighted":"<strong style='color:var(--purple)'>Does</strong> he <strong style='color:var(--purple)'>speak</strong> English?","es":"¿Habla inglés?","note":"Questions: Does + base verb"}
+    {"en":"She <strong style='color:var(--purple)'>is working</strong> from home today.","en_plain":"She is working from home today.","en_highlighted":"She <strong style='color:var(--purple)'>is working</strong> from home today.","es":"Ella está trabajando desde casa hoy.","note":"Temporary situation → present continuous"},
+    {"en":"They <strong style='color:var(--purple)'>aren't listening</strong> to me!","en_plain":"They aren't listening to me!","en_highlighted":"They <strong style='color:var(--purple)'>aren't listening</strong> to me!","es":"¡No me están escuchando!","note":"aren't = are not (contraction)"},
+    {"en":"<strong style='color:var(--purple)'>Is</strong> he <strong style='color:var(--purple)'>coming</strong> to the meeting?","en_plain":"Is he coming to the meeting?","en_highlighted":"<strong style='color:var(--purple)'>Is</strong> he <strong style='color:var(--purple)'>coming</strong> to the meeting?","es":"¿Va a venir a la reunión?","note":"Question: auxiliary moves to front"}
   ],
-  "error":{"wrong":"She don't know.","correct":"She doesn't know.","explanation":"With he/she/it always use <strong>doesn't</strong>. Spanish speakers often forget because Spanish doesn't have a separate auxiliary verb."},
+  "error":{"wrong":"I am work right now.","correct":"I am working right now.","explanation":"Present continuous always needs <strong>verb+ing</strong>. Never use the base form after am/is/are."},
+  "error_tags_for_claude":["omitir el auxiliar am/is/are","usar infinitivo en lugar de -ing","confundir present simple con present continuous"],
   "exercises_mc":[
-    {"question":"Choose the correct form: 'He ___ to work every day.'","options":["go","goes","is going","going"],"correct":1,"explanation":"3rd person singular (he/she/it) adds -s to the verb.","error_tag":"3rd person -s","speak":"He goes to work every day."},
-    {"question":"Which sentence is correct?","options":["She don't like coffee.","She doesn't likes coffee.","She doesn't like coffee.","She not like coffee."],"correct":2,"explanation":"Negative: subject + doesn't + base verb (no -s on main verb).","error_tag":"doesn't vs don't","speak":"She doesn't like coffee."},
-    {"question":"'They ___ football on Sundays.'","options":["plays","is playing","play","played"],"correct":2,"explanation":"With they/we/I/you, use the base form (no -s).","error_tag":"base form plural","speak":"They play football on Sundays."},
-    {"question":"How do you ask a question? '___ she work in Madrid?'","options":["Is","Does","Do","Has"],"correct":1,"explanation":"Questions with he/she/it: Does + subject + base verb.","error_tag":"does questions","speak":"Does she work in Madrid?"}
+    {"question":"Choose the correct form: 'She ___ a report right now.'","options":["write","writes","is writing","writing"],"correct":2,"explanation":"Present continuous = am/is/are + verb+ing. 3rd person uses 'is'.","error_tag":"omitir auxiliar","speak":"She is writing a report right now."},
+    {"question":"Which is correct?","options":["They are not work today.","They aren't working today.","They don't working today.","They not are working."],"correct":1,"explanation":"Negative: subject + aren't/isn't + verb+ing.","error_tag":"forma negativa -ing","speak":"They aren't working today."},
+    {"question":"'___ you listening to me?' — Complete the question.","options":["Do","Are","Is","Have"],"correct":1,"explanation":"Questions: auxiliary (am/is/are) + subject + verb+ing.","error_tag":"preguntas present continuous","speak":"Are you listening to me?"},
+    {"question":"When do we use present continuous?","options":["For habits and routines","For actions happening right now","For completed past actions","For future plans only"],"correct":1,"explanation":"Present continuous = actions in progress NOW or temporary situations.","error_tag":"uso correcto","speak":"I am learning English right now."}
   ],
   "exercises_fp":[
-    {"prompt":"Translate: 'Mi hermano trabaja en un hospital.' (My brother works...)","accepted":["my brother works in a hospital","my brother works at a hospital"],"model":"My brother works in a hospital.","hint":"3rd person — remember the -s on the verb.","feedback_ok":"Perfect use of 3rd person singular.","feedback_partial":"Almost! Check the verb ending.","feedback_wrong":"3rd person singular (he/she/it) always needs -s: work → works.","error_tag":"3rd person -s","speak":"My brother works in a hospital."},
-    {"prompt":"Make it negative: 'I eat fish.' → 'I ___ fish.'","accepted":["i don't eat fish","i do not eat fish"],"model":"I don't eat fish.","hint":"Use don't (do not) + base verb.","feedback_ok":"Correct negative form!","feedback_partial":"Check the auxiliary verb.","feedback_wrong":"Negative: I/you/we/they + don't + base verb.","error_tag":"don't negative","speak":"I don't eat fish."},
-    {"prompt":"Ask a question: You want to know if Ana speaks French. Start with 'Does...'","accepted":["does ana speak french","does she speak french"],"model":"Does Ana speak French?","hint":"Does + subject + base verb (no -s on main verb).","feedback_ok":"Great question structure!","feedback_partial":"Remember: after Does, the main verb has no -s.","feedback_wrong":"Questions: Does + he/she/it + base verb (speak, not speaks).","error_tag":"does questions","speak":"Does Ana speak French?"}
+    {"prompt":"Translate: 'Mi jefe está hablando por teléfono ahora mismo.'","accepted":["my boss is talking on the phone right now","my boss is speaking on the phone right now","my boss is talking on his phone right now"],"model":"My boss is talking on the phone right now.","hint":"Subject + is + verb+ing + complement","feedback_ok":"Perfect! Correct use of present continuous.","feedback_partial":"Almost! Remember the structure: is + verb+ing.","feedback_wrong":"Use: My boss + IS + talk+ING. Never 'My boss talking' or 'My boss talk'.","error_tag":"omitir auxiliar","speak":"My boss is talking on the phone right now."},
+    {"prompt":"Make it negative: 'I am working today.' → 'I ___ today.'","accepted":["i am not working today","i'm not working today","i am not working"],"model":"I'm not working today.","hint":"I + am + not + working","feedback_ok":"Correct negative form!","feedback_partial":"Check: am + not + verb+ing.","feedback_wrong":"Negative: I'm not working / I am not working. Never 'I am not work'.","error_tag":"forma negativa -ing","speak":"I'm not working today."},
+    {"prompt":"Ask: you want to know what your colleague is doing right now. Start with 'What...'","accepted":["what are you doing","what are you doing right now","what are you working on"],"model":"What are you doing right now?","hint":"What + are + you + doing?","feedback_ok":"Natural question!","feedback_partial":"Good structure. Full version: What are you doing right now?","feedback_wrong":"Questions: What + ARE + you + verb+ING? Not 'What you are doing?'","error_tag":"preguntas present continuous","speak":"What are you doing right now?"}
   ],
-  "tip":{"phrase":"I don't buy it.","meaning":"No solo 'no lo compro' — coloquialmente significa <strong>'no me lo creo'</strong>. Example: 'He said he was sick.' — 'I don't buy it.' (No me lo creo.)"}
+  "tip":{"phrase":"I'm working on it.","meaning":"No solo 'estoy trabajando en ello' — es la respuesta estándar cuando alguien te pregunta por el avance de algo. <strong>Equivale a 'lo estoy gestionando'</strong>. Ejemplo: 'Is the report ready?' — 'I'm working on it.'"}
 }`;
 
-  try {
+  try{
     const res=await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
       headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:apiPrompt}]})
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2200,messages:[{role:"user",content:apiPrompt}]})
     });
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`);}
     const data=await res.json();
     const raw=data.content?.find(b=>b.type==='text')?.text||'';
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const parsed=JSON.parse(clean);
-
-    const cost=((data.usage?.input_tokens||1000)/1e6*3)+((data.usage?.output_tokens||1500)/1e6*15);
-    state.cost=(state.cost||0)+cost; state.sessions=(state.sessions||0)+1; save(state);
-
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const cost=((data.usage?.input_tokens||1000)/1e6*3)+((data.usage?.output_tokens||1800)/1e6*15);
+    state.cost=(state.cost||0)+cost;state.sessions=(state.sessions||0)+1;save(state);
     document.getElementById('session-loading').style.display='none';
-    renderSession(parsed); renderMeta();
-    btn.disabled=false; btn.textContent='Regenerar sesión';
-
-  } catch(e) {
+    renderSession(parsed);renderMeta();
+    btn.disabled=false;btn.textContent='Regenerar sesión';
+  }catch(e){
     document.getElementById('session-loading').style.display='none';
     document.getElementById('session-content').style.display='block';
     document.getElementById('grammar-card').innerHTML=`<div style="color:var(--red);font-size:13px;padding:8px">Error: ${e.message}<br><br>Verifica tu API key en Configuración.</div>`;
-    btn.disabled=false; btn.textContent='Generar sesión de hoy';
+    btn.disabled=false;btn.textContent='Generar sesión de hoy';
   }
 }
 
-// ── Navigation ────────────────────────────────────────────────────────────────
+// ── Nav ───────────────────────────────────────────────────────────────────────
 function markDone(){
   const today=new Date().toISOString().slice(0,10);
-  if(!state.done.includes(today)) state.done.push(today);
-  state.day=Math.min(state.day+1,TOTAL-1); save(state); renderFull();
+  if(!state.done.includes(today))state.done.push(today);
+  state.day=Math.min(state.day+1,TOTAL-1);save(state);renderFull();
 }
 function skipDay(){state.day=Math.min(state.day+1,TOTAL-1);save(state);renderFull();}
 function resetProgress(){if(confirm('¿Reiniciar progreso?')){state.day=0;state.done=[];state.errors={};save(state);renderFull();}}
 function resetUsage(){if(confirm('¿Reiniciar contador mensual?')){state.cost=0;state.sessions=0;state.mk=monthKey();save(state);renderMeta();}}
 
-renderFull();
+// ── Init ──────────────────────────────────────────────────────────────────────
+if(isNewUser) { renderFull(); showDayModal(); }
+else renderFull();
 </script>
 </body>
 </html>
