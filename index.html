@@ -258,6 +258,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .banner.setup { background: var(--ld-pale); border-left-color: var(--ld-teal); color: var(--text2); }
 .banner.danger { background: var(--red-l); border-left-color: var(--red); color: var(--red); font-weight: 600; }
 
+/* ── Intro card ── */
+.intro-card { background: linear-gradient(135deg, var(--ld-dark) 0%, #1a3530 100%); border-radius: 14px; padding: 18px 20px; margin-top: 16px; display: flex; gap: 14px; align-items: flex-start; }
+.intro-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+.intro-body { flex: 1; }
+.intro-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ld-amber); margin-bottom: 7px; }
+.intro-text { font-size: 13.5px; color: rgba(255,255,255,0.85); line-height: 1.75; }
+
+/* ── Transform exercise ── */
+.tr-type-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: var(--ld-amber); color: var(--ld-dark); border-radius: 5px; padding: 2px 8px; margin-bottom: 10px; }
+.tr-source { font-size: 16px; font-weight: 700; color: var(--ld-dark); margin-bottom: 6px; padding: 10px 14px; background: var(--blue-l); border-radius: 9px; border-left: 3px solid var(--blue); }
+.tr-instruction { font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+.tr-input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border2); border-radius: 10px; font-size: 14px; color: var(--text); background: var(--bg); outline: none; font-family: inherit; }
+.tr-input:focus { border-color: var(--ld-teal); }
+
 /* ── Skeleton ── */
 .skeleton { background: var(--bg2); border-radius: 14px; padding: 28px; text-align: center; color: var(--text3); font-size: 13px; margin-top: 16px; border: 1px solid var(--border); }
 @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
@@ -408,6 +422,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
   <!-- Full session -->
   <div id="session-loading" style="display:none"><div class="skeleton"><span class="loading-dots">Generando tu sesión</span></div></div>
   <div id="session-content" style="display:none">
+    <div id="intro-card" class="intro-card" style="display:none"></div>
     <div class="sec-label">Pronunciación clave</div>
     <div class="phonetics-card"><div class="phonetics-grid" id="phonetics-grid"></div></div>
     <div class="sec-label">Estructura gramatical</div>
@@ -503,7 +518,31 @@ const CURRICULUM = [
     {title:"Repaso y consolidación",sub:"Integración de todos los conceptos"},
   ]},
 ];
-const ALL = CURRICULUM.flatMap(p=>p.topics.map(t=>({...t,phase:p.phase,phaseName:p.name})));
+// Build flat list with review sessions injected every 5 content days
+// Days 5,10,15,20,25,30,35,40,45 = review. Total = 45 content + 9 review = 54 slots
+function buildAllWithReviews(){
+  const base=CURRICULUM.flatMap(p=>p.topics.map(t=>({...t,phase:p.phase,phaseName:p.name,isReview:false})));
+  const result=[];
+  let contentCount=0;
+  for(let i=0;i<base.length;i++){
+    result.push(base[i]);
+    contentCount++;
+    if(contentCount%5===0&&i<base.length-1){
+      // collect last 5 content topics
+      const last5=base.slice(Math.max(0,i-4),i+1);
+      result.push({
+        title:'Repaso · Lecciones '+(contentCount-4)+'-'+contentCount,
+        sub:'Consolidación de los últimos 5 temas',
+        phase:base[i].phase,
+        phaseName:base[i].phaseName,
+        isReview:true,
+        reviewTopics:last5.map(t=>t.title)
+      });
+    }
+  }
+  return result;
+}
+const ALL=buildAllWithReviews();
 const TOTAL=ALL.length; const DAYS=['L','M','X','J','V','S','D'];
 
 function monthKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()}`;}
@@ -520,7 +559,7 @@ let raw=load(), state, cfg=loadCfg(), isNew=false;
 if(raw){state={day:raw.day||0,done:raw.done||[],mk:monthKey(),cost:raw.cost||raw.monthCost||0,sessions:raw.sessions||0,errors:raw.errors||{}};if(state.mk!==monthKey()){state.mk=monthKey();state.cost=0;state.sessions=0;}save(state);}
 else{isNew=true;state={day:0,done:[],mk:monthKey(),cost:0,sessions:0,errors:{}};}
 
-let exData=null,exPhase=0,mcIdx=0,mcScore=0,mcAnswered=false,fpIdx=0,fpScore=0;
+let exData=null,exPhase=0,mcIdx=0,mcScore=0,mcAnswered=false,fpIdx=0,fpScore=0,trIdx=0,trScore=0;
 let currentExIdx=0,currentExamples=[],currentPrompt='',quickMode=false;
 
 // ── Audio ────────────────────────────────────────────────────────────────────
@@ -595,7 +634,7 @@ function renderMeta(){
 
   document.getElementById('hero-badge').textContent=`Día ${idx+1} de ${TOTAL}`;
   document.getElementById('hero-day').textContent=`Fase ${t.phase} · ${t.phaseName}`;
-  document.getElementById('hero-title').textContent=t.title;
+  document.getElementById('hero-title').textContent=t.isReview?'🔄 '+t.title:t.title;
   document.getElementById('hero-sub').textContent=t.sub;
   document.getElementById('hero-prog-fill').style.width=phPct+'%';
   document.getElementById('hero-prog-pct').textContent=phPct+'%';
@@ -622,7 +661,8 @@ function renderMeta(){
 
   const btn=document.getElementById('btn-generate');
   btn.disabled=limited||!cfg.key;
-  btn.textContent=!cfg.key?'Configura tu API key primero':limited?'Límite mensual alcanzado':'Generar sesión de hoy';
+  const isRev=ALL[Math.min(state.day,TOTAL-1)]?.isReview;
+  btn.textContent=!cfg.key?'Configura tu API key':limited?'Límite alcanzado':isRev?'Generar sesión de repaso':'Generar sesión de hoy';
 }
 
 function renderFull(){
@@ -638,12 +678,21 @@ function renderFull(){
 // ── Session render ────────────────────────────────────────────────────────────
 function renderSession(data){
   exData=data;
+  const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
+
+  // Intro explanation in Spanish
+  const introEl=document.getElementById('intro-card');
+  if(data.intro_es){
+    introEl.style.display='block';
+    introEl.innerHTML=`<div class="intro-icon">📖</div><div class="intro-body"><div class="intro-title">${t.isReview?'Sesión de repaso':'¿De qué trata hoy?'}</div><div class="intro-text">${data.intro_es}</div></div>`;
+  } else introEl.style.display='none';
+
   document.getElementById('phonetics-grid').innerHTML=(data.phonetics||[]).map(p=>`<div class="ph-item"><div class="ph-word">${p.word}</div><div class="ph-ipa">${p.ipa}</div><div class="ph-meaning">${p.meaning}</div><button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}',this)">▶ Escuchar</button></div>`).join('');
   document.getElementById('grammar-card').innerHTML=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:8px">Fórmula</div><div class="formula-box">${data.formula||''}</div><div class="grammar-note">${data.grammar_note||''}</div>`;
   currentExamples=data.examples||[];currentExIdx=0;renderExamples();
   const err=data.error||{};
   document.getElementById('error-card').innerHTML=`<div class="err-wrong"><div class="err-wrong-lbl">✗ Error frecuente</div><div class="err-wrong-txt">${err.wrong||''}</div></div><div class="err-right"><div class="err-right-lbl">✓ Correcto</div><div class="err-right-txt">${err.correct||''}</div></div><div class="err-explain">${err.explanation||''}</div>`;
-  mcIdx=0;mcScore=0;mcAnswered=false;fpIdx=0;fpScore=0;exPhase=0;renderExercisePhase();
+  mcIdx=0;mcScore=0;mcAnswered=false;fpIdx=0;fpScore=0;trIdx=0;trScore=0;exPhase=0;renderExercisePhase();
   const tip=data.tip||{};
   document.getElementById('tip-card').innerHTML=`<div class="tip-lbl">Tip del día</div><div class="tip-phrase">"${tip.phrase||''}"</div><div class="tip-meaning">${tip.meaning||''}</div>`;
   currentPrompt=buildClaudePrompt(data);
@@ -662,15 +711,35 @@ function nextEx(){goEx((currentExIdx+1)%currentExamples.length);}
 function prevEx(){goEx((currentExIdx-1+currentExamples.length)%currentExamples.length);}
 
 function renderExercisePhase(){
-  const mc=exData.exercises_mc||[];const fp=exData.exercises_fp||[];const c=document.getElementById('exercises-card');
-  const tabs=`<div class="ex-phase-tabs"><div class="ex-tab ${exPhase===0?'active':exPhase>0?'done':''}">1 · Reconocimiento</div><div class="ex-tab ${exPhase===1?'active':exPhase>1?'done':exPhase<1?'locked':''}">2 · Producción</div></div>`;
+  const mc=exData.exercises_mc||[];const fp=exData.exercises_fp||[];const tr=exData.exercises_tr||[];
+  const c=document.getElementById('exercises-card');
+  const tabs=`<div class="ex-phase-tabs">
+    <div class="ex-tab ${exPhase===0?'active':exPhase>0?'done':''}">1 · Reconocimiento</div>
+    <div class="ex-tab ${exPhase===1?'active':exPhase>1?'done':exPhase<1?'locked':''}">2 · Transformación</div>
+    <div class="ex-tab ${exPhase===2?'active':exPhase>2?'done':exPhase<2?'locked':''}">3 · Producción</div>
+  </div>`;
+
   if(exPhase===0){
     if(mcIdx<mc.length){
       const q=mc[mcIdx];
       c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Pregunta ${mcIdx+1}/${mc.length}</span><span>${mcScore} correctas</span></div><div class="score-bar"><div class="score-fill" style="width:${(mcIdx/mc.length)*100}%"></div></div></div><div class="mc-question">${q.question}</div><div class="mc-options" id="mc-opts">${q.options.map((o,i)=>`<div class="mc-option" onclick="checkMC(${i})">${o}</div>`).join('')}</div><div id="mc-feedback" style="display:none" class="mc-feedback"></div><div style="text-align:right;margin-top:6px"><button class="btn-next-q" id="btn-nmc" onclick="nextMC()" style="display:none">Siguiente →</button></div>`;
     } else {
       const pct=Math.round((mcScore/mc.length)*100);const pass=pct>=60;
-      c.innerHTML=tabs+`<div class="phase-result"><div class="phase-result-score" style="color:${pass?'var(--ld-teal)':'var(--red)'}">${pct}%</div><div class="phase-result-label">${pass?'¡Listo para producción! 👍':'Repasa los ejemplos antes de continuar'}</div><button class="btn-next-phase" onclick="startFP()">Pasar a producción →</button>${!pass?`<button class="btn-retry" onclick="retryMC()">Repetir</button>`:''}</div>`;
+      c.innerHTML=tabs+`<div class="phase-result"><div class="phase-result-score" style="color:${pass?'var(--ld-teal)':'var(--red)'}">${pct}%</div><div class="phase-result-label">${pass?'¡A transformar! 👍':'Repasa los ejemplos antes de continuar'}</div><button class="btn-next-phase" onclick="startTR()">Pasar a transformación →</button>${!pass?`<button class="btn-retry" onclick="retryMC()">Repetir</button>`:''}</div>`;
+    }
+  } else if(exPhase===1){
+    if(trIdx<tr.length){
+      const q=tr[trIdx];
+      c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${trIdx+1}/${tr.length}</span><span>${trScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(trIdx/tr.length)*100}%"></div></div></div>
+      <div class="tr-type-badge">${q.type_label||'Transforma'}</div>
+      <div class="tr-source">${q.source}</div>
+      <div class="tr-instruction">${q.instruction}</div>
+      <input class="tr-input" id="tr-input" type="text" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+      <div class="fp-actions"><button class="btn-check" onclick="checkTR()">Verificar</button><button class="btn-hint" onclick="showTRHint()">Pista</button></div>
+      <div id="tr-feedback" style="display:none" class="fp-feedback"></div>`;
+    } else {
+      const pct=Math.round((trScore/tr.length)*100);const pass=pct>=60;
+      c.innerHTML=tabs+`<div class="phase-result"><div class="phase-result-score" style="color:${pass?'var(--ld-teal)':'var(--red)'}">${pct}%</div><div class="phase-result-label">${pass?'¡Listo para producción libre! 🚀':'Sigue practicando'}</div><button class="btn-next-phase" onclick="startFP()">Pasar a producción →</button>${!pass?`<button class="btn-retry" onclick="retryTR()">Repetir</button>`:''}</div>`;
     }
   } else {
     if(fpIdx<fp.length){
@@ -699,7 +768,32 @@ function checkMC(i){
 }
 function nextMC(){mcIdx++;mcAnswered=false;renderExercisePhase();}
 function retryMC(){mcIdx=0;mcScore=0;mcAnswered=false;renderExercisePhase();}
-function startFP(){exPhase=1;fpIdx=0;fpScore=0;renderExercisePhase();}
+function startTR(){exPhase=1;trIdx=0;trScore=0;renderExercisePhase();}
+function startFP(){exPhase=2;fpIdx=0;fpScore=0;renderExercisePhase();}
+
+function checkTR(){
+  const inp=document.getElementById('tr-input');const answer=(inp?.value||'').trim();if(!answer)return;
+  const q=(exData.exercises_tr||[])[trIdx];
+  const norm=s=>s.toLowerCase().replace(/[^a-z0-9\s']/g,'').trim();
+  const userN=norm(answer);const accepted=(q.accepted||[]).map(norm);
+  const isExact=accepted.some(a=>userN===a);
+  const isPartial=!isExact&&accepted.some(a=>userN.split(' ').filter(w=>a.split(' ').includes(w)).length/a.split(' ').length>=0.65);
+  const fb=document.getElementById('tr-feedback');if(!fb)return;
+  fb.style.display='block';
+  if(isExact){trScore++;fb.className='fp-feedback ok';fb.innerHTML=`✓ Perfecto. ${q.feedback_ok||''}`;if(q.speak)setTimeout(()=>speak(q.speak),300);}
+  else if(isPartial){fb.className='fp-feedback partial';fb.innerHTML=`≈ Casi. ${q.feedback_partial||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;trackError(q.error_tag||'');if(q.speak)setTimeout(()=>speak(q.model||''),400);}
+  else{fb.className='fp-feedback nope';fb.innerHTML=`✗ ${q.feedback_wrong||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;trackError(q.error_tag||'');if(q.speak)setTimeout(()=>speak(q.model||''),400);}
+  if(inp)inp.disabled=true;
+  const acts=document.querySelector('.fp-actions');
+  if(acts)acts.innerHTML=`<button class="btn-check" onclick="nextTR()">Siguiente →</button>`;
+}
+function showTRHint(){
+  const q=(exData.exercises_tr||[])[trIdx];
+  const fb=document.getElementById('tr-feedback');if(!fb)return;
+  fb.style.display='block';fb.className='fp-feedback partial';fb.innerHTML=`Pista: ${q.hint||''}`;
+}
+function nextTR(){trIdx++;renderExercisePhase();}
+function retryTR(){trIdx=0;trScore=0;renderExercisePhase();}
 
 function checkFP(){
   const inp=document.getElementById('fp-input');const answer=(inp.value||'').trim();if(!answer)return;
@@ -721,57 +815,68 @@ function trackError(tag){if(!tag)return;if(!state.errors[tag])state.errors[tag]=
 
 function buildClaudePrompt(data){
   const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
-  const errs=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,4);
+  const isReview=t.isReview||false;
+  const errs=Object.entries(state.errors||{}).filter(([,v])=>v.count>0).sort((a,b)=>b[1].count-a[1].count).slice(0,3);
   const errStr=errs.length>0?errs.map(([k,v])=>`"${k}" (×${v.count})`).join(', '):'ninguno registrado aún';
-  return `===== SESIÓN DE PRÁCTICA — Día ${idx+1}/45 =====
-Tema: ${t.title} | Fase ${t.phase}/3 (${t.phaseName})
+  const reviewTopics=isReview&&t.reviewTopics?t.reviewTopics.join(', '):'';
+
+  return `===== SESIÓN DE PRÁCTICA — Día ${idx+1}/${TOTAL} =====
+${isReview?`TIPO: Sesión de REPASO — Temas: ${reviewTopics}`:`Tema: ${t.title} | Fase ${t.phase}/3 (${t.phaseName})`}
 Contexto: ${t.sub}
 
 PERFIL DEL ALUMNO:
 - Hispanohablante nativo, nivel A2-B1
-- Errores frecuentes registrados: ${errStr}
-- Ya completó la sesión teórica del día en la app (fonética, fórmula, ejemplos, ejercicios escritos)
+- Errores frecuentes acumulados: ${errStr}
+- Ya completó la sesión teórica del día en la app
+
+ERRORES ESPECÍFICOS A VIGILAR (corrígelos siempre que aparezcan):
+- Omitir el auxiliar (do/does/did/am/is/are/have) en preguntas y negaciones
+- Usar el infinitivo donde se necesita -ing o participio
+- Traducción literal del español que produce orden de palabras incorrecto
+- Olvidar la -s de tercera persona en present simple
 
 ARQUITECTURA DE LA SESIÓN (sigue este orden estricto):
 
 FASE 1 — CALENTAMIENTO (conversación, 2-3 turnos)
-- Si hay errores frecuentes, empieza con UN mini-ejercicio de repaso del error más repetido
-- Luego haz UNA pregunta simple sobre el tema para activar conocimiento
-- Espera mi respuesta antes de continuar. Una pregunta por turno.
-- Corrige con: ✗ [error] → ✓ [corrección] | Motivo: una línea. Tono directo, sin elogios excesivos.
+• Haz UNA pregunta de activación sobre el tema${isReview?` o sobre uno de los temas de repaso`:''}
+• Espera mi respuesta antes de continuar. Una pregunta por turno.
+• Corrige con: ✗ [error] → ✓ [corrección] | Motivo: una línea. Tono directo, sin elogios excesivos.
 
 FASE 2 — PRÁCTICA GUIADA (widget interactivo)
 IMPORTANTE: genera el widget usando la herramienta de visualización inline del chat (show_widget), NO como archivo HTML descargable.
 
 El widget debe contener 2-3 actividades combinando distintos tipos según el tema. Elige libremente entre:
-
-- QUIZ paso a paso — una pregunta a la vez con botón "Siguiente →", feedback inmediato en color
+- QUIZ paso a paso — una pregunta a la vez con "Siguiente →", feedback inmediato en color
 - FILL IN THE BLANKS — frase con hueco, input de texto, validación al instante
 - MATCH PAIRS — conecta inglés con traducción, con animación al acertar/fallar
-- SENTENCE BUILDER — palabras desordenadas que se reordenan (drag & drop o botones de clic)
-- TIMED CHALLENGE — 5 preguntas con cuenta atrás, activa el automatismo
-- LISTEN & CHOOSE — reproduce audio con Web Speech API y el alumno elige qué frase escuchó
+- SENTENCE BUILDER — palabras desordenadas, se reordenan con clic o drag
+- TIMED CHALLENGE — 5 preguntas con cuenta atrás, activa automatismo
+- ERROR HUNTER — frase con error subrayado, el alumno identifica y corrige
+- TRANSFORM — se da frase en afirmativo, se convierte a negativo/pregunta/pasado
+- CLOZE DIALOGUE — diálogo con 3-4 huecos en contexto real (email, conversación de trabajo)
 
-REGLAS DEL WIDGET:
-- Los ejercicios se muestran DE UNO EN UNO con botón "Siguiente →". No apilar todo verticalmente.
+REGLAS CRÍTICAS DEL WIDGET (obligatorio seguirlas para evitar bugs):
+- Los ejercicios se muestran DE UNO EN UNO con botón "Siguiente →". No apilar verticalmente.
+- El <div id="feedback"> siempre va entre el último input/opciones y el botón Check/Siguiente.
+- En quiz y fill-in-the-blank: el feedback y el botón Siguiente se manipulan con classList y style.display directamente sobre elementos existentes. NUNCA llamar a render() o reconstruir el HTML dentro de un event handler.
 - Toda la lógica de corrección en JavaScript dentro del widget. NO usar sendPrompt() para corregir.
-- Botón "▶ Escuchar" en cada ejercicio usando Web Speech API (lang en-US, rate 0.85)
+- Botón "▶ Escuchar" usando Web Speech API (lang en-US, rate 0.85) en cada ejercicio
 - Barra de progreso que avanza con cada ejercicio completado
-- Pantalla final con puntuación y mensaje según resultado
-- Paleta de colores: fondo #F3F6F5, acento principal #00897B, acento correcto #3B6D11, error #A32D2D, amber #FFB300
+- Puntuación final con mensaje según resultado (≥80% excelente, ≥60% bien, <60% repasa)
+- Paleta: fondo #F3F6F5, acento #00897B, correcto #3B6D11, error #A32D2D, amber #FFB300
 - Errores típicos a detectar: ${(data.error_tags_for_claude||['concordancia sujeto-verbo','auxiliar incorrecto','tiempo verbal']).join(', ')}
 
 FASE 3 — PRODUCCIÓN LIBRE (conversación, 2-3 turnos)
-- Propón un mini-escenario real (email, conversación de trabajo, descripción cotidiana)
-- Yo escribo libremente usando ${t.title}
-- Corrige solo errores del tema del día
-- Cierra con 2-3 frases cortas para practicar pronunciación en voz alta
+• Propón un mini-escenario real (email, conversación de trabajo, descripción cotidiana)
+• Yo escribo libremente usando ${isReview?'los temas del repaso':t.title}
+• Corrige solo errores del tema del día
+• Cierra con 2-3 frases cortas para practicar pronunciación en voz alta
 
 REGLAS GENERALES:
-- Una acción por turno, nunca dos a la vez
-- Nunca des la respuesta antes de que yo la intente
-- Fases 1 y 3: texto conversacional | Fase 2: widget inline
-- No avances de fase sin mi respuesta
+• Una acción por turno, nunca dos a la vez
+• Nunca des la respuesta antes de que yo la intente
+• Fases 1 y 3: texto conversacional | Fase 2: widget inline
+• No avances de fase sin mi respuesta
 
 Empieza ahora con la Fase 1.`;
 }
@@ -783,29 +888,59 @@ function copyPromptQuick(){
 
 async function generateSession(){
   const idx=Math.min(state.day,TOTAL-1);const t=ALL[idx];
+  const isReview=t.isReview||false;
   const btn=document.getElementById('btn-generate');
   btn.disabled=true;btn.textContent='Generando...';
   document.getElementById('session-content').style.display='none';
   document.getElementById('session-loading').style.display='block';
 
+  const reviewContext=isReview?`This is a REVIEW session covering these 5 topics: ${(t.reviewTopics||[]).join(', ')}. Generate content that reviews and integrates all 5 topics, not just one.`:'';
+
   const apiPrompt=`You are an expert English teacher for Spanish speakers. Return ONLY valid JSON, no markdown fences, no extra text.
 
 Topic: ${t.title} | Context: ${t.sub} | Phase: ${t.phase}/3 (${t.phaseName})
-Student: A2-B1 Spanish speaker. Use English with Spanish translations in parentheses.
+${reviewContext}
+Student: A2-B1 Spanish speaker.
 
-Return this exact JSON (adapt ALL content to "${t.title}"):
-{"phonetics":[{"word":"is","ipa":"/ɪz/","meaning":"es/está"},{"word":"working","ipa":"/ˈwɜːrkɪŋ/","meaning":"trabajando"},{"word":"right now","ipa":"/raɪt naʊ/","meaning":"ahora mismo"},{"word":"aren't","ipa":"/ˈɑːrnt/","meaning":"no están"}],"formula":"<span class='f-subject'>Subject</span> + <span class='f-aux'>am/is/are</span> + <span class='f-verb'>verb+ing</span><br><span class='f-neg'>Negative:</span> <span class='f-subject'>Subject</span> + <span class='f-aux'>am/is/are</span> + <span class='f-neg'>not</span> + <span class='f-verb'>verb+ing</span>","grammar_note":"Use <strong>present continuous</strong> for actions happening RIGHT NOW. <em>(Español: acciones que ocurren en este momento exacto)</em>","examples":[{"en":"She <strong style='color:var(--ld-teal)'>is working</strong> from home today.","en_plain":"She is working from home today.","en_highlighted":"She <strong style='color:var(--ld-teal)'>is working</strong> from home today.","es":"Ella está trabajando desde casa hoy.","note":"Temporary situation → present continuous"},{"en":"They <strong style='color:var(--ld-teal)'>aren't listening</strong> to me!","en_plain":"They aren't listening to me!","en_highlighted":"They <strong style='color:var(--ld-teal)'>aren't listening</strong> to me!","es":"¡No me están escuchando!","note":"aren't = are not"},{"en":"<strong style='color:var(--ld-teal)'>Is</strong> he <strong style='color:var(--ld-teal)'>coming</strong> to the meeting?","en_plain":"Is he coming to the meeting?","en_highlighted":"<strong style='color:var(--ld-teal)'>Is</strong> he <strong style='color:var(--ld-teal)'>coming</strong> to the meeting?","es":"¿Va a venir a la reunión?","note":"Question: auxiliary moves first"}],"error":{"wrong":"I am work right now.","correct":"I am working right now.","explanation":"Present continuous always needs <strong>verb+ing</strong> after am/is/are."},"error_tags_for_claude":["omitir auxiliar am/is/are","usar infinitivo en lugar de -ing","confundir present simple con present continuous"],"exercises_mc":[{"question":"Choose: 'She ___ a report right now.'","options":["write","writes","is writing","writing"],"correct":2,"explanation":"Present continuous = is + verb+ing for 3rd person.","error_tag":"omitir auxiliar","speak":"She is writing a report right now."},{"question":"Which is correct?","options":["They are not work today.","They aren't working today.","They don't working today.","They not are working."],"correct":1,"explanation":"Negative: subject + aren't/isn't + verb+ing.","error_tag":"forma negativa -ing","speak":"They aren't working today."},{"question":"'___ you listening?' — Complete.","options":["Do","Are","Is","Have"],"correct":1,"explanation":"Questions: Are/Is + subject + verb+ing.","error_tag":"preguntas present continuous","speak":"Are you listening?"},{"question":"When do we use present continuous?","options":["For habits","For actions RIGHT NOW","For completed actions","For general facts"],"correct":1,"explanation":"Present continuous = actions in progress at this moment.","error_tag":"uso correcto","speak":"I am learning English right now."}],"exercises_fp":[{"prompt":"Translate: 'Mi jefe está hablando por teléfono ahora mismo.'","accepted":["my boss is talking on the phone right now","my boss is speaking on the phone right now"],"model":"My boss is talking on the phone right now.","hint":"Subject + is + verb+ing + complement","feedback_ok":"Perfect use of present continuous!","feedback_partial":"Almost! Remember: is + verb+ing.","feedback_wrong":"Use: My boss + IS + talk+ING. Never 'My boss talking'.","error_tag":"omitir auxiliar","speak":"My boss is talking on the phone right now."},{"prompt":"Negative: 'I am working today.' → 'I ___ today.'","accepted":["i am not working today","i'm not working today"],"model":"I'm not working today.","hint":"I + am + not + working","feedback_ok":"Correct!","feedback_partial":"Check: am + not + verb+ing.","feedback_wrong":"Negative: I'm not working. Never 'I am not work'.","error_tag":"forma negativa -ing","speak":"I'm not working today."},{"prompt":"Ask what your colleague is doing right now. Start with 'What...'","accepted":["what are you doing","what are you doing right now","what are you working on"],"model":"What are you doing right now?","hint":"What + are + you + doing?","feedback_ok":"Natural!","feedback_partial":"Good! Full: What are you doing right now?","feedback_wrong":"Questions: What + ARE + you + verb+ING?","error_tag":"preguntas present continuous","speak":"What are you doing right now?"}],"tip":{"phrase":"I'm working on it.","meaning":"Respuesta estándar cuando preguntan por el avance de algo. <strong>Equivale a 'lo estoy gestionando'</strong>. Ej: 'Is the report ready?' — 'I'm working on it.'"}}`;
+Return this exact JSON structure (adapt ALL content to "${t.title}"):
+{
+  "intro_es": "Explicación en español, pragmática y concreta: qué es este tema, para qué sirve en la vida real, y cuál es la diferencia clave con el español. Máximo 3 oraciones. Sin tecnicismos innecesarios.",
+  "phonetics": [{"word":"example","ipa":"/ɪɡˈzɑːmpəl/","meaning":"ejemplo"}],
+  "formula": "<span class='f-subject'>Subject</span> + <span class='f-verb'>verb</span>",
+  "grammar_note": "Explanation in English with <strong>key terms</strong>. <em>(Español: traducción del punto clave)</em>",
+  "examples": [
+    {"en":"Example sentence.","en_plain":"Example sentence.","en_highlighted":"<strong style='color:var(--ld-teal)'>Example</strong> sentence.","es":"Oración de ejemplo.","note":"Grammar note here"}
+  ],
+  "error": {"wrong":"Wrong example.","correct":"Correct example.","explanation":"Why it's wrong for Spanish speakers."},
+  "error_tags_for_claude": ["error tag 1","error tag 2","error tag 3"],
+  "exercises_mc": [
+    {"question":"Question text?","options":["A","B","C","D"],"correct":0,"explanation":"Why this is correct.","error_tag":"tag","speak":"Correct answer spoken aloud."},
+    {"question":"Question 2?","options":["A","B","C","D"],"correct":1,"explanation":"Explanation.","error_tag":"tag","speak":"Spoken answer."},
+    {"question":"Question 3?","options":["A","B","C","D"],"correct":2,"explanation":"Explanation.","error_tag":"tag","speak":"Spoken answer."},
+    {"question":"Question 4?","options":["A","B","C","D"],"correct":0,"explanation":"Explanation.","error_tag":"tag","speak":"Spoken answer."}
+  ],
+  "exercises_tr": [
+    {"type_label":"Negativo","source":"She works every day.","instruction":"Convierte a negativo:","accepted":["she doesn't work every day","she does not work every day"],"model":"She doesn't work every day.","hint":"subject + doesn't + verb","feedback_ok":"Correcto!","feedback_partial":"Casi, revisa el auxiliar.","feedback_wrong":"Negativo: subject + doesn't/don't + verb base.","error_tag":"negación","speak":"She doesn't work every day."},
+    {"type_label":"Pregunta","source":"He speaks French.","instruction":"Convierte a pregunta:","accepted":["does he speak french","does he speak french?"],"model":"Does he speak French?","hint":"Does + subject + verb?","feedback_ok":"Perfecto!","feedback_partial":"Casi, revisa el orden.","feedback_wrong":"Pregunta: Does + subject + verb base?","error_tag":"preguntas","speak":"Does he speak French?"},
+    {"type_label":"Traducción","source":"Ellos no saben la respuesta.","instruction":"Traduce al inglés:","accepted":["they don't know the answer","they do not know the answer"],"model":"They don't know the answer.","hint":"they + don't + verb","feedback_ok":"Excelente traducción!","feedback_partial":"Casi correcto.","feedback_wrong":"They + DON'T + know. No olvides el auxiliar.","error_tag":"traducción directa","speak":"They don't know the answer."}
+  ],
+  "exercises_fp": [
+    {"prompt":"Escribe 2 frases usando el tema de hoy sobre tu trabajo o vida cotidiana.","accepted":["i","we","she","he","they","you"],"model":"I work from home every Monday.","hint":"Usa el vocabulario y la estructura del tema.","feedback_ok":"Excelente producción!","feedback_partial":"Casi, revisa la estructura.","feedback_wrong":"Recuerda la estructura del tema.","error_tag":"producción libre","speak":"I work from home every Monday."},
+    {"prompt":"Traduce: 'Mi equipo no entiende el problema todavía.'","accepted":["my team doesn't understand the problem yet","my team does not understand the problem yet"],"model":"My team doesn't understand the problem yet.","hint":"team + doesn't + understand + yet","feedback_ok":"Perfecto!","feedback_partial":"Revisa el auxiliar o el adverbio.","feedback_wrong":"My team + DOESN'T + understand. Yet va al final.","error_tag":"traducción","speak":"My team doesn't understand the problem yet."}
+  ],
+  "tip": {"phrase":"Example tip phrase.","meaning":"Explanation of when and how to use it in real life. <strong>Key part highlighted.</strong>"}
+}`;
 
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2200,messages:[{role:"user",content:apiPrompt}]})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2500,messages:[{role:"user",content:apiPrompt}]})});
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`);}
     const data=await res.json();
     const parsed=JSON.parse((data.content?.find(b=>b.type==='text')?.text||'').replace(/```json|```/g,'').trim());
-    const cost=((data.usage?.input_tokens||1000)/1e6*3)+((data.usage?.output_tokens||1800)/1e6*15);
+    const cost=((data.usage?.input_tokens||1000)/1e6*3)+((data.usage?.output_tokens||2000)/1e6*15);
     state.cost=(state.cost||0)+cost;state.sessions=(state.sessions||0)+1;save(state);
     document.getElementById('session-loading').style.display='none';
     renderSession(parsed);renderMeta();
-    btn.disabled=false;btn.textContent='Regenerar sesión';
+    btn.disabled=false;btn.textContent=isReview?'Regenerar repaso':'Regenerar sesión';
   }catch(e){
     document.getElementById('session-loading').style.display='none';
     document.getElementById('session-content').style.display='block';
@@ -817,7 +952,7 @@ Return this exact JSON (adapt ALL content to "${t.title}"):
 // ── Day modal ─────────────────────────────────────────────────────────────────
 function showDayModal(){
   const sel=document.getElementById('modal-day-select');
-  sel.innerHTML=ALL.map((t,i)=>`<option value="${i}"${i===1?' selected':''}>Día ${i+1} — ${t.title} (${t.phaseName})</option>`).join('');
+  sel.innerHTML=ALL.map((t,i)=>`<option value="${i}"${i===1?' selected':''}>${t.isReview?'🔄 ':''}Día ${i+1} — ${t.title} (${t.phaseName})</option>`).join('');
   document.getElementById('modal-wrap').style.display='flex';
 }
 function applyDayFromModal(){const v=parseInt(document.getElementById('modal-day-select').value)||0;state.day=v;save(state);document.getElementById('modal-wrap').style.display='none';renderFull();}
