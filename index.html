@@ -747,12 +747,16 @@ function renderExercisePhase(){
   } else if(exPhase===1){
     if(trIdx<tr.length){
       const q=tr[trIdx];
+      const isWrite=q.input_type==='write';
+      const inputHtml=isWrite
+        ? `<input class="tr-input" id="tr-input" type="text" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+           <div class="fp-actions"><button class="btn-check" onclick="checkTR()">Verificar</button><button class="btn-hint" onclick="showTRHint()">Pista</button></div>`
+        : `<div class="mc-options" id="tr-opts">${(q.options||[]).map((o,i)=>`<div class="mc-option" onclick="checkTRSelect(${i})">${o}</div>`).join('')}</div>`;
       c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${trIdx+1}/${tr.length}</span><span>${trScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(trIdx/tr.length)*100}%"></div></div></div>
       <div class="tr-type-badge">${q.type_label||'Transforma'}</div>
       <div class="tr-source">${q.source}</div>
       <div class="tr-instruction">${q.instruction}</div>
-      <input class="tr-input" id="tr-input" type="text" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false"/>
-      <div class="fp-actions"><button class="btn-check" onclick="checkTR()">Verificar</button><button class="btn-hint" onclick="showTRHint()">Pista</button></div>
+      ${inputHtml}
       <div id="tr-feedback" style="display:none" class="fp-feedback"></div>`;
     } else {
       const pct=Math.round((trScore/tr.length)*100);const pass=pct>=60;
@@ -808,6 +812,26 @@ function showTRHint(){
   const q=(exData.exercises_tr||[])[trIdx];
   const fb=document.getElementById('tr-feedback');if(!fb)return;
   fb.style.display='block';fb.className='fp-feedback partial';fb.innerHTML=`Pista: ${q.hint||''}`;
+}
+function checkTRSelect(i){
+  const q=(exData.exercises_tr||[])[trIdx];
+  document.querySelectorAll('#tr-opts .mc-option').forEach(o=>o.classList.add('disabled'));
+  const isOk=i===q.correct_idx;
+  document.querySelectorAll('#tr-opts .mc-option')[i].classList.add(isOk?'correct':'wrong');
+  if(!isOk&&q.correct_idx!=null)document.querySelectorAll('#tr-opts .mc-option')[q.correct_idx].classList.add('correct');
+  if(isOk)trScore++;
+  const fb=document.getElementById('tr-feedback');if(!fb)return;
+  fb.style.display='block';
+  fb.className='fp-feedback '+(isOk?'ok':'nope');
+  fb.innerHTML=isOk?`✓ ${q.feedback_ok||''}`:(`✗ ${q.feedback_wrong||''}<div class="fp-model">Correcto: <strong>${q.model||''}</strong></div>`);
+  if(!isOk)trackError(q.error_tag||'');
+  if(q.speak)setTimeout(()=>speak(q.speak),300);
+  // append next button without rebuilding DOM
+  const wrap=document.getElementById('tr-feedback');
+  const btn=document.createElement('div');
+  btn.style.cssText='text-align:right;margin-top:8px';
+  btn.innerHTML=`<button class="btn-next-q" onclick="nextTR()">Siguiente →</button>`;
+  wrap.after(btn);
 }
 function nextTR(){trIdx++;renderExercisePhase();}
 function retryTR(){trIdx=0;trScore=0;renderExercisePhase();}
@@ -965,9 +989,48 @@ Return this exact JSON (adapt ALL content to "${t.title}"):
     {"question":"'They ___ football on weekends.'","options":["plays","is playing","play","played"],"correct":2,"explanation":"With they/we/I/you, verb stays in base form — no -s.","error_tag":"base form plural","speak":"They play football on weekends."}
   ],
   "exercises_tr": [
-    {"type_label":"Elige la correcta","source":"My colleague (work / works) from home on Fridays.","instruction":"Selecciona la forma correcta del verbo entre paréntesis y escríbela:","accepted":["works"],"model":"works","hint":"3rd person singular → verb + s","feedback_ok":"Correcto! 3rd person → works.","feedback_partial":"Casi, revisa la persona gramatical.","feedback_wrong":"My colleague = he/she → 3rd person → works (not work).","error_tag":"3rd person -s","speak":"My colleague works from home on Fridays."},
-    {"type_label":"Transforma","source":"She speaks Spanish. (→ negative)","instruction":"Convierte a negativo:","accepted":["she doesn't speak spanish","she does not speak spanish","she doesn't speak spanish."],"model":"She doesn't speak Spanish.","hint":"she + doesn't + verb (base form)","feedback_ok":"Perfecto! doesn't + base form.","feedback_partial":"Casi. Recuerda: doesn't + speak (sin -s).","feedback_wrong":"Negativo con she: She DOESN'T speak (base form, sin -s).","error_tag":"doesn't + base form","speak":"She doesn't speak Spanish."},
-    {"type_label":"Escribe","source":"Traduce al inglés: 'Mi jefa no usa redes sociales.'","instruction":"Escribe la traducción completa:","accepted":["my boss doesn't use social media","my boss does not use social media","my boss doesn't use social networks"],"model":"My boss doesn't use social media.","hint":"boss = she → doesn't + verb base","feedback_ok":"Excelente traducción!","feedback_partial":"Casi. Revisa el auxiliar o el verbo.","feedback_wrong":"My boss (she) → DOESN'T use. El verbo use no lleva -s después de doesn't.","error_tag":"traducción con doesn't","speak":"My boss doesn't use social media."}
+    {
+      "type_label":"Elige la correcta",
+      "input_type":"select",
+      "source":"My colleague ___ from home on Fridays.",
+      "instruction":"Selecciona la forma correcta del verbo:",
+      "options":["work","works","is work","working"],
+      "correct_idx":1,
+      "model":"works",
+      "hint":"3rd person singular → verb + s",
+      "feedback_ok":"Correcto! 3rd person → works.",
+      "feedback_wrong":"My colleague = he/she → 3rd person singular → works (not work).",
+      "error_tag":"3rd person -s",
+      "speak":"My colleague works from home on Fridays."
+    },
+    {
+      "type_label":"Transforma",
+      "input_type":"select",
+      "source":"She speaks Spanish. → negative",
+      "instruction":"¿Cuál es la forma negativa correcta?",
+      "options":["She don't speak Spanish.","She doesn't speaks Spanish.","She doesn't speak Spanish.","She not speaks Spanish."],
+      "correct_idx":2,
+      "model":"She doesn't speak Spanish.",
+      "hint":"she + doesn't + verb base form (no -s)",
+      "feedback_ok":"Perfecto! doesn't + base form, sin -s en el verbo.",
+      "feedback_wrong":"Con she: doesn't + base form. Nunca 'don't' ni 'doesn't speaks'.",
+      "error_tag":"doesn't + base form",
+      "speak":"She doesn't speak Spanish."
+    },
+    {
+      "type_label":"Escribe",
+      "input_type":"write",
+      "source":"Traduce: 'Mi jefa no usa redes sociales.'",
+      "instruction":"Escribe la traducción completa en inglés:",
+      "accepted":["my boss doesn't use social media","my boss does not use social media","my boss doesn't use social networks"],
+      "model":"My boss doesn't use social media.",
+      "hint":"boss = she → doesn't + verb base",
+      "feedback_ok":"Excelente! Traducción perfecta.",
+      "feedback_partial":"Casi. Revisa el auxiliar o el verbo principal.",
+      "feedback_wrong":"My boss (she) → DOESN'T use. El verbo 'use' no lleva -s después de doesn't.",
+      "error_tag":"traducción con doesn't",
+      "speak":"My boss doesn't use social media."
+    }
   ],
   "exercises_fp": [
     {"prompt":"Describe tu rutina de trabajo en 2-3 frases usando present simple. Incluye al menos una frase negativa.","accepted":["i","we","she","he","they","you","don't","doesn't","work","start","finish","meet"],"model":"I start work at 9. I don't have meetings on Mondays. My team works remotely on Fridays.","hint":"Usa: I work... / I don't... / My colleague works...","feedback_ok":"Excelente producción libre!","feedback_partial":"Buen intento. Revisa la concordancia sujeto-verbo.","feedback_wrong":"Recuerda: he/she/it + verb-s | I/you/we/they + verb base.","error_tag":"producción libre","speak":"I start work at nine. I don't have meetings on Mondays."}
