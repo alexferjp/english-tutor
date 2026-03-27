@@ -135,13 +135,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 
 /* ── Grammar ── */
 .grammar-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
-.formula-box { background: var(--blue-l); border: 1px solid rgba(24,95,165,0.15); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; font-family: monospace; font-size: 13px; line-height: 2; }
+.grammar-structures { display: flex; flex-direction: column; gap: 12px; }
+.grammar-block { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.grammar-block-formula { background: var(--blue-l); padding: 12px 16px; font-family: monospace; font-size: 13px; font-weight: 600; line-height: 1.6; border-bottom: 1px solid rgba(24,95,165,0.15); }
+.grammar-block-en { padding: 9px 16px; font-size: 12.5px; color: var(--text2); line-height: 1.65; border-bottom: 1px solid var(--border); background: var(--card); }
+.grammar-block-es { padding: 9px 16px; font-size: 12.5px; color: var(--ld-teal); line-height: 1.65; background: var(--ld-pale); font-style: italic; }
+.grammar-block-es::before { content: '🇪🇸 '; font-style: normal; }
 .f-subject { color: var(--blue); font-weight: 700; }
 .f-verb { color: #D85A30; font-weight: 700; }
 .f-object { color: var(--ld-teal); font-weight: 700; }
 .f-neg { color: var(--red); font-weight: 700; }
 .f-aux { color: var(--amber-p); font-weight: 700; }
-.grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.75; }
+.grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.75; margin-top: 12px; }
 
 /* ── Examples ── */
 .example-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: none; animation: slideIn 0.25s ease; }
@@ -688,7 +693,19 @@ function renderSession(data){
   } else introEl.style.display='none';
 
   document.getElementById('phonetics-grid').innerHTML=(data.phonetics||[]).map(p=>`<div class="ph-item"><div class="ph-word">${p.word}</div><div class="ph-ipa">${p.ipa}</div><div class="ph-meaning">${p.meaning}</div><button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}',this)">▶ Escuchar</button></div>`).join('');
-  document.getElementById('grammar-card').innerHTML=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:8px">Fórmula</div><div class="formula-box">${data.formula||''}</div><div class="grammar-note">${data.grammar_note||''}</div>`;
+  // Grammar card — structures with inline EN+ES explanations
+  const gc=document.getElementById('grammar-card');
+  if(data.structures&&data.structures.length>0){
+    gc.innerHTML=`<div class="grammar-structures">${data.structures.map(s=>`
+      <div class="grammar-block">
+        <div class="grammar-block-formula">${s.formula}</div>
+        <div class="grammar-block-en">${s.en}</div>
+        <div class="grammar-block-es">${s.es}</div>
+      </div>`).join('')}</div>${data.grammar_note?`<div class="grammar-note">${data.grammar_note}</div>`:''}`;
+  } else {
+    // fallback for old format
+    gc.innerHTML=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:8px">Fórmula</div><div class="grammar-block-formula" style="border-radius:10px">${data.formula||''}</div><div class="grammar-note">${data.grammar_note||''}</div>`;
+  }
   currentExamples=data.examples||[];currentExIdx=0;renderExamples();
   const err=data.error||{};
   document.getElementById('error-card').innerHTML=`<div class="err-wrong"><div class="err-wrong-lbl">✗ Error frecuente</div><div class="err-wrong-txt">${err.wrong||''}</div></div><div class="err-right"><div class="err-right-lbl">✓ Correcto</div><div class="err-right-txt">${err.correct||''}</div></div><div class="err-explain">${err.explanation||''}</div>`;
@@ -902,33 +919,60 @@ Topic: ${t.title} | Context: ${t.sub} | Phase: ${t.phase}/3 (${t.phaseName})
 ${reviewContext}
 Student: A2-B1 Spanish speaker.
 
-Return this exact JSON structure (adapt ALL content to "${t.title}"):
+CRITICAL: The "structures" array replaces "formula"+"grammar_note". Each structure block has its formula, an English explanation, and a Spanish explanation — all three together, one block per structure pattern. Never group all explanations at the end.
+
+Return this exact JSON (adapt ALL content to "${t.title}"):
 {
-  "intro_es": "Explicación en español, pragmática y concreta: qué es este tema, para qué sirve en la vida real, y cuál es la diferencia clave con el español. Máximo 3 oraciones. Sin tecnicismos innecesarios.",
-  "phonetics": [{"word":"example","ipa":"/ɪɡˈzɑːmpəl/","meaning":"ejemplo"}],
-  "formula": "<span class='f-subject'>Subject</span> + <span class='f-verb'>verb</span>",
-  "grammar_note": "Explanation in English with <strong>key terms</strong>. <em>(Español: traducción del punto clave)</em>",
-  "examples": [
-    {"en":"Example sentence.","en_plain":"Example sentence.","en_highlighted":"<strong style='color:var(--ld-teal)'>Example</strong> sentence.","es":"Oración de ejemplo.","note":"Grammar note here"}
+  "intro_es": "Explicación en español, pragmática y concreta: qué es este tema, para qué sirve en la vida real, y cuál es la diferencia clave con el español. Máximo 3 oraciones directas. Sin tecnicismos.",
+  "phonetics": [
+    {"word":"works","ipa":"/wɜːrks/","meaning":"trabaja (3ª persona)"},
+    {"word":"doesn't","ipa":"/ˈdʌznt/","meaning":"no hace"},
+    {"word":"always","ipa":"/ˈɔːlweɪz/","meaning":"siempre"},
+    {"word":"does","ipa":"/dʌz/","meaning":"auxiliar 3ª persona"}
   ],
-  "error": {"wrong":"Wrong example.","correct":"Correct example.","explanation":"Why it's wrong for Spanish speakers."},
-  "error_tags_for_claude": ["error tag 1","error tag 2","error tag 3"],
+  "structures": [
+    {
+      "formula": "<span class='f-subject'>Subject</span> + <span class='f-verb'>verb (base)</span> — affirmative",
+      "en": "Use the base verb for I/you/we/they. Add <strong>-s or -es</strong> for he/she/it (3rd person singular).",
+      "es": "Usa el verbo en forma base para I/you/we/they. Agrega <strong>-s o -es</strong> para he/she/it."
+    },
+    {
+      "formula": "<span class='f-subject'>Subject</span> + <span class='f-aux'>don't/doesn't</span> + <span class='f-verb'>verb (base)</span> — negative",
+      "en": "<strong>Don't</strong> for I/you/we/they. <strong>Doesn't</strong> for he/she/it. The main verb returns to base form — no -s.",
+      "es": "<strong>Don't</strong> para I/you/we/they. <strong>Doesn't</strong> para he/she/it. El verbo principal vuelve a la forma base — sin -s."
+    },
+    {
+      "formula": "<span class='f-aux'>Do/Does</span> + <span class='f-subject'>subject</span> + <span class='f-verb'>verb (base)</span>? — question",
+      "en": "Move the auxiliary to the front. Use <strong>Does</strong> for he/she/it, <strong>Do</strong> for the rest. Never add -s to the main verb.",
+      "es": "El auxiliar va al principio. Usa <strong>Does</strong> para he/she/it y <strong>Do</strong> para los demás. El verbo principal nunca lleva -s."
+    }
+  ],
+  "examples": [
+    {"en":"She <strong style='color:var(--ld-teal)'>works</strong> at a tech company.","en_plain":"She works at a tech company.","en_highlighted":"She <strong style='color:var(--ld-teal)'>works</strong> at a tech company.","es":"Ella trabaja en una empresa tecnológica.","note":"3rd person → -s on verb"},
+    {"en":"I <strong style='color:var(--ld-teal)'>don't eat</strong> meat, but I <strong style='color:var(--ld-teal)'>love</strong> fish.","en_plain":"I don't eat meat, but I love fish.","en_highlighted":"I <strong style='color:var(--ld-teal)'>don't eat</strong> meat, but I <strong style='color:var(--ld-teal)'>love</strong> fish.","es":"No como carne, pero me encanta el pescado.","note":"don't for I/you/we/they"},
+    {"en":"<strong style='color:var(--ld-teal)'>Does</strong> he <strong style='color:var(--ld-teal)'>speak</strong> English?","en_plain":"Does he speak English?","en_highlighted":"<strong style='color:var(--ld-teal)'>Does</strong> he <strong style='color:var(--ld-teal)'>speak</strong> English?","es":"¿Habla inglés?","note":"Does → he/she/it, verb stays base"}
+  ],
+  "error": {
+    "wrong":"She don't know the answer.",
+    "correct":"She doesn't know the answer.",
+    "explanation":"With <strong>he/she/it</strong> always use <strong>doesn't</strong>. Spanish speakers often forget because Spanish doesn't use a separate auxiliary."
+  },
+  "error_tags_for_claude": ["3rd person -s omitted","don't vs doesn't","verb after doesn't has -s"],
   "exercises_mc": [
-    {"question":"Question text?","options":["A","B","C","D"],"correct":0,"explanation":"Why this is correct.","error_tag":"tag","speak":"Correct answer spoken aloud."},
-    {"question":"Question 2?","options":["A","B","C","D"],"correct":1,"explanation":"Explanation.","error_tag":"tag","speak":"Spoken answer."},
-    {"question":"Question 3?","options":["A","B","C","D"],"correct":2,"explanation":"Explanation.","error_tag":"tag","speak":"Spoken answer."},
-    {"question":"Question 4?","options":["A","B","C","D"],"correct":0,"explanation":"Explanation.","error_tag":"tag","speak":"Spoken answer."}
+    {"question":"Choose: 'She ___ to work every day.'","options":["go","goes","is going","going"],"correct":1,"explanation":"3rd person singular → verb gets -s: go → goes.","error_tag":"3rd person -s","speak":"She goes to work every day."},
+    {"question":"Which is correct?","options":["She don't like coffee.","She doesn't likes coffee.","She doesn't like coffee.","She not like coffee."],"correct":2,"explanation":"Negative with he/she/it: doesn't + base verb (no -s on main verb).","error_tag":"doesn't + base form","speak":"She doesn't like coffee."},
+    {"question":"'___ he work on Saturdays?'","options":["Is","Does","Do","Has"],"correct":1,"explanation":"Question with he/she/it: Does + subject + base verb.","error_tag":"does questions","speak":"Does he work on Saturdays?"},
+    {"question":"'They ___ football on weekends.'","options":["plays","is playing","play","played"],"correct":2,"explanation":"With they/we/I/you, verb stays in base form — no -s.","error_tag":"base form plural","speak":"They play football on weekends."}
   ],
   "exercises_tr": [
-    {"type_label":"Negativo","source":"She works every day.","instruction":"Convierte a negativo:","accepted":["she doesn't work every day","she does not work every day"],"model":"She doesn't work every day.","hint":"subject + doesn't + verb","feedback_ok":"Correcto!","feedback_partial":"Casi, revisa el auxiliar.","feedback_wrong":"Negativo: subject + doesn't/don't + verb base.","error_tag":"negación","speak":"She doesn't work every day."},
-    {"type_label":"Pregunta","source":"He speaks French.","instruction":"Convierte a pregunta:","accepted":["does he speak french","does he speak french?"],"model":"Does he speak French?","hint":"Does + subject + verb?","feedback_ok":"Perfecto!","feedback_partial":"Casi, revisa el orden.","feedback_wrong":"Pregunta: Does + subject + verb base?","error_tag":"preguntas","speak":"Does he speak French?"},
-    {"type_label":"Traducción","source":"Ellos no saben la respuesta.","instruction":"Traduce al inglés:","accepted":["they don't know the answer","they do not know the answer"],"model":"They don't know the answer.","hint":"they + don't + verb","feedback_ok":"Excelente traducción!","feedback_partial":"Casi correcto.","feedback_wrong":"They + DON'T + know. No olvides el auxiliar.","error_tag":"traducción directa","speak":"They don't know the answer."}
+    {"type_label":"Elige la correcta","source":"My colleague (work / works) from home on Fridays.","instruction":"Selecciona la forma correcta del verbo entre paréntesis y escríbela:","accepted":["works"],"model":"works","hint":"3rd person singular → verb + s","feedback_ok":"Correcto! 3rd person → works.","feedback_partial":"Casi, revisa la persona gramatical.","feedback_wrong":"My colleague = he/she → 3rd person → works (not work).","error_tag":"3rd person -s","speak":"My colleague works from home on Fridays."},
+    {"type_label":"Transforma","source":"She speaks Spanish. (→ negative)","instruction":"Convierte a negativo:","accepted":["she doesn't speak spanish","she does not speak spanish","she doesn't speak spanish."],"model":"She doesn't speak Spanish.","hint":"she + doesn't + verb (base form)","feedback_ok":"Perfecto! doesn't + base form.","feedback_partial":"Casi. Recuerda: doesn't + speak (sin -s).","feedback_wrong":"Negativo con she: She DOESN'T speak (base form, sin -s).","error_tag":"doesn't + base form","speak":"She doesn't speak Spanish."},
+    {"type_label":"Escribe","source":"Traduce al inglés: 'Mi jefa no usa redes sociales.'","instruction":"Escribe la traducción completa:","accepted":["my boss doesn't use social media","my boss does not use social media","my boss doesn't use social networks"],"model":"My boss doesn't use social media.","hint":"boss = she → doesn't + verb base","feedback_ok":"Excelente traducción!","feedback_partial":"Casi. Revisa el auxiliar o el verbo.","feedback_wrong":"My boss (she) → DOESN'T use. El verbo use no lleva -s después de doesn't.","error_tag":"traducción con doesn't","speak":"My boss doesn't use social media."}
   ],
   "exercises_fp": [
-    {"prompt":"Escribe 2 frases usando el tema de hoy sobre tu trabajo o vida cotidiana.","accepted":["i","we","she","he","they","you"],"model":"I work from home every Monday.","hint":"Usa el vocabulario y la estructura del tema.","feedback_ok":"Excelente producción!","feedback_partial":"Casi, revisa la estructura.","feedback_wrong":"Recuerda la estructura del tema.","error_tag":"producción libre","speak":"I work from home every Monday."},
-    {"prompt":"Traduce: 'Mi equipo no entiende el problema todavía.'","accepted":["my team doesn't understand the problem yet","my team does not understand the problem yet"],"model":"My team doesn't understand the problem yet.","hint":"team + doesn't + understand + yet","feedback_ok":"Perfecto!","feedback_partial":"Revisa el auxiliar o el adverbio.","feedback_wrong":"My team + DOESN'T + understand. Yet va al final.","error_tag":"traducción","speak":"My team doesn't understand the problem yet."}
+    {"prompt":"Describe tu rutina de trabajo en 2-3 frases usando present simple. Incluye al menos una frase negativa.","accepted":["i","we","she","he","they","you","don't","doesn't","work","start","finish","meet"],"model":"I start work at 9. I don't have meetings on Mondays. My team works remotely on Fridays.","hint":"Usa: I work... / I don't... / My colleague works...","feedback_ok":"Excelente producción libre!","feedback_partial":"Buen intento. Revisa la concordancia sujeto-verbo.","feedback_wrong":"Recuerda: he/she/it + verb-s | I/you/we/they + verb base.","error_tag":"producción libre","speak":"I start work at nine. I don't have meetings on Mondays."}
   ],
-  "tip": {"phrase":"Example tip phrase.","meaning":"Explanation of when and how to use it in real life. <strong>Key part highlighted.</strong>"}
+  "tip": {"phrase":"It doesn't ring a bell.","meaning":"No me suena / No me recuerdo. <strong>Equivale a 'no me suena de nada'</strong>. Ej: 'Do you know Alex?' — 'Hmm, it doesn't ring a bell.'"}
 }`;
 
   try{
