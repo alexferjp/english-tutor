@@ -277,6 +277,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .tr-input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border2); border-radius: 10px; font-size: 14px; color: var(--text); background: var(--bg); outline: none; font-family: inherit; }
 .tr-input:focus { border-color: var(--ld-teal); }
 
+/* ── Sentence Builder ── */
+.sb-instruction { font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
+.sb-built-area { min-height: 44px; background: var(--blue-l); border: 1.5px solid rgba(24,95,165,0.2); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sb-built { background: var(--ld-teal); color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
+.sb-placeholder { font-size: 12px; color: rgba(24,95,165,0.4); font-style: italic; }
+.sb-words-area { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; padding: 10px; background: var(--bg2); border-radius: 10px; }
+.sb-word { background: var(--card); border: 1.5px solid var(--border2); border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; transition: all 0.15s; user-select: none; }
+.sb-word:hover:not(.used) { border-color: var(--ld-teal); background: var(--ld-pale); color: var(--ld-deep); }
+.sb-word.used { opacity: 0.3; cursor: default; pointer-events: none; }
+
 /* ── Skeleton ── */
 .skeleton { background: var(--bg2); border-radius: 14px; padding: 28px; text-align: center; color: var(--text3); font-size: 13px; margin-top: 16px; border: 1px solid var(--border); }
 @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
@@ -733,7 +743,7 @@ function renderExercisePhase(){
   const tabs=`<div class="ex-phase-tabs">
     <div class="ex-tab ${exPhase===0?'active':exPhase>0?'done':''}">1 · Reconocimiento</div>
     <div class="ex-tab ${exPhase===1?'active':exPhase>1?'done':exPhase<1?'locked':''}">2 · Transformación</div>
-    <div class="ex-tab ${exPhase===2?'active':exPhase>2?'done':exPhase<2?'locked':''}">3 · Producción</div>
+    <div class="ex-tab ${exPhase===2?'active':exPhase>2?'done':exPhase<2?'locked':''}">3 · Construcción</div>
   </div>`;
 
   if(exPhase===0){
@@ -765,7 +775,27 @@ function renderExercisePhase(){
   } else {
     if(fpIdx<fp.length){
       const q=fp[fpIdx];
-      c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${fpIdx+1}/${fp.length}</span><span>${fpScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(fpIdx/fp.length)*100}%"></div></div></div><div class="fp-instruction">Escribe en inglés. Puedes pedir una pista si la necesitas.</div><div class="fp-prompt">${q.prompt}</div><textarea class="fp-input" id="fp-input" placeholder="Your answer here..." rows="3"></textarea><div class="fp-actions"><button class="btn-check" onclick="checkFP()">Verificar</button><button class="btn-hint" onclick="showHint()">Pista</button></div><div id="fp-feedback" style="display:none"></div>`;
+      // Shuffle words if not already shuffled
+      if(!q._shuffled){
+        q._shuffled=[...q.words];
+        for(let i=q._shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[q._shuffled[i],q._shuffled[j]]=[q._shuffled[j],q._shuffled[i]];}
+        // Make sure it's actually shuffled (not same as original)
+        const orig=q.words.join('|');let attempts=0;
+        while(q._shuffled.join('|')===orig&&attempts<10){for(let i=q._shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[q._shuffled[i],q._shuffled[j]]=[q._shuffled[j],q._shuffled[i]];}attempts++;}
+        q._selected=[];
+      }
+      const wordsHtml=q._shuffled.map((w,i)=>`<span class="sb-word ${q._selected.includes(i)?'used':''}" onclick="sbClick(${i})">${w}</span>`).join('');
+      const builtHtml=q._selected.map(i=>`<span class="sb-built">${q._shuffled[i]}</span>`).join('');
+      c.innerHTML=tabs+`<div class="score-bar-wrap"><div class="score-bar-labels"><span>Ejercicio ${fpIdx+1}/${fp.length}</span><span>${fpScore} correctos</span></div><div class="score-bar"><div class="score-fill" style="width:${(fpIdx/fp.length)*100}%"></div></div></div>
+      <div class="tr-type-badge">Sentence Builder</div>
+      <div class="sb-instruction">${q.instruction}</div>
+      <div class="sb-built-area" id="sb-built">${builtHtml||'<span class="sb-placeholder">Haz clic en las palabras en orden...</span>'}</div>
+      <div class="sb-words-area" id="sb-words">${wordsHtml}</div>
+      <div class="fp-actions">
+        <button class="btn-check" onclick="sbCheck()">Comprobar</button>
+        <button class="btn-hint" onclick="sbUndo()">↩ Deshacer</button>
+      </div>
+      <div id="sb-feedback" style="display:none" class="fp-feedback"></div>`;
     } else {
       const pct=Math.round((fpScore/fp.length)*100);
       c.innerHTML=tabs+`<div class="phase-result"><div class="phase-result-score" style="color:${pct>=60?'var(--ld-teal)':'var(--amber-p)'}">${pct}%</div><div class="phase-result-label">${pct>=80?'Excelente 🎉':pct>=60?'Buen progreso':'Practica más con Claude'}</div><div style="font-size:12px;color:var(--text2);margin-top:10px">Copia el prompt de abajo para practicar conversación con Claude.</div></div>`;
@@ -836,21 +866,53 @@ function checkTRSelect(i){
 function nextTR(){trIdx++;renderExercisePhase();}
 function retryTR(){trIdx=0;trScore=0;renderExercisePhase();}
 
-function checkFP(){
-  const inp=document.getElementById('fp-input');const answer=(inp.value||'').trim();if(!answer)return;
+// ── Sentence Builder ──────────────────────────────────────────────────────────
+function sbClick(wordIdx){
   const q=(exData.exercises_fp||[])[fpIdx];
-  const norm=s=>s.toLowerCase().replace(/[^a-z0-9\s']/g,'').trim();
-  const userN=norm(answer);const accepted=(q.accepted||[]).map(norm);
-  const isExact=accepted.some(a=>userN===a);
-  const isPartial=!isExact&&accepted.some(a=>userN.split(' ').filter(w=>a.split(' ').includes(w)).length/a.split(' ').length>=0.6);
-  const fb=document.getElementById('fp-feedback');fb.style.display='block';
-  if(isExact){fpScore++;fb.className='fp-feedback ok';fb.innerHTML=`✓ Perfecto. ${q.feedback_ok||''}`;if(q.speak)setTimeout(()=>speak(q.speak),300);}
-  else if(isPartial){fb.className='fp-feedback partial';fb.innerHTML=`≈ Casi. ${q.feedback_partial||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;trackError(q.error_tag||'');if(q.speak)setTimeout(()=>speak(q.model||''),400);}
-  else{fb.className='fp-feedback nope';fb.innerHTML=`✗ ${q.feedback_wrong||''}<div class="fp-model">Modelo: <strong>${q.model||''}</strong></div>`;trackError(q.error_tag||'');if(q.speak)setTimeout(()=>speak(q.model||''),400);}
-  inp.disabled=true;
-  document.querySelector('.fp-actions').innerHTML=`<button class="btn-check" onclick="nextFP()">Siguiente →</button>`;
+  if(!q._selected)q._selected=[];
+  if(q._selected.includes(wordIdx))return; // already used
+  q._selected.push(wordIdx);
+  // Update built area
+  const builtEl=document.getElementById('sb-built');
+  if(builtEl)builtEl.innerHTML=q._selected.map(i=>`<span class="sb-built">${q._shuffled[i]}</span>`).join('');
+  // Mark word as used
+  const wordEls=document.querySelectorAll('#sb-words .sb-word');
+  if(wordEls[wordIdx])wordEls[wordIdx].classList.add('used');
 }
-function showHint(){const q=(exData.exercises_fp||[])[fpIdx];const fb=document.getElementById('fp-feedback');fb.style.display='block';fb.className='fp-feedback partial';fb.innerHTML=`Pista: ${q.hint||''}`;}
+function sbUndo(){
+  const q=(exData.exercises_fp||[])[fpIdx];
+  if(!q._selected||q._selected.length===0)return;
+  const last=q._selected.pop();
+  const builtEl=document.getElementById('sb-built');
+  if(builtEl)builtEl.innerHTML=q._selected.length?q._selected.map(i=>`<span class="sb-built">${q._shuffled[i]}</span>`).join(''):'<span class="sb-placeholder">Haz clic en las palabras en orden...</span>';
+  const wordEls=document.querySelectorAll('#sb-words .sb-word');
+  if(wordEls[last])wordEls[last].classList.remove('used');
+}
+function sbCheck(){
+  const q=(exData.exercises_fp||[])[fpIdx];
+  if(!q._selected||q._selected.length===0)return;
+  const built=q._selected.map(i=>q._shuffled[i]).join(' ').toLowerCase().replace(/[^a-z0-9\s']/g,'').trim();
+  const correct=q.words.join(' ').toLowerCase().replace(/[^a-z0-9\s']/g,'').trim();
+  const isOk=built===correct;
+  const fb=document.getElementById('sb-feedback');if(!fb)return;
+  fb.style.display='block';
+  if(isOk){
+    fpScore++;
+    fb.className='fp-feedback ok';
+    fb.innerHTML=`✓ Correcto! ${q.feedback_ok||''}`;
+    if(q.speak)setTimeout(()=>speak(q.speak),300);
+  } else {
+    fb.className='fp-feedback nope';
+    fb.innerHTML=`✗ ${q.feedback_wrong||'Revisa el orden.'}<div class="fp-model">Correcto: <strong>${q.words.join(' ')}</strong></div>`;
+    trackError(q.error_tag||'');
+    if(q.speak)setTimeout(()=>speak(q.words.join(' ')),400);
+  }
+  // Disable all word buttons
+  document.querySelectorAll('#sb-words .sb-word').forEach(w=>w.classList.add('used'));
+  // Replace actions with Next button
+  const acts=document.querySelector('.fp-actions');
+  if(acts)acts.innerHTML=`<button class="btn-check" onclick="nextFP()">Siguiente →</button>`;
+}
 function nextFP(){fpIdx++;renderExercisePhase();}
 function trackError(tag){if(!tag)return;if(!state.errors[tag])state.errors[tag]={count:0};state.errors[tag].count++;save(state);}
 
@@ -943,6 +1005,13 @@ Topic: ${t.title} | Context: ${t.sub} | Phase: ${t.phase}/3 (${t.phaseName})
 ${reviewContext}
 Student: A2-B1 Spanish speaker.
 
+CRITICAL RULES FOR exercises_fp (Sentence Builder):
+- "words" must be an ARRAY of individual words/tokens INCLUDING punctuation as separate elements (e.g. ["She","works","hard","."])
+- Words must be in the CORRECT order in the array — the JavaScript will shuffle them automatically
+- Each sentence must practice the grammar structure of today's topic
+- Include 3 sentence builder exercises per session
+- Sentences must be practical and workplace/daily-life related
+
 CRITICAL: The "structures" array replaces "formula"+"grammar_note". Each structure block has its formula, an English explanation, and a Spanish explanation — all three together, one block per structure pattern. Never group all explanations at the end.
 
 Return this exact JSON (adapt ALL content to "${t.title}"):
@@ -1033,7 +1102,33 @@ Return this exact JSON (adapt ALL content to "${t.title}"):
     }
   ],
   "exercises_fp": [
-    {"prompt":"Describe tu rutina de trabajo en 2-3 frases usando present simple. Incluye al menos una frase negativa.","accepted":["i","we","she","he","they","you","don't","doesn't","work","start","finish","meet"],"model":"I start work at 9. I don't have meetings on Mondays. My team works remotely on Fridays.","hint":"Usa: I work... / I don't... / My colleague works...","feedback_ok":"Excelente producción libre!","feedback_partial":"Buen intento. Revisa la concordancia sujeto-verbo.","feedback_wrong":"Recuerda: he/she/it + verb-s | I/you/we/they + verb base.","error_tag":"producción libre","speak":"I start work at nine. I don't have meetings on Mondays."}
+    {
+      "instruction": "Ordena las palabras para formar la frase correcta:",
+      "words": ["She", "doesn't", "work", "on", "Saturdays", "."],
+      "speak": "She doesn't work on Saturdays.",
+      "feedback_ok": "Perfecto! Orden y estructura correctos.",
+      "feedback_wrong": "El auxiliar 'doesn't' va después del sujeto. Verbo en forma base sin -s.",
+      "error_tag": "orden de palabras",
+      "hint": "Sujeto + doesn't + verbo base + complemento"
+    },
+    {
+      "instruction": "Ordena las palabras para formar una pregunta:",
+      "words": ["Does", "your", "team", "meet", "every", "Monday", "?"],
+      "speak": "Does your team meet every Monday?",
+      "feedback_ok": "Correcto! Does al principio, verbo en forma base.",
+      "feedback_wrong": "Preguntas con he/she/it/they: Does + sujeto + verbo base + ?",
+      "error_tag": "orden preguntas",
+      "hint": "Does + sujeto + verbo (sin -s) + complemento + ?"
+    },
+    {
+      "instruction": "Construye la frase negativa:",
+      "words": ["My", "manager", "doesn't", "check", "emails", "after", "6pm", "."],
+      "speak": "My manager doesn't check emails after 6pm.",
+      "feedback_ok": "Excelente! doesn't + verbo base perfectamente usado.",
+      "feedback_wrong": "Con 'my manager' (he/she): doesn't + verbo base (sin -s).",
+      "error_tag": "doesn't + base form",
+      "hint": "My manager + doesn't + verbo base + complemento"
+    }
   ],
   "tip": {"phrase":"It doesn't ring a bell.","meaning":"No me suena / No me recuerdo. <strong>Equivale a 'no me suena de nada'</strong>. Ej: 'Do you know Alex?' — 'Hmm, it doesn't ring a bell.'"}
 }`;
