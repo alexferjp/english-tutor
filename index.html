@@ -146,6 +146,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; c
 .f-object { color: var(--ld-teal); font-weight: 700; }
 .f-neg { color: var(--red); font-weight: 700; }
 .f-aux { color: var(--amber-p); font-weight: 700; }
+.grammar-block-examples { border-top: 1px solid var(--border); background: var(--card); padding: 10px 16px; display: flex; flex-direction: column; gap: 8px; }
+.grammar-inline-ex { padding: 6px 10px; background: var(--bg2); border-radius: 8px; border-left: 2px solid var(--ld-teal); }
+.grammar-inline-en { font-size: 13px; font-weight: 600; color: var(--ld-dark); margin-bottom: 2px; line-height: 1.5; }
+.grammar-inline-es { font-size: 12px; color: var(--text3); font-style: italic; }
 .grammar-note { font-size: 12.5px; color: var(--text2); line-height: 1.75; margin-top: 12px; }
 
 /* ── Examples ── */
@@ -703,7 +707,7 @@ function renderSession(data){
   } else introEl.style.display='none';
 
   document.getElementById('phonetics-grid').innerHTML=(data.phonetics||[]).map(p=>`<div class="ph-item"><div class="ph-word">${p.word}</div><div class="ph-ipa">${p.ipa}</div><div class="ph-meaning">${p.meaning}</div><button class="btn-speak" onclick="speak('${p.word.replace(/'/g,"\\'")}',this)">▶ Escuchar</button></div>`).join('');
-  // Grammar card — structures with inline EN+ES explanations
+  // Grammar card — structures with inline EN+ES explanations + color-coded examples
   const gc=document.getElementById('grammar-card');
   if(data.structures&&data.structures.length>0){
     gc.innerHTML=`<div class="grammar-structures">${data.structures.map(s=>`
@@ -711,6 +715,11 @@ function renderSession(data){
         <div class="grammar-block-formula">${s.formula}</div>
         <div class="grammar-block-en">${s.en}</div>
         <div class="grammar-block-es">${s.es}</div>
+        ${s.examples&&s.examples.length?`<div class="grammar-block-examples">${s.examples.map(ex=>`
+          <div class="grammar-inline-ex">
+            <div class="grammar-inline-en">${ex.en}</div>
+            <div class="grammar-inline-es">${ex.es}</div>
+          </div>`).join('')}</div>`:''}
       </div>`).join('')}</div>${data.grammar_note?`<div class="grammar-note">${data.grammar_note}</div>`:''}`;
   } else {
     // fallback for old format
@@ -1012,7 +1021,12 @@ CRITICAL RULES FOR exercises_fp (Sentence Builder):
 - Include 3 sentence builder exercises per session
 - Sentences must be practical and workplace/daily-life related
 
-CRITICAL: The "structures" array replaces "formula"+"grammar_note". Each structure block has its formula, an English explanation, and a Spanish explanation — all three together, one block per structure pattern. Never group all explanations at the end.
+CRITICAL: The "structures" array replaces "formula"+"grammar_note". Each structure block has:
+- formula: the grammar pattern with colored spans (f-subject, f-verb, f-aux, f-neg, f-object)
+- en: English explanation with <strong> highlights
+- es: Spanish explanation with <strong> highlights
+- examples: exactly 2 short color-coded examples using the SAME span classes as the formula. These reinforce the pattern visually. Keep them short (max 8 words each).
+Never group all explanations at the end — each block is self-contained.
 
 Return this exact JSON (adapt ALL content to "${t.title}"):
 {
@@ -1027,23 +1041,37 @@ Return this exact JSON (adapt ALL content to "${t.title}"):
     {
       "formula": "<span class='f-subject'>Subject</span> + <span class='f-verb'>verb (base)</span> — affirmative",
       "en": "Use the base verb for I/you/we/they. Add <strong>-s or -es</strong> for he/she/it (3rd person singular).",
-      "es": "Usa el verbo en forma base para I/you/we/they. Agrega <strong>-s o -es</strong> para he/she/it."
+      "es": "Usa el verbo en forma base para I/you/we/they. Agrega <strong>-s o -es</strong> para he/she/it.",
+      "examples": [
+        {"en":"<span class='f-subject'>I</span> <span class='f-verb'>work</span> from home on Fridays.","es":"Trabajo desde casa los viernes."},
+        {"en":"<span class='f-subject'>She</span> <span class='f-verb'>works</span> at a hospital.","es":"Ella trabaja en un hospital."}
+      ]
     },
     {
       "formula": "<span class='f-subject'>Subject</span> + <span class='f-aux'>don't/doesn't</span> + <span class='f-verb'>verb (base)</span> — negative",
-      "en": "<strong>Don't</strong> for I/you/we/they. <strong>Doesn't</strong> for he/she/it. The main verb returns to base form — no -s.",
-      "es": "<strong>Don't</strong> para I/you/we/they. <strong>Doesn't</strong> para he/she/it. El verbo principal vuelve a la forma base — sin -s."
+      "en": "<strong>Don't</strong> for I/you/we/they. <strong>Doesn't</strong> for he/she/it. Main verb stays base — no -s.",
+      "es": "<strong>Don't</strong> para I/you/we/they. <strong>Doesn't</strong> para he/she/it. El verbo principal vuelve a la forma base.",
+      "examples": [
+        {"en":"<span class='f-subject'>I</span> <span class='f-aux'>don't</span> <span class='f-verb'>check</span> emails after 7pm.","es":"No reviso correos después de las 7pm."},
+        {"en":"<span class='f-subject'>He</span> <span class='f-aux'>doesn't</span> <span class='f-verb'>speak</span> French.","es":"Él no habla francés."}
+      ]
     },
     {
       "formula": "<span class='f-aux'>Do/Does</span> + <span class='f-subject'>subject</span> + <span class='f-verb'>verb (base)</span>? — question",
-      "en": "Move the auxiliary to the front. Use <strong>Does</strong> for he/she/it, <strong>Do</strong> for the rest. Never add -s to the main verb.",
-      "es": "El auxiliar va al principio. Usa <strong>Does</strong> para he/she/it y <strong>Do</strong> para los demás. El verbo principal nunca lleva -s."
+      "en": "Move the auxiliary to the front. <strong>Does</strong> for he/she/it, <strong>Do</strong> for the rest. Never add -s to the main verb.",
+      "es": "El auxiliar va al principio. <strong>Does</strong> para he/she/it y <strong>Do</strong> para los demás. Sin -s en el verbo principal.",
+      "examples": [
+        {"en":"<span class='f-aux'>Do</span> <span class='f-subject'>you</span> <span class='f-verb'>have</span> a meeting today?","es":"¿Tienes reunión hoy?"},
+        {"en":"<span class='f-aux'>Does</span> <span class='f-subject'>your team</span> <span class='f-verb'>use</span> Slack?","es":"¿Tu equipo usa Slack?"}
+      ]
     }
   ],
   "examples": [
     {"en":"She <strong style='color:var(--ld-teal)'>works</strong> at a tech company.","en_plain":"She works at a tech company.","en_highlighted":"She <strong style='color:var(--ld-teal)'>works</strong> at a tech company.","es":"Ella trabaja en una empresa tecnológica.","note":"3rd person → -s on verb"},
     {"en":"I <strong style='color:var(--ld-teal)'>don't eat</strong> meat, but I <strong style='color:var(--ld-teal)'>love</strong> fish.","en_plain":"I don't eat meat, but I love fish.","en_highlighted":"I <strong style='color:var(--ld-teal)'>don't eat</strong> meat, but I <strong style='color:var(--ld-teal)'>love</strong> fish.","es":"No como carne, pero me encanta el pescado.","note":"don't for I/you/we/they"},
-    {"en":"<strong style='color:var(--ld-teal)'>Does</strong> he <strong style='color:var(--ld-teal)'>speak</strong> English?","en_plain":"Does he speak English?","en_highlighted":"<strong style='color:var(--ld-teal)'>Does</strong> he <strong style='color:var(--ld-teal)'>speak</strong> English?","es":"¿Habla inglés?","note":"Does → he/she/it, verb stays base"}
+    {"en":"<strong style='color:var(--ld-teal)'>Does</strong> he <strong style='color:var(--ld-teal)'>speak</strong> English?","en_plain":"Does he speak English?","en_highlighted":"<strong style='color:var(--ld-teal)'>Does</strong> he <strong style='color:var(--ld-teal)'>speak</strong> English?","es":"¿Habla inglés?","note":"Does → he/she/it, verb stays base"},
+    {"en":"We <strong style='color:var(--ld-teal)'>always have</strong> a standup on Mondays.","en_plain":"We always have a standup on Mondays.","en_highlighted":"We <strong style='color:var(--ld-teal)'>always have</strong> a standup on Mondays.","es":"Siempre tenemos standup los lunes.","note":"Frequency adverb before the main verb"},
+    {"en":"My manager <strong style='color:var(--ld-teal)'>doesn't check</strong> emails on weekends.","en_plain":"My manager doesn't check emails on weekends.","en_highlighted":"My manager <strong style='color:var(--ld-teal)'>doesn't check</strong> emails on weekends.","es":"Mi jefe no revisa correos los fines de semana.","note":"3rd person negative: doesn't + base form"}
   ],
   "error": {
     "wrong":"She don't know the answer.",
@@ -1134,7 +1162,7 @@ Return this exact JSON (adapt ALL content to "${t.title}"):
 }`;
 
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:4000,messages:[{role:"user",content:apiPrompt}]})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:isReview?5000:4000,messages:[{role:"user",content:apiPrompt}]})});
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`);}
     const data=await res.json();
     const parsed=JSON.parse((data.content?.find(b=>b.type==='text')?.text||'').replace(/```json|```/g,'').trim());
